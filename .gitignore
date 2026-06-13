@@ -1,0 +1,52 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+
+# --- Docs: whitelist ---
+# All docs/ content is ignored by default; only curated docs are tracked.
+# To add a new one, add its `!docs/...` line here.
+docs/*
+!docs/adr/
+!docs/design-system.md
+
+# --- Agents / plans / scratch ---
+# Local agent state and ephemeral output (superpowers plans, temp, etc.).
+.claude/*
+# Skills excluded by default; whitelist specific ones here to commit them
+# (e.g. `!.claude/skills/some-skill/`).
+!.claude/skills/
+.claude/skills/*
+/plans/
+.tmp/
+tmp/
+*.tmp
+
+# Skill lockfile: local install state, not a portfolio artifact.
+/skills-lock.json
+
+# Initial brain-dump (personal/situational notes; not published).
+/v2.md
+
+# Working roadmap (living plan; kept local).
+/pending.md

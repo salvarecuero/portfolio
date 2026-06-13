@@ -1,0 +1,45 @@
+# Portfolio v2
+
+Personal portfolio, v2. v1 is frozen at tag `v1.0`; v2 starts from scratch on the `v2` branch.
+
+- Domain language: see [CONTEXT.md](./CONTEXT.md).
+- Architecture decisions: see [docs/adr/](./docs/adr/).
+- Design foundation: see [docs/design-system.md](./docs/design-system.md).
+
+## Stack
+
+- **Astro** (islands architecture). See ADR 0001.
+- **Tailwind v4** with design tokens as CSS custom properties as the source of truth. Per-Project theming via token overrides.
+- No backend: Project metadata is static content (Astro Content Collections, typed).
+
+## Structure
+
+- **Standalone Astro app**. Projects live and deploy in their own repos.
+- The portfolio only contains: Posters, Project metadata, and Custom view components.
+- Embeds point to the Projects' deployed URLs (cross-origin), under the embed contract (ADR 0004).
+- Not a monorepo (no backend or shared code to justify it).
+- **Deploy:** static output to **Cloudflare Pages** (domain and DNS already on Cloudflare), cached at the edge.
+
+## Priorities
+
+- **Performance is first-class**: the goal is the Lighthouse ceiling. It justifies the HTML-first approach (load only the Presentation first), zero-JS by default, and the Poster-no-spinner model of the Showcase.
+
+## Commands
+
+- `pnpm dev` — dev server
+- `pnpm build` — static build to `dist/`
+- `pnpm preview` — serve the build
+- `pnpm check` — `astro check` (typecheck of `.astro` files)
+
+## Project layout
+
+- `src/pages/` — routes (single page: `index.astro`)
+- `src/layouts/` — layouts (`Layout.astro` imports the global styles)
+- `src/styles/global.css` — Tailwind + tokens (`@theme`)
+- `src/content.config.ts` — `projects` collection (Project schema)
+- `src/content/projects/` — one `.md`/`.mdx` per Project
+
+## Conventions
+
+- **English only.** All text committed to the repo — code, comments, commit messages, docs, ADRs, CONTEXT — is in English. (i18n with an EN/ES switch is a possible future consideration, not in scope now.)
+- **Technical objectivity in the record.** Every commit message, code comment and doc (including ADRs and CONTEXT.md) describes *what* changes and, when relevant, *why* — but the "why" **only when it has technical grounding** (an architecture trade-off, a fix for a measurable bug, a performance constraint). It never references session conversations, personal or situational explanations, or the private motivation behind a decision. If a justification has no technical grounding, it is omitted.

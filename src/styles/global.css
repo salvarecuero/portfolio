@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Design tokens — source of truth for the design system. See docs/design-system.md.
+   Tailwind v4 consumes these tokens via @theme and generates utilities from them.
+   The final visual is iterated later; this is the minimal foundation. */
+@theme {
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-bg: oklch(0.18 0.01 260);
+  --color-fg: oklch(0.96 0.01 260);
+
+  /* Identity accent: resolves to the runtime --accent var, which the Showcase
+     overrides per Project (theming via token override). */
+  --color-accent: var(--accent, oklch(0.7 0.16 250));
+
+  --radius-base: 0.5rem;
+}
+
+:root {
+  color-scheme: dark;
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+}
