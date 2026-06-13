@@ -38,6 +38,7 @@ docs/*
 !.claude/skills/
 .claude/skills/*
 /plans/
+.superpowers/
 .tmp/
 tmp/
 *.tmp
