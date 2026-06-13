@@ -1,0 +1,15 @@
+---
+import { buildPersonSchema } from "../data/personSchema";
+import { presentation } from "../data/presentation";
+
+interface Props {
+  /** Absolute URL to the photo (resolved by the parent from Astro.site). */
+  imageUrl: string;
+}
+
+const { imageUrl } = Astro.props;
+const siteUrl = Astro.site?.href ?? `${presentation.domain}/`;
+const schema = buildPersonSchema({ siteUrl, imageUrl });
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
