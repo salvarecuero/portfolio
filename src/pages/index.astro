@@ -1,18 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Presentation from "../components/Presentation.astro";
+import { presentation } from "../data/presentation";
+
+const title = `${presentation.name} — ${presentation.role}`;
 ---
 
-<Layout title="Salvador Recuero — Portfolio">
-  {/* Skeleton of the two sections with native scroll-snap (see ADR 0003).
-      Placeholder content: the Presentation and the Showcase are built separately. */}
+<Layout title={title} description={presentation.description}>
   <main class="h-dvh snap-y snap-mandatory overflow-y-scroll">
-    {/* Presentation — see CONTEXT.md */}
-    <section class="grid h-dvh snap-start place-items-center">
-      <h1 class="font-sans text-4xl text-accent">Presentation</h1>
-    </section>
+    <Presentation />
 
-    {/* Showcase — see CONTEXT.md, ADR 0002 and 0003 */}
-    <section class="grid h-dvh snap-start place-items-center">
+    {/* Showcase — see CONTEXT.md, ADR 0002 and 0003. Built separately. */}
+    <section id="showcase" class="grid h-dvh snap-start place-items-center">
       <p class="font-sans text-2xl">Showcase</p>
     </section>
   </main>
