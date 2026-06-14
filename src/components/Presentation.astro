@@ -113,12 +113,14 @@ const imageUrl = new URL(photo.src, Astro.site ?? `${presentation.domain}/`).hre
     background: var(--wallUrl) center / cover no-repeat, var(--p-wall);
   }
 
-  /* centered content band: keeps text and subject close on wide screens */
+  /* centered content band: keeps text and subject close on wide screens.
+     Wide max-width + tight inline padding so the text column has room for the
+     strapline + code chip to share one row alongside the subject. */
   .band {
     width: 100%;
-    max-width: 72rem;
+    max-width: 82rem;
     margin-inline: auto;
-    padding-inline: clamp(1.5rem, 5vw, 4rem);
+    padding-inline: clamp(1.25rem, 3vw, 2.25rem);
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
@@ -276,7 +278,7 @@ const imageUrl = new URL(photo.src, Astro.site ?? `${presentation.domain}/`).hre
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
     padding: 0.18em 0.7em 0.32em;
-    font-size: 0.62em;
+    font-size: 0.56em; /* sized so the chip shares the strapline row */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     margin-left: 0.3rem;
   }
@@ -427,7 +429,10 @@ const imageUrl = new URL(photo.src, Astro.site ?? `${presentation.domain}/`).hre
     .stack li:hover .stack-ic { transform: none; }
   }
 
-  @media (max-width: 860px) {
+  /* Below this width the subject (a fixed ~600px square) leaves the text column too
+     narrow for the strapline + chip to share a row, so stack: subject on top, text
+     centered at full width (where the row fits again). */
+  @media (max-width: 1180px) {
     .band {
       grid-template-columns: 1fr;
       justify-items: center;
@@ -449,8 +454,9 @@ const imageUrl = new URL(photo.src, Astro.site ?? `${presentation.domain}/`).hre
     }
     .subject {
       order: 1;
+      justify-self: center; /* override the two-column `justify-self: end` */
       height: auto;
-      width: min(70vw, 360px); /* size by width on mobile; preserves the square ratio */
+      width: min(58vw, 380px); /* size by width when stacked; preserves the square ratio */
     }
   }
 </style>
