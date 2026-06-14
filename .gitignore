@@ -43,6 +43,9 @@ docs/*
 tmp/
 *.tmp
 
+# Playwright MCP scratch output (console logs + page snapshots from browser automation).
+.playwright-mcp/
+
 # Skill lockfile: local install state, not a portfolio artifact.
 /skills-lock.json
 
