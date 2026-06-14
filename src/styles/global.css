@@ -22,12 +22,17 @@
   color: var(--color-fg);
 }
 
-html {
+/* `main` is the scroll container (overflow-y-scroll snap), so the smooth behaviour must
+   live on it, not only on `html`, for the in-page anchor scroll (e.g. the Presentation's
+   "Scroll" cue → #showcase) to animate instead of jumping. */
+html,
+main {
   scroll-behavior: smooth;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
+  html,
+  main {
     scroll-behavior: auto;
   }
 }
