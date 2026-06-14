@@ -1,4 +1,5 @@
 ---
+import { Font } from "astro:assets";
 import "../styles/global.css";
 
 interface Props {
@@ -16,6 +17,11 @@ const { title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <Font cssVariable="--font-geist" preload />
+    <Font cssVariable="--font-geist-mono" preload />
+    <Font cssVariable="--font-yellowtail" />
+    <Font cssVariable="--font-oswald" />
+    <Font cssVariable="--font-zilla" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     {Astro.site && (
