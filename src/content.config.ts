@@ -18,6 +18,8 @@ const projects = defineCollection({
     order: z.number().default(0),
     // Project identity accent; overrides the --accent var.
     accent: z.string().optional(),
+    // Selector tab glyph: a key into src/data/showcaseIcons.ts (falls back to a default).
+    icon: z.string().optional(),
     // Embed contract — only for mode: "embed". See ADR 0004.
     embed: z
       .object({
