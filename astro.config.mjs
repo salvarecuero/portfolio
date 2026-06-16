@@ -51,6 +51,14 @@ export default defineConfig({
       styles: ['normal'],
       fallbacks: ['serif'],
     },
+    {
+      provider: fontProviders.google(),
+      name: 'Outfit',
+      cssVariable: '--font-outfit',
+      weights: [400, 500, 600],
+      styles: ['normal'],
+      fallbacks: ['system-ui', 'sans-serif'],
+    },
   ],
   // The editor's TS server may flag a Vite PluginOption type mismatch here from pnpm's peer-differentiated vite copies; astro check, tsc and build are unaffected.
   vite: {

@@ -22,6 +22,7 @@ const { title, description } = Astro.props;
     <Font cssVariable="--font-yellowtail" />
     <Font cssVariable="--font-oswald" />
     <Font cssVariable="--font-zilla" />
+    <Font cssVariable="--font-outfit" preload />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     {Astro.site && (
