@@ -1,0 +1,96 @@
+---
+import { Picture } from 'astro:assets';
+import type { MediaItem } from '../../lib/showcaseProjects';
+
+interface Props {
+  items: MediaItem[];
+  variant: 'desktop' | 'mobile';
+}
+const { items, variant } = Astro.props as Props;
+const total = items.length;
+// Stage is ~full viewport width minus the cosmos frame padding.
+const sizes = '(min-width: 800px) calc(100vw - 72px), 100vw';
+const widths = [640, 960, 1280, 1920, 2560];
+---
+<div
+  class:list={["media-gallery", `media-gallery--${variant}`]}
+  data-gallery
+  data-index="0"
+  role="group"
+  aria-roledescription="carousel"
+  aria-label="Project media"
+>
+  <div class="gallery-track" data-track style="transform:translateX(0%)">
+    {items.map((item, i) => (
+      <div
+        class="gallery-slide"
+        data-slide
+        role="group"
+        aria-roledescription="slide"
+        aria-label={`${i + 1} of ${total}`}
+        aria-hidden={i === 0 ? 'false' : 'true'}
+      >
+        {item.type === 'image' ? (
+          <Picture
+            src={item.src}
+            formats={['avif', 'webp']}
+            widths={widths}
+            sizes={sizes}
+            layout="none"
+            alt={item.alt}
+            class="gallery-media"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <>
+            <img
+              class="gallery-media gallery-media--poster"
+              src={item.poster.src}
+              width={item.poster.width}
+              height={item.poster.height}
+              alt={item.alt}
+              loading="lazy"
+              decoding="async"
+            />
+            <video
+              class="gallery-media gallery-media--video"
+              data-video
+              muted
+              loop
+              playsinline
+              preload="none"
+              poster={item.poster.src}
+              width={item.poster.width}
+              height={item.poster.height}
+              aria-label={item.alt}
+            >
+              {item.sources.map((s) => <source data-src={s.src} type={s.type} />)}
+            </video>
+          </>
+        )}
+      </div>
+    ))}
+  </div>
+
+  <button class="gallery-arrow gallery-arrow--prev" type="button" data-prev aria-label="Previous media">‹</button>
+  <button class="gallery-arrow gallery-arrow--next" type="button" data-next aria-label="Next media">›</button>
+  <div class="gallery-counter" data-counter aria-hidden="true">1 / {total}</div>
+
+  <div class="gallery-thumbs" role="tablist" aria-label="Media thumbnails">
+    {items.map((item, i) => (
+      <button
+        class:list={["gallery-thumb", { on: i === 0, vid: item.type === 'video' }]}
+        type="button"
+        role="tab"
+        aria-selected={i === 0 ? 'true' : 'false'}
+        aria-label={`Show: ${item.alt}`}
+        data-thumb={i}
+      ></button>
+    ))}
+  </div>
+</div>
+
+<script>
+  import '../../scripts/galleryController';
+</script>
