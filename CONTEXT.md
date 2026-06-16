@@ -24,10 +24,10 @@ The mode that shows the Project's real, live, interactive app. Reserved for web 
 _Avoid_: iframe (that is implementation)
 
 **Media**:
-The mode that shows a Project with its Poster only (image/video), without a live app. The mode for Projects that cannot or should not be embedded live (e.g. bye-bg, due to the weight/isolation of its WASM).
+The mode that shows a Project through a navigable set of media (images and/or a short looping video), without a live app. The set has a desktop (landscape) variant and an optional mobile (portrait) variant — the site as rendered on a phone. The mode for Projects that cannot or should not be embedded live (e.g. bye-bg, due to the weight/isolation of its WASM).
 
 **Poster**:
-The static visual representation of a Project (image/video) the Showcase can always use to show it in a polished way. It is the base layer of both Media mode and Embed mode (the live app fades in over the Poster). It replaces any spinner: the Showcase never shows a spinner, it shows the Poster.
+The static visual representation of a Project (image/video) the Showcase can always use to show it in a polished way. It is the base layer of both Media mode and Embed mode (the live app fades in over the Poster). It replaces any spinner: the Showcase never shows a spinner, it shows the Poster. It is the first item of the Media set (the rest of the set are additional captures); it remains the only "loading state" Embed shows.
 _Avoid_: Thumbnail, preview, loading state
 
 **Custom view**:
