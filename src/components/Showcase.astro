@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content';
+import { toShowcaseProjects } from '../lib/showcaseProjects';
+import Selector from './showcase/Selector.astro';
+import Stage from './showcase/Stage.astro';
+import ProjectLinks from './showcase/ProjectLinks.astro';
+import '../styles/showcase.css';
+
+const projects = toShowcaseProjects(await getCollection('projects'));
+const active = projects.find((p) => p.active) ?? projects[0];
+---
+
+<section id="showcase" class="showcase" style={active?.accent ? `--accent:${active.accent}` : undefined}>
+  <div class="cosmos" aria-hidden="true"></div>
+
+  {/* command overlay ($ showcase) — base display:none; shown only while the intro plays */}
+  <div class="cmd" aria-hidden="true">
+    <div class="line"><span class="p">$</span><span class="word">showcase</span><span class="caret"></span></div>
+  </div>
+
+  <div class="to">
+    <Selector projects={projects} />
+    {active && (
+      <Stage project={active}>
+        <ProjectLinks links={active.links} title={active.title} />
+      </Stage>
+    )}
+  </div>
+</section>
+
+<script>
+  import { createIntroTrigger } from '../scripts/introTrigger';
+  const root = document.documentElement;
+  const showcase = document.getElementById('showcase');
+  if (showcase) {
+    const play = () => {
+      root.classList.remove('intro-play');
+      void (showcase as HTMLElement).offsetWidth; // reflow → clean (re)start
+      root.classList.add('intro-play');
+    };
+    const handle = createIntroTrigger(play, 0.6);
+    const io = new IntersectionObserver((entries) => {
+      if (handle(entries)) io.unobserve(showcase);
+    }, { threshold: [0, 0.6, 1] });
+    io.observe(showcase);
+  }
+</script>
