@@ -1,0 +1,12 @@
+---
+import type { ShowcaseProject } from '../../lib/showcaseProjects';
+const { projects } = Astro.props as { projects: ShowcaseProject[] };
+---
+<nav class="selector" aria-label="Projects">
+  {projects.map((p) => (
+    <button class:list={["tab", { active: p.active }]} data-project={p.id} type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d={p.iconPath} /></svg>
+      {p.title}
+    </button>
+  ))}
+</nav>

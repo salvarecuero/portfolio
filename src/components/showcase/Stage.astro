@@ -1,0 +1,8 @@
+---
+import type { ShowcaseProject } from '../../lib/showcaseProjects';
+const { project } = Astro.props as { project: ShowcaseProject };
+---
+<section class="stage">
+  <img class="poster" src={project.poster} alt={`${project.title} — ${project.summary}`} loading="lazy" decoding="async" />
+  <slot />
+</section>
