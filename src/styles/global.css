@@ -16,6 +16,19 @@
   --radius-base: 0.5rem;
 }
 
+/* Showcase (dark cosmos world) tokens — consumed by src/styles/showcase.css.
+   Distinct from the Presentation's scoped light palette. Per-Project accent is
+   applied at runtime via the --accent override on the Showcase root. */
+:root {
+  --space: #020206;          /* deep near-black space */
+  --prompt: #7fb481;         /* terminal-green $ prompt + block caret */
+  --cmd-word: #ffffff;       /* typed command, pure white (not the accent) */
+  --app-surface: #ffffff;    /* the light app/Stage surface (light-merge tab) */
+  --showcase-pad: 36px;      /* cosmos frame thickness (sides/bottom) */
+  --intro-cycle: 2800ms;     /* locked intro total */
+  --intro-ease: cubic-bezier(0.22, 1, 0.36, 1);  /* out-quint */
+}
+
 :root {
   color-scheme: dark;
   background-color: var(--color-bg);
