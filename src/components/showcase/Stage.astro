@@ -1,10 +1,10 @@
 ---
-import { Image } from 'astro:assets';
+import MediaGallery from './MediaGallery.astro';
 import type { ShowcaseProject } from '../../lib/showcaseProjects';
 const { project } = Astro.props as { project: ShowcaseProject };
-const poster = project.media[0]?.type === 'image' ? project.media[0] : undefined;
 ---
 <section class="stage">
-  {poster && <Image class="poster" src={poster.src} alt={poster.alt} loading="lazy" decoding="async" />}
+  <MediaGallery items={project.media} variant="desktop" />
+  {project.mediaMobile && <MediaGallery items={project.mediaMobile} variant="mobile" />}
   <slot />
 </section>
