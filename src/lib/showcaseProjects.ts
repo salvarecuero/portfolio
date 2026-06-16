@@ -1,5 +1,12 @@
 import type { CollectionEntry } from 'astro:content';
+import type { ImageMetadata } from 'astro';
 import { iconPath } from '../data/showcaseIcons';
+
+export type VideoSource = { src: string; type: string };
+
+export type MediaItem =
+  | { type: 'image'; src: ImageMetadata; alt: string }
+  | { type: 'video'; poster: ImageMetadata; sources: VideoSource[]; alt: string };
 
 export interface ShowcaseProject {
   id: string;
@@ -7,9 +14,12 @@ export interface ShowcaseProject {
   summary: string;
   iconPath: string;
   accent?: string;
-  poster: string;
   active: boolean;
   links?: { live?: string; repo?: string };
+  // Media set. media[0] is the Poster (base layer / anti-spinner / Embed fade-in).
+  media: MediaItem[];
+  // Portrait set for narrow viewports; absent => fall back to `media`.
+  mediaMobile?: MediaItem[];
 }
 
 export function toShowcaseProjects(
@@ -23,8 +33,9 @@ export function toShowcaseProjects(
       summary: e.data.summary,
       iconPath: iconPath(e.data.icon),
       accent: e.data.accent,
-      poster: e.data.poster,
       active: i === 0,
       links: e.data.links,
+      media: e.data.media,
+      mediaMobile: e.data.mediaMobile,
     }));
 }

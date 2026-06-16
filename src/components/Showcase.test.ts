@@ -7,8 +7,8 @@ describe('Selector', () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Selector, {
       props: { projects: [
-        { id: 'a', title: 'Alpha', iconPath: 'M0 0', active: true, summary: '', poster: '' },
-        { id: 'b', title: 'Beta', iconPath: 'M0 0', active: false, summary: '', poster: '' },
+        { id: 'a', title: 'Alpha', iconPath: 'M0 0', active: true, summary: '', media: [] },
+        { id: 'b', title: 'Beta', iconPath: 'M0 0', active: false, summary: '', media: [] },
       ] },
     });
     expect(html).toContain('Alpha');

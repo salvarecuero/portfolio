@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { toShowcaseProjects } from './showcaseProjects';
 
+const img = { src: '/x.webp', width: 10, height: 10, format: 'webp' } as any;
 const raw = [
-  { id: 'b', data: { title: 'B', order: 2, icon: 'target', accent: '#f00', poster: 'p', summary: 's', mode: 'media', stack: [], links: { live: 'https://b.dev' } } },
-  { id: 'a', data: { title: 'A', order: 1, icon: undefined, accent: '#0f0', poster: 'p', summary: 's', mode: 'media', stack: [], links: { repo: 'https://git/a' } } },
+  { id: 'b', data: { title: 'B', order: 2, icon: 'target', accent: '#f00', summary: 's', mode: 'media', stack: [], links: { live: 'https://b.dev' }, media: [{ type: 'image', src: img, alt: 'b0' }] } },
+  { id: 'a', data: { title: 'A', order: 1, icon: undefined, accent: '#0f0', summary: 's', mode: 'media', stack: [], links: { repo: 'https://git/a' }, media: [{ type: 'image', src: img, alt: 'a0' }], mediaMobile: [{ type: 'image', src: img, alt: 'a0m' }] } },
 ];
 
 describe('toShowcaseProjects', () => {
@@ -20,5 +21,12 @@ describe('toShowcaseProjects', () => {
   it('passes links through', () => {
     const out = toShowcaseProjects(raw as any);
     expect(out[0].links?.repo).toBe('https://git/a');
+  });
+  it('passes the media set through; media[0] is the poster', () => {
+    const out = toShowcaseProjects(raw as any);
+    expect(out[0].media).toHaveLength(1);
+    expect(out[0].media[0].alt).toBe('a0');
+    expect(out[0].mediaMobile?.[0].alt).toBe('a0m');
+    expect(out[1].mediaMobile).toBeUndefined();
   });
 });
