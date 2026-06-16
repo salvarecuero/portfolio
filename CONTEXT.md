@@ -39,4 +39,8 @@ _Avoid_: Canvas, viewport
 
 **Selector**:
 The static menu, part of the portfolio chrome, that lets the visitor iterate between Projects within the Showcase. It is both the branding (makes clear you are still in the portfolio, not inside the app) and the escape hatch from the immersion. It must be evident.
-_Avoid_: Navbar, tabs, menu
+_Avoid_: Navbar, generic menu. (The *visual* is an elevated, branded top-tab row — the term "Selector" is kept; a plain browser-tab/navbar look is what's avoided.)
+
+**Project links**:
+The floating menu, part of the portfolio chrome, of the *current* Project's external links (its live site, its repository). Sits bottom-center over the Stage. Distinct from the Selector: the Selector navigates *between* Projects; Project links point *out* to the active Project's real presence. Reuses the Presentation link-pill language. The accent is not used here (accent = identity/"the promise").
+_Avoid_: toolbar, footer, actions
