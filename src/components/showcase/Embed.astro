@@ -1,0 +1,40 @@
+---
+import { Picture } from 'astro:assets';
+import type { ShowcaseProject } from '../../lib/showcaseProjects';
+const { project } = Astro.props as { project: ShowcaseProject };
+const embed = project.embed!;
+const poster = project.media[0]; // media[0] is the Poster (an image item for embed posters)
+// Stage is ~full viewport minus the cosmos frame padding (same as MediaGallery).
+const sizes = '(min-width: 800px) calc(100vw - 72px), 100vw';
+const widths = [640, 960, 1280, 1920, 2560];
+---
+<div class="embed" data-embed>
+  <div class="embed-poster" data-embed-poster>
+    {poster.type === 'image' && (
+      <Picture
+        src={poster.src}
+        formats={['avif', 'webp']}
+        widths={widths}
+        sizes={sizes}
+        layout="none"
+        alt={poster.alt}
+        class="embed-poster-img"
+        loading="lazy"
+        decoding="async"
+      />
+    )}
+  </div>
+  <iframe
+    class="embed-frame"
+    data-embed-frame
+    title={project.title}
+    referrerpolicy="strict-origin-when-cross-origin"
+    allow="autoplay; fullscreen"
+    loading="lazy"
+    inert
+    tabindex="-1"
+  ></iframe>
+  {embed.requiresLaunch && (
+    <button class="embed-launch" type="button" data-embed-launch>Launch {project.title}</button>
+  )}
+</div>
