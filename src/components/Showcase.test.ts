@@ -1,8 +1,30 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import Selector from './showcase/Selector.astro';
 import Stage from './showcase/Stage.astro';
+import Showcase from './Showcase.astro';
 import placeholder from '../assets/posters/placeholder.webp';
+
+// Real project content carries poster image paths that the container's image
+// service cannot resolve (LocalImageUsedWrongly), which would error before the
+// assertion. The easter-egg message is static markup independent of project
+// data, so we stub getCollection with a minimal media-free project: this keeps
+// renderToString(Showcase) on the static path and makes the assertion meaningful.
+vi.mock('astro:content', () => ({
+  getCollection: async () => [
+    {
+      id: 'stub',
+      data: {
+        title: 'Stub',
+        summary: '',
+        icon: 'rocket',
+        mode: 'media',
+        order: 0,
+        media: [],
+      },
+    },
+  ],
+}));
 
 describe('Selector', () => {
   it('renders a tab per project with the active one marked', async () => {
@@ -56,5 +78,13 @@ describe('Stage', () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Stage, { props: { project, active: false } });
     expect(html).toMatch(/<section[^>]*\shidden/);
+  });
+});
+
+describe('Showcase', () => {
+  it('renders the easter-egg message element (hidden by default, present in DOM for CLS-free reveal)', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(Showcase);
+    expect(html).toContain('data-egg-message');
   });
 });

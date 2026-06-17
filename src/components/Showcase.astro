@@ -12,6 +12,8 @@ const active = projects.find((p) => p.active) ?? projects[0];
 
 <section id="showcase" class="showcase" style={active?.accent ? `--accent:${active.accent}` : undefined}>
   <div class="cosmos" aria-hidden="true"></div>
+  <div class="egg-core" aria-hidden="true"></div>
+  <p class="egg-message" data-egg-message aria-hidden="true">Still in the portfolio.</p>
 
   {/* command overlay ($ showcase) — base display:none; shown only while the intro plays */}
   <div class="cmd" aria-hidden="true">
