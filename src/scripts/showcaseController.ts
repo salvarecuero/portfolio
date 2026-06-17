@@ -36,7 +36,10 @@ if (tablist && showcase) {
   }
 
   // Animated activation. `push` records a history entry; `focus` moves DOM focus.
+  // No-op when the target is already active: avoids duplicate history entries (which
+  // make the Back button appear dead) and a crossfade of identical pixels.
   function activate(id: string, opts: { focus?: boolean; push?: boolean } = {}) {
+    if (id === currentId()) return;
     const run = () => {
       setActive(id);
       if (opts.focus) tabFor(id)?.focus();
