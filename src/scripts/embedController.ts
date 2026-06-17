@@ -33,6 +33,7 @@ interface EmbedEntry {
   revealed: boolean;
   race?: RevealRace;
   helloTimer?: number;
+  posterEndHandler?: () => void;
 }
 
 const entries = new Map<string, EmbedEntry>();
@@ -80,7 +81,13 @@ function reveal(entry: EmbedEntry) {
     const onEnd = () => {
       entry.poster.style.display = 'none';
       entry.poster.removeEventListener('transitionend', onEnd);
+      entry.posterEndHandler = undefined;
     };
+    // Tracked on the entry so unmount can detach it. Otherwise an eviction mid-fade
+    // leaves this listener attached; when unmount removes `embed-revealed` the poster's
+    // opacity transition reverses and fires transitionend, re-hiding a poster that
+    // should now be visible (blank Stage), and listeners accumulate across re-mounts.
+    entry.posterEndHandler = onEnd;
     entry.poster.addEventListener('transitionend', onEnd);
   }
 }
@@ -114,6 +121,10 @@ function unmount(id: string) {
   if (!entry || !entry.mounted) return;
   entry.race?.cancel();
   if (entry.helloTimer) window.clearInterval(entry.helloTimer);
+  if (entry.posterEndHandler) {
+    entry.poster.removeEventListener('transitionend', entry.posterEndHandler);
+    entry.posterEndHandler = undefined;
+  }
   entry.iframe.removeAttribute('src');
   entry.iframe.setAttribute('inert', '');
   entry.iframe.setAttribute('tabindex', '-1');
