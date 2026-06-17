@@ -510,3 +510,16 @@
 }
 .stage--embed[data-embed-mobile] .embed { display: block; }
 .stage--embed[data-embed-mobile] .media-gallery--mobile { display: none; }
+
+/* ---- Easter egg (Phase 2, concept only) -------------------------------------- */
+/* The portfolio-home button toggles .easter-egg on .showcase; the only effect is a
+   cheap GPU-friendly brightness pulse on the starfield. Motion-gated, polish deferred. */
+.tab--egg { margin-left: auto; padding: 0 0.8rem; }
+.tab--egg svg { opacity: 0.8; }
+@media (prefers-reduced-motion: no-preference) {
+  .showcase.easter-egg .cosmos { animation: cosmos-twinkle 2.4s ease-in-out infinite; }
+}
+@keyframes cosmos-twinkle {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.55) saturate(1.15); }
+}

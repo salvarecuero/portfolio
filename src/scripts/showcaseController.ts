@@ -86,4 +86,13 @@ if (tablist && showcase) {
     const id = projectFromHash(location.hash, ids) ?? ids[0];
     activate(id);
   });
+
+  // Easter egg (concept only): a non-Project button toggles a cheap cosmos effect.
+  // It is not a tab and carries no data-project, so it never touches the switching
+  // model above; this is a self-contained toggle a later session can replace.
+  const egg = tablist.querySelector<HTMLButtonElement>('[data-easter-egg]');
+  egg?.addEventListener('click', () => {
+    const on = showcase!.classList.toggle('easter-egg');
+    egg.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
 }
