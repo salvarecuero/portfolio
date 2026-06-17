@@ -14,3 +14,10 @@ To achieve this: every Embed is backed by its **Poster** (the same visual layer 
 - **bye-bg is the exception:** its WASM AI models likely require cross-origin isolation (`COOP`/`COEP`), a header that applies to the whole page and would break the other iframes. So bye-bg goes in Media mode with an explicit launch (takeover/new tab), not as a simultaneous live Embed.
 - Embeds are only possible on owned Projects, enabling `frame-ancestors` toward the portfolio domain; third-party sites are out of Embed mode.
 - Memory grows with each visited Project (bounded to the handful of Projects in the Showcase).
+
+## Phase 2 as built
+
+- **Keep-alive is toggle-only.** Switching never moves the iframe in the DOM — only the Stage's `hidden`/ARIA toggles. Reparenting an iframe reloads it (the browser detaches/re-attaches the document), which would defeat keep-alive; the render-all Stage model makes the toggle sufficient.
+- **LRU cap (3).** To bound renderer-process memory, at most 3 embeds stay live; mounting a 4th unsets `src` on the least-recently-used (restoring its Poster) so a later return re-mounts cleanly. Pure decision in `lruEvict` (unit-tested); wiring in `embedController.ts`.
+- **Mobile = Media fallback.** Below `--showcase-embed-min` (800px) an embed Project shows its Media gallery (`mediaMobile ?? media`) and mounts no iframe. A per-Project `embed.mobile` (default `false`) opts one Project into mounting the Embed on mobile too.
+- **Warming stays off the hero's critical path.** `preconnect`/`dns-prefetch` for embed origins are injected from JS at idle (post-`load` / `requestIdleCallback`) and on Selector hover/focus intent — never in the static `<head>` — so the first paint and the hero's Lighthouse metrics are unchanged. The iframe ships with no `src` (`loading="lazy"` is not relied on for `display:none` Stages) and is assigned `src` on first activation.

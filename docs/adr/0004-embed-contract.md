@@ -13,5 +13,12 @@ It is only possible because the Projects are owned.
 
 ## Consequences
 
-- The contract is the basis for a future skill that encapsulates the embed/optimization mechanism.
+- The contract is the basis for a future skill that encapsulates the embed/optimization mechanism. Phase 2 is the reference implementation of that mechanism (`src/scripts/embedController.ts` + `embedLifecycle.ts`).
 - bye-bg is out of Embed mode (see ADR 0002): due to COEP it cannot coexist as a live iframe, so it does not implement this contract; it goes in Media mode with an explicit launch.
+
+## Phase 2 as built
+
+- **Two-way handshake, protocol `v: 1`.** The parent attaches its `message` listener *before* setting `iframe.src`, posts `portfolio:hello` on iframe `load`, and the child posts `portfolio:ready` on a retry interval until it receives `portfolio:ack`. The `hello` covers the race where the child becomes ready before the parent's listener exists. Messages carry `{ type, v }`; the parent validates `event.origin` (=== the origin derived from `embed.url`), `event.source` (=== the iframe's `contentWindow`), and the shape/version before acking and revealing. Posts always use an explicit `targetOrigin`, never `*`.
+- **First-wins fallback reveal.** So an uninstrumented embed still reveals, the Poster fades on whichever fires first of: the `portfolio:ready` message, iframe `load` + 400 ms grace, or a 3.5 s hard ceiling. The reveal is idempotent (fires once; the losers are cancelled). The fallback means the portfolio works before a Project deploys the contract, then upgrades to the exact `ready`-driven reveal once it does. Pure decision in `createRevealRace` (unit-tested).
+- **`requiresLaunch`.** When set, the embed is not auto-mounted; the Poster shows with an explicit launch affordance and the iframe mounts on click.
+- **`frame-ancestors` scope.** The portfolio's parent origins are `https://salvarecuero.dev` and `http://localhost:<dev-port>`; the Project allowlists exactly these and adds no `X-Frame-Options` (one mechanism only).
