@@ -447,3 +447,66 @@
     animation: beat-links var(--intro-cycle) var(--intro-ease) both;
   }
 }
+
+/* ---- Live Embed (Phase 2) ---------------------------------------------------- */
+/* The Embed fills the Stage; the Poster sits on top and fades out on reveal.
+   media[0] (Poster) is the only loading state — never a spinner (ADR 0002).
+   .stage is already position:relative, so .embed's inset:0 is contained. */
+.stage--embed .embed {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--stage-inner-radius, 0);
+  overflow: hidden;
+}
+.embed-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.embed-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 1;                 /* above the iframe until reveal */
+  opacity: 1;
+  pointer-events: auto;       /* shield: block clicks to the not-yet-ready app */
+  transition: opacity 0.4s ease;
+  background: var(--space);   /* matting for any residual sliver */
+}
+.embed-poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.stage--embed.embed-revealed .embed-poster {
+  opacity: 0;
+  pointer-events: none;       /* clicks now pass to the live app */
+}
+.embed-launch {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  z-index: 2;
+  /* Minimal affordance; reuses chrome tokens. Styled lightly — requiresLaunch is rare. */
+  width: max-content;
+  height: max-content;
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .embed-poster { transition: none; }
+}
+
+/* Mobile gate (keep in sync with --showcase-embed-min). Default: live Embed >= breakpoint,
+   Media gallery below it. A [data-embed-mobile] Project shows the Embed on mobile too. */
+.stage--embed .embed { display: none; }
+.stage--embed .media-gallery--mobile { display: block; }
+@media (min-width: 800px) {
+  .stage--embed .embed { display: block; }
+  .stage--embed .media-gallery--mobile { display: none; }
+}
+.stage--embed[data-embed-mobile] .embed { display: block; }
+.stage--embed[data-embed-mobile] .media-gallery--mobile { display: none; }
