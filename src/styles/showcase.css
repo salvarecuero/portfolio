@@ -83,7 +83,9 @@
 }
 .stage {
   position: relative;
-  border-radius: 0 0 14px 14px;
+  /* top-left stays square: the active Selector tab merges into the Stage surface
+     there. The other three corners round to match the cosmos frame. */
+  border-radius: 0 14px 14px 14px;
   overflow: hidden;
   background: var(--space);
   box-shadow: 0 24px 70px -30px rgba(0, 0, 0, 0.85);
