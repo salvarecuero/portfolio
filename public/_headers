@@ -1,0 +1,15 @@
+# Cloudflare Pages serves this from the dist/ root (Astro copies public/ verbatim).
+# The portfolio is the iframe PARENT, so it needs no frame-ancestors for itself; the
+# embedded Projects enforce their own framing (frame-ancestors, ADR 0004).
+#
+# Deliberately NO restrictive CSP frame-src allowlist: it would couple this file to every
+# new embed Project (adding a Project would require editing _headers), breaking the additive
+# content model (handoff invariant). Security headers below carry no such coupling.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Astro content-hashes these — safe to cache forever.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
