@@ -511,15 +511,65 @@
 .stage--embed[data-embed-mobile] .embed { display: block; }
 .stage--embed[data-embed-mobile] .media-gallery--mobile { display: none; }
 
-/* ---- Easter egg (Phase 2, concept only) -------------------------------------- */
-/* The portfolio-home button toggles .easter-egg on .showcase; the only effect is a
-   cheap GPU-friendly brightness pulse on the starfield. Motion-gated, polish deferred. */
+/* ---- Easter egg: black-hole pull → message → settle (Phase 3) ----------------- */
+/* The home tab toggles .easter-egg on .showcase. Reduced motion is the DEFAULT: the
+   pull only runs inside (prefers-reduced-motion: no-preference); otherwise the message
+   simply fades in. Compositor-only properties (transform/opacity/filter) → zero CLS,
+   nothing runs at idle (the keyframes are inert until the class is applied). */
 .tab--egg { margin-left: auto; padding: 0 0.8rem; }
 .tab--egg svg { opacity: 0.8; }
-@media (prefers-reduced-motion: no-preference) {
-  .showcase.easter-egg .cosmos { animation: cosmos-twinkle 2.4s ease-in-out infinite; }
+
+/* The dark core that "eats" the starfield — a fixed, centered radial gradient that
+   scales up underneath the contracting cosmos. Inert until the egg is active. */
+.egg-core {
+  position: fixed;
+  inset: 0;
+  z-index: -1;                 /* same stacking band as .cosmos */
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 50%, #000 0%, #000 18%, transparent 42%);
+  transform: scale(0);
 }
-@keyframes cosmos-twinkle {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.55) saturate(1.15); }
+
+/* The branded message, overlaid (fixed) so it never affects document flow → no CLS. */
+.egg-message {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  pointer-events: none;
+  opacity: 0;
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  letter-spacing: 0.04em;
+  color: color-mix(in oklch, white 88%, var(--color-accent));
+  text-shadow: 0 0 24px color-mix(in oklch, var(--color-accent) 60%, transparent);
+}
+
+/* Reduced-motion default: no pull, the message just fades in. */
+.showcase.easter-egg .egg-message { animation: egg-fade 0.5s ease 0.05s forwards; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .showcase.easter-egg .cosmos {
+    will-change: transform, opacity, filter;
+    animation: blackhole 1.4s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  }
+  .showcase.easter-egg .egg-core { animation: egg-core 1.4s cubic-bezier(0.7, 0, 0.84, 0) forwards; }
+  .showcase.easter-egg .egg-message { animation: egg-fade 0.6s ease 1.15s forwards; }
+}
+
+@keyframes blackhole {
+  0%   { transform: scale(1) rotate(0deg);        opacity: 1; filter: blur(0); }
+  70%  { transform: scale(0.5) rotate(380deg);    opacity: 0.85; filter: blur(1px); }
+  100% { transform: scale(0.02) rotate(540deg);   opacity: 0; filter: blur(3px); }
+}
+@keyframes egg-core {
+  0%   { transform: scale(0);   opacity: 0; }
+  60%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 1; }
+}
+@keyframes egg-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
