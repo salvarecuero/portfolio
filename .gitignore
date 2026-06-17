@@ -54,3 +54,4 @@ tmp/
 
 # Working roadmap (living plan; kept local).
 /pending.md
+.design-lab/
