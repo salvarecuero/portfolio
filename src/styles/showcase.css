@@ -165,7 +165,10 @@
   align-items: stretch;
   gap: 0.3rem;
   padding-top: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.selector::-webkit-scrollbar { display: none; }
 .projlinks {
   position: absolute;
   left: 50%;
@@ -194,6 +197,8 @@
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-bottom: none;
   color: #9aa3b0;
+  white-space: nowrap;
+  min-width: 0;
 }
 .tab svg {
   width: 16px;
@@ -212,6 +217,17 @@
   color: var(--accent);
   opacity: 1;
 }
+/* Tab titles never wrap: full title when there's room; inactive tabs ellipsize
+   when space is tight; the active tab keeps its full title and never shrinks;
+   the row scrolls horizontally in the extreme (see .selector overflow-x). */
+.tab-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tab.active { flex: 0 0 auto; }
+.tab:not(.active) { flex: 0 1 auto; }
 .lnk {
   display: inline-flex;
   align-items: center;
