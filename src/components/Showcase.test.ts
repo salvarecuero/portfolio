@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import Selector from './showcase/Selector.astro';
+import Stage from './showcase/Stage.astro';
+import placeholder from '../assets/posters/placeholder.webp';
 
 describe('Selector', () => {
   it('renders a tab per project with the active one marked', async () => {
@@ -32,5 +34,27 @@ describe('Selector', () => {
     expect(html).toContain('aria-selected="false"');
     expect(html).toContain('tabindex="-1"');
     expect(html).toContain('data-accent="#abc"');
+  });
+});
+
+describe('Stage', () => {
+  const project = {
+    id: 'alpha', title: 'Alpha', iconPath: 'M0 0', active: true, summary: '',
+    media: [{ type: 'image' as const, src: placeholder, alt: 'overview' }],
+  };
+
+  it('renders the active Stage as a visible tabpanel wired to its tab', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Stage, { props: { project, active: true } });
+    expect(html).toMatch(/role="tabpanel"/);
+    expect(html).toContain('id="panel-alpha"');
+    expect(html).toContain('aria-labelledby="tab-alpha"');
+    expect(html).not.toMatch(/<section[^>]*\shidden/);
+  });
+
+  it('renders an inactive Stage hidden', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Stage, { props: { project, active: false } });
+    expect(html).toMatch(/<section[^>]*\shidden/);
   });
 });

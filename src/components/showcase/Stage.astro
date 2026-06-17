@@ -1,9 +1,16 @@
 ---
 import MediaGallery from './MediaGallery.astro';
 import type { ShowcaseProject } from '../../lib/showcaseProjects';
-const { project } = Astro.props as { project: ShowcaseProject };
+const { project, active } = Astro.props as { project: ShowcaseProject; active: boolean };
 ---
-<section class="stage">
+<section
+  class="stage"
+  role="tabpanel"
+  id={`panel-${project.id}`}
+  data-project={project.id}
+  aria-labelledby={`tab-${project.id}`}
+  hidden={!active}
+>
   <MediaGallery items={project.media} variant="desktop" />
   {project.mediaMobile && <MediaGallery items={project.mediaMobile} variant="mobile" />}
   <slot />
