@@ -5,6 +5,7 @@
  * poster is shown via CSS; here we additionally never load/play the video under reduce.
  */
 import { nextIndex, prevIndex, wrapIndex } from './galleryNav';
+import { resolveSwipe } from './gallerySwipe';
 
 const reduceMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -41,6 +42,26 @@ function setupGallery(root: HTMLElement) {
     else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
     else if (e.key === 'End') { e.preventDefault(); goTo(n - 1); }
   });
+
+  // Touch swipe-to-advance (mobile). Threshold + vertical-dominance check live in
+  // resolveSwipe so a vertical page scroll is never hijacked. The track snaps via
+  // its existing CSS transition; passive listeners keep scrolling smooth.
+  const SWIPE_THRESHOLD = 45;
+  let startX = 0;
+  let startY = 0;
+  root.addEventListener('touchstart', (e) => {
+    const t = e.changedTouches[0];
+    if (!t) return;
+    startX = t.clientX;
+    startY = t.clientY;
+  }, { passive: true });
+  root.addEventListener('touchend', (e) => {
+    const t = e.changedTouches[0];
+    if (!t) return;
+    const dir = resolveSwipe(t.clientX - startX, t.clientY - startY, SWIPE_THRESHOLD);
+    if (dir === -1) goTo(nextIndex(index, n));
+    else if (dir === 1) goTo(prevIndex(index, n));
+  }, { passive: true });
 
   // Video: lazy-load + play when visible, pause when not. Skip entirely under reduced motion.
   const videos = Array.from(root.querySelectorAll<HTMLVideoElement>('[data-video]'));
