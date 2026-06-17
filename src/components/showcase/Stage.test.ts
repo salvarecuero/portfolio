@@ -21,4 +21,17 @@ describe('Stage', () => {
     expect(html).toMatch(/media-gallery--desktop/);
     expect(html).toMatch(/media-gallery--mobile/);
   });
+  it('embed mode: data-embed-url, the Embed iframe, and a mobile MediaGallery fallback', async () => {
+    const c = await AstroContainer.create();
+    const imgMeta = { src: '/p.webp', width: 1280, height: 720, format: 'webp' } as any;
+    const project = {
+      id: 'rt', title: 'RangeTube', summary: 's', iconPath: 'M0 0', active: true,
+      mode: 'embed', embed: { url: 'https://rangetube.netlify.app', requiresLaunch: false, mobile: false },
+      media: [{ type: 'image', src: imgMeta, alt: 'RangeTube' }],
+    } as any;
+    const html = await c.renderToString(Stage, { props: { project, active: true } });
+    expect(html).toContain('data-embed-url="https://rangetube.netlify.app"');
+    expect(html).toContain('data-embed-frame');
+    expect(html).toContain('media-gallery--mobile');
+  });
 });
