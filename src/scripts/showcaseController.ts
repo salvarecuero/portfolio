@@ -33,6 +33,8 @@ if (tablist && showcase) {
     const accent = tabFor(id)?.dataset.accent;
     if (accent) showcase!.style.setProperty('--accent', accent);
     else showcase!.style.removeProperty('--accent');
+    // Notify the embed controller (decoupled): mount/keep-alive the activated Project.
+    showcase!.dispatchEvent(new CustomEvent('showcase:activate', { detail: { id } }));
   }
 
   // Animated activation. `push` records a history entry; `focus` moves DOM focus.
