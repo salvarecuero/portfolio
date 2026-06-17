@@ -1,5 +1,6 @@
 ---
 import { Font } from "astro:assets";
+import SEO from "../components/SEO.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -16,7 +17,6 @@ const { title, description } = Astro.props;
     <script is:inline>document.documentElement.classList.add('js')</script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <Font cssVariable="--font-geist" preload />
     <Font cssVariable="--font-geist-mono" preload />
@@ -24,11 +24,7 @@ const { title, description } = Astro.props;
     <Font cssVariable="--font-oswald" />
     <Font cssVariable="--font-zilla" />
     <Font cssVariable="--font-outfit" preload />
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
-    {Astro.site && (
-      <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
-    )}
+    <SEO title={title} description={description} />
   </head>
   <body>
     <slot />

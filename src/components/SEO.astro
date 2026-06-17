@@ -1,0 +1,59 @@
+---
+import { buildSeoMeta } from '../lib/seo';
+import { buildWebsiteSchema } from '../data/websiteSchema';
+import { presentation } from '../data/presentation';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: string;
+}
+const { title, description = presentation.description, image, type } = Astro.props;
+
+const meta = buildSeoMeta({
+  site: Astro.site,
+  fallbackOrigin: presentation.domain,
+  pathname: Astro.url.pathname,
+  title,
+  description,
+  image,
+  type,
+});
+const imageAlt = `${presentation.name} — ${presentation.role}`;
+const website = buildWebsiteSchema({ siteUrl: meta.canonical });
+---
+<title>{meta.title}</title>
+<meta name="description" content={meta.description} />
+<link rel="canonical" href={meta.canonical} />
+
+<!-- Favicons (svg primary, ico fallback, apple-touch for iOS) + browser chrome colour -->
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<meta name="theme-color" content="#020206" />
+
+<!-- Open Graph -->
+<meta property="og:type" content={meta.ogType} />
+<meta property="og:title" content={meta.title} />
+<meta property="og:description" content={meta.description} />
+<meta property="og:url" content={meta.ogUrl} />
+<meta property="og:site_name" content={presentation.name} />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content={meta.ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={imageAlt} />
+
+<!-- Twitter / X (image reuses og:image) -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={meta.title} />
+<meta name="twitter:description" content={meta.description} />
+<meta name="twitter:image" content={meta.ogImage} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<!-- Sitemap discovery -->
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+<!-- WebSite JSON-LD (Person lives in the Presentation) -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(website)} />
