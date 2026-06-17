@@ -20,11 +20,13 @@ const active = projects.find((p) => p.active) ?? projects[0];
 
   <div class="to">
     <Selector projects={projects} />
-    {active && (
-      <Stage project={active}>
-        <ProjectLinks links={active.links} title={active.title} />
-      </Stage>
-    )}
+    <div class="stage-viewport">
+      {projects.map((p) => (
+        <Stage project={p} active={p.active}>
+          <ProjectLinks links={p.links} title={p.title} />
+        </Stage>
+      ))}
+    </div>
   </div>
 </section>
 
