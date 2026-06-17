@@ -9,7 +9,7 @@ import { projectFromHash, nextTab, prevTab } from './projectSelection';
 const reduceMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const tablist = document.querySelector<HTMLElement>('.selector[role="tablist"]');
+const tablist = document.querySelector<HTMLElement>('.selector-list[role="tablist"]');
 const showcase = document.getElementById('showcase');
 
 if (tablist && showcase) {
@@ -90,7 +90,7 @@ if (tablist && showcase) {
   // Easter egg: a non-Project button toggles .easter-egg on the showcase, which drives a
   // one-shot black-hole pull → branded message → settle (pure CSS in showcase.css). It is
   // not a tab and carries no data-project, so it never touches the switching model above.
-  const egg = tablist.querySelector<HTMLButtonElement>('[data-easter-egg]');
+  const egg = document.querySelector<HTMLButtonElement>('[data-easter-egg]');
   egg?.addEventListener('click', () => {
     const on = showcase!.classList.toggle('easter-egg');
     egg.setAttribute('aria-pressed', on ? 'true' : 'false');

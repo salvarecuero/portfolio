@@ -57,6 +57,23 @@ describe('Selector', () => {
     expect(html).toContain('tabindex="-1"');
     expect(html).toContain('data-accent="#abc"');
   });
+
+  it('keeps the easter-egg button OUTSIDE the tablist (ARIA: a tablist may only own tabs)', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Selector, {
+      props: { projects: [
+        { id: 'a', title: 'Alpha', iconPath: 'M0 0', active: true, summary: '', media: [] },
+        { id: 'b', title: 'Beta', iconPath: 'M0 0', active: false, summary: '', media: [] },
+      ] },
+    });
+    // The tabs are <button>s (no nested <div>), so the first </div> after the tablist
+    // opening tag is the tablist's own close. The egg button must come AFTER it.
+    const tablistOpen = html.indexOf('role="tablist"');
+    const tablistClose = html.indexOf('</div>', tablistOpen);
+    const eggIdx = html.indexOf('data-easter-egg');
+    expect(tablistOpen).toBeGreaterThanOrEqual(0);
+    expect(eggIdx).toBeGreaterThan(tablistClose);
+  });
 });
 
 describe('Stage', () => {

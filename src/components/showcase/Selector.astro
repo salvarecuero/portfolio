@@ -2,28 +2,33 @@
 import type { ShowcaseProject } from '../../lib/showcaseProjects';
 const { projects } = Astro.props as { projects: ShowcaseProject[] };
 ---
-<div class="selector" role="tablist" aria-label="Projects">
-  {projects.map((p) => (
-    <button
-      class:list={["tab", { active: p.active }]}
-      role="tab"
-      id={`tab-${p.id}`}
-      data-project={p.id}
-      data-accent={p.accent}
-      aria-selected={p.active ? 'true' : 'false'}
-      aria-controls={`panel-${p.id}`}
-      tabindex={p.active ? 0 : -1}
-      type="button"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d={p.iconPath} /></svg>
-      <span class="tab-label">{p.title}</span>
-    </button>
-  ))}
+{/* `.selector` is the visual chrome row; the tablist wraps ONLY the Project tabs so a
+    tablist owns only role="tab" children (ARIA). The easter-egg button is a sibling of
+    the tablist, not a member of it. */}
+<div class="selector">
+  <div class="selector-list" role="tablist" aria-label="Projects">
+    {projects.map((p) => (
+      <button
+        class:list={["tab", { active: p.active }]}
+        role="tab"
+        id={`tab-${p.id}`}
+        data-project={p.id}
+        data-accent={p.accent}
+        aria-selected={p.active ? 'true' : 'false'}
+        aria-controls={`panel-${p.id}`}
+        tabindex={p.active ? 0 : -1}
+        type="button"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d={p.iconPath} /></svg>
+        <span class="tab-label">{p.title}</span>
+      </button>
+    ))}
+  </div>
   {/* Non-Project easter egg: a branded home glyph. Deliberately NOT role="tab" /
-      data-project, so it stays outside the tablist model — it never touches Project
-      switching, deep-links, keyboard nav, or the embed lifecycle. The controller toggles
-      .easter-egg, which plays a one-shot black-hole pull → branded message → settle
-      (pure CSS in showcase.css, reduced-motion safe). */}
+      data-project and a SIBLING of the tablist, so it stays outside the tablist model —
+      it never touches Project switching, deep-links, keyboard nav, or the embed
+      lifecycle. The controller toggles .easter-egg, which plays a one-shot black-hole
+      pull → branded message → settle (pure CSS in showcase.css, reduced-motion safe). */}
   <button class="tab tab--egg" type="button" data-easter-egg aria-pressed="false" aria-label="Portfolio — replay intro">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10" /></svg>
   </button>

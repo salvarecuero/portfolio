@@ -192,6 +192,14 @@
   scrollbar-width: none;
 }
 .selector::-webkit-scrollbar { display: none; }
+/* The tablist holds only the Project tabs (ARIA); it shares the row layout with the
+   sibling easter-egg button. min-width:0 lets it shrink so the row can scroll. */
+.selector-list {
+  display: flex;
+  align-items: stretch;
+  gap: 0.3rem;
+  min-width: 0;
+}
 .projlinks {
   position: absolute;
   left: 50%;
