@@ -8,6 +8,8 @@ export const showcaseIcons: Record<string, string> = {
   spark: "M12 3v18 M3 12h18 M5.6 5.6l12.8 12.8 M18.4 5.6 5.6 18.4",
   // dual-handle range slider — RangeTube's signature start/end control
   range: "M3 12h18 M9 12m-2.4 0a2.4 2.4 0 1 0 4.8 0a2.4 2.4 0 1 0 -4.8 0 M15 12m-2.4 0a2.4 2.4 0 1 0 4.8 0a2.4 2.4 0 1 0 -4.8 0",
+  // magic wand + sparkle — bye-bg's one-tap background removal
+  wand: "M4 20 13 11 M16.5 3v6 M13.5 6h6",
 };
 
 export function iconPath(key?: string): string {
