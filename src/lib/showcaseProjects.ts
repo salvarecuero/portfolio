@@ -2,6 +2,8 @@ import type { CollectionEntry } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import { iconPath } from '../data/showcaseIcons';
 
+export type EmbedMode = 'embed' | 'media' | 'custom';
+
 export type VideoSource = { src: string; type: string };
 
 export type MediaItem =
@@ -15,6 +17,8 @@ export interface ShowcaseProject {
   iconPath: string;
   accent?: string;
   active: boolean;
+  mode: EmbedMode;
+  embed?: { url: string; requiresLaunch: boolean; mobile: boolean };
   links?: { live?: string; repo?: string };
   // Media set. media[0] is the Poster (base layer / anti-spinner / Embed fade-in).
   media: MediaItem[];
@@ -34,6 +38,8 @@ export function toShowcaseProjects(
       iconPath: iconPath(e.data.icon),
       accent: e.data.accent,
       active: i === 0,
+      mode: e.data.mode,
+      embed: e.data.embed,
       links: e.data.links,
       media: e.data.media,
       mediaMobile: e.data.mediaMobile,

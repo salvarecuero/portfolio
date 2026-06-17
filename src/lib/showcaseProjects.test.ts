@@ -30,3 +30,24 @@ describe('toShowcaseProjects', () => {
     expect(out[1].mediaMobile).toBeUndefined();
   });
 });
+
+describe('toShowcaseProjects — embed fields', () => {
+  const base = {
+    title: 'X', summary: 's', media: [{ type: 'image', src: { src: '/p.webp', width: 10, height: 10, format: 'webp' }, alt: 'a' }],
+    order: 0, stack: [],
+  } as any;
+
+  it('surfaces mode and embed (url/requiresLaunch/mobile)', () => {
+    const [p] = toShowcaseProjects([
+      { id: 'rt', data: { ...base, mode: 'embed', embed: { url: 'https://rangetube.netlify.app', requiresLaunch: false, mobile: false } } },
+    ] as any);
+    expect(p.mode).toBe('embed');
+    expect(p.embed).toEqual({ url: 'https://rangetube.netlify.app', requiresLaunch: false, mobile: false });
+  });
+
+  it('media-mode project has mode "media" and no embed', () => {
+    const [p] = toShowcaseProjects([{ id: 'm', data: { ...base, mode: 'media' } }] as any);
+    expect(p.mode).toBe('media');
+    expect(p.embed).toBeUndefined();
+  });
+});

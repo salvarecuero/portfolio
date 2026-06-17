@@ -45,6 +45,8 @@ const projects = defineCollection({
         .object({
           url: z.url(),
           requiresLaunch: z.boolean().default(false),
+          // Opt a single mobile-oriented Project into mounting its Embed on mobile.
+          mobile: z.boolean().default(false),
         })
         .optional(),
       links: z
