@@ -81,6 +81,29 @@
   padding: 0 var(--showcase-pad) var(--showcase-pad);
   background: transparent;
 }
+/* stage-viewport — the persistent 1fr cell of the .to grid that holds every Project's
+   Stage (render-all keep-alive). Only the active Stage is shown; the rest carry [hidden].
+   The View Transition is NAMED here (not on each Stage) so the crossfade is scoped to this
+   region: the persistent element's before/after pixels are morphed, while the Selector,
+   the cosmos and the $ showcase intro — all outside this name — stay still. */
+.stage-viewport {
+  position: relative;
+  display: grid;
+  min-height: 0;
+  view-transition-name: stage-viewport;
+}
+.stage[hidden] { display: none; }
+
+/* reduced-motion safety net: the controller already skips startViewTransition under
+   reduce, but neutralise the transition group too in case a switch is wrapped anyway. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(stage-viewport),
+  ::view-transition-old(stage-viewport),
+  ::view-transition-new(stage-viewport) {
+    animation: none;
+  }
+}
+
 .stage {
   position: relative;
   /* top-left stays square: the active Selector tab merges into the Stage surface
