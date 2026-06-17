@@ -152,7 +152,7 @@
 @media (max-width: 799px) {
   .gallery-thumbs { gap: 14px; padding: 12px; justify-content: center; }
   .gallery-thumb { width: 44px; height: 66px; border-radius: 7px; }
-  .stage .projlinks { bottom: 104px; }
+  .stage .projlinks { bottom: 104px; font-size: 1rem; }
 }
 
 /* reduced motion: no carousel slide animation */
@@ -175,8 +175,11 @@
   bottom: 26px;
   transform: translate(-50%, 0);
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: 0.9rem;
+  row-gap: 0.6rem;
   z-index: 5;
   font-size: calc(1rem * 1.25);
 }
@@ -253,6 +256,7 @@
 }
 .lnk .label {
   font-size: 0.95em;
+  white-space: nowrap;
 }
 .lnk.live {
   color: #26221f;
