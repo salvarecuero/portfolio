@@ -29,6 +29,7 @@ pnpm-debug.log*
 docs/*
 !docs/adr/
 !docs/design-system.md
+!docs/deploy-cloudflare-pages.md
 
 # --- Agents / plans / scratch ---
 # Local agent state and ephemeral output (superpowers plans, temp, etc.).
