@@ -21,8 +21,9 @@ const { projects } = Astro.props as { projects: ShowcaseProject[] };
   ))}
   {/* Non-Project easter egg: a branded home glyph. Deliberately NOT role="tab" /
       data-project, so it stays outside the tablist model — it never touches Project
-      switching, deep-links, keyboard nav, or the embed lifecycle. Concept only; the
-      controller toggles a cheap cosmos effect (polish deferred). */}
+      switching, deep-links, keyboard nav, or the embed lifecycle. The controller toggles
+      .easter-egg, which plays a one-shot black-hole pull → branded message → settle
+      (pure CSS in showcase.css, reduced-motion safe). */}
   <button class="tab tab--egg" type="button" data-easter-egg aria-pressed="false" aria-label="Portfolio — replay intro">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10" /></svg>
   </button>
