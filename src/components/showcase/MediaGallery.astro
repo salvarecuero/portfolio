@@ -77,13 +77,15 @@ const widths = [640, 960, 1280, 1920, 2560];
   <button class="gallery-arrow gallery-arrow--next" type="button" data-next aria-label="Next media">›</button>
   <div class="gallery-counter" data-counter aria-hidden="true">1 / {total}</div>
 
-  <div class="gallery-thumbs" role="tablist" aria-label="Media thumbnails">
+  {/* WAI-ARIA APG "carousel" slide-picker: a labelled group of buttons that jump to a
+      slide, with the active one marked by aria-current. Not a tablist — there are no
+      tabpanels/aria-controls, and the slides already carry "slide" roles. */}
+  <div class="gallery-thumbs" role="group" aria-label="Choose media">
     {items.map((item, i) => (
       <button
         class:list={["gallery-thumb", { on: i === 0, vid: item.type === 'video' }]}
         type="button"
-        role="tab"
-        aria-selected={i === 0 ? 'true' : 'false'}
+        aria-current={i === 0 ? 'true' : undefined}
         aria-label={`Show: ${item.alt}`}
         data-thumb={i}
       ></button>

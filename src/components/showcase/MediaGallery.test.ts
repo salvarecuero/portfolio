@@ -45,4 +45,22 @@ describe('MediaGallery', () => {
     const html = await render([imageItem], 'mobile');
     expect(html).toMatch(/media-gallery--mobile/);
   });
+  // The thumbnail strip follows the WAI-ARIA APG "carousel" slide-picker pattern:
+  // a labelled group of buttons, not a tablist (no tabpanels/aria-controls exist).
+  it('exposes the thumbnail strip as a labelled group, not a tablist', async () => {
+    const html = await render([imageItem, imageItem]);
+    expect(html).toMatch(/class="gallery-thumbs"[^>]*role="group"/);
+    expect(html).toContain('aria-label="Choose media"');
+    expect(html).not.toContain('role="tablist"');
+  });
+  it('uses plain buttons without tab semantics for thumbnails', async () => {
+    const html = await render([imageItem, imageItem]);
+    expect(html).not.toContain('role="tab"');
+    expect(html).not.toContain('aria-selected');
+  });
+  it('marks the active thumbnail with aria-current and keeps descriptive labels', async () => {
+    const html = await render([imageItem, imageItem]);
+    expect((html.match(/aria-current="true"/g) ?? []).length).toBe(1);
+    expect(html).toContain('aria-label="Show: overview"');
+  });
 });

@@ -24,7 +24,10 @@ function setupGallery(root: HTMLElement) {
     slides.forEach((s, i) => s.setAttribute('aria-hidden', i === index ? 'false' : 'true'));
     thumbs.forEach((t, i) => {
       t.classList.toggle('on', i === index);
-      t.setAttribute('aria-selected', i === index ? 'true' : 'false');
+      // Slide-picker pattern: the active thumb is the current item (APG carousel),
+      // not a selected tab. The .on class above stays for styling only.
+      if (i === index) t.setAttribute('aria-current', 'true');
+      else t.removeAttribute('aria-current');
     });
   };
   const goTo = (i: number) => { index = wrapIndex(i, n); update(); };
