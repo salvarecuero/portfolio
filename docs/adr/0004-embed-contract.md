@@ -9,7 +9,26 @@ It is only possible because the Projects are owned.
 
 ## Considered Options
 
-- **Embed mode via query param (`?embed=1`)** — when the Project detects the param, it hides its own chrome (nav/footer/cookie banner) and skips heavy third-party scripts, serving a cleaner and lighter view (with `noindex`). Not discarded: it remains a per-Project candidate to implement case by case, given its variable cost. Not part of the firm contract yet.
+- **Embed mode via query param (`?embed=1`)** — when the Project detects the param, it hides its own chrome (nav/footer/cookie banner) and skips heavy third-party scripts, serving a cleaner and lighter view (with `noindex`). Not discarded: it remains a per-Project candidate to implement case by case, given its variable cost. Not part of the firm contract yet. See the design note below.
+
+### `?embed=1` optimization (designed, deferred)
+
+A Project may opt into an embed-optimized view: when it detects `?embed=1` it (a) hides its own
+chrome (nav, footer, cookie banner) so only the app surface shows inside the Stage, (b) skips heavy
+third-party scripts (analytics, chat widgets) that are pointless inside an embed and cost load time,
+and (c) emits `<meta name="robots" content="noindex">` so the embed URL is not indexed as a
+duplicate of the canonical app.
+
+**Portfolio side (optional opt-in, not yet implemented):** an `embed.embedParam` boolean content
+field (default `false`). When `true`, the controller appends `?embed=1` to the iframe `src` it
+assigns on mount (the only change — the lazy-mount, handshake, keep-alive, and warming are
+unchanged). Origin validation is unaffected: `event.origin` is compared against the origin derived
+by `embedOrigin(url)` (`new URL(url).origin`), which ignores the query string.
+
+**Status: deferred.** The cost is per-Project and lives mostly in the Project's own repo, so it is
+implemented case by case when a Project benefits (e.g. a Project with a heavy nav/cookie banner or
+third-party scripts). It is not part of the firm contract. The future optimization skill (Phase 7)
+is the natural home for both sides of this mechanism.
 
 ## Consequences
 
