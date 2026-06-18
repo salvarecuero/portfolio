@@ -33,7 +33,7 @@ is the natural home for both sides of this mechanism.
 ## Consequences
 
 - The contract is the basis for a future skill that encapsulates the embed/optimization mechanism. Phase 2 is the reference implementation of that mechanism (`src/scripts/embedController.ts` + `embedLifecycle.ts`).
-- The exclusion criterion for Embed mode is "deploy hard-requires cross-origin isolation (`COOP`/`COEP`)", not "runs WASM/AI" — see ADR 0002. bye-bg was initially assumed to require isolation and placed in Media mode, but verification of its source showed it does not (WebGPU primary, single-threaded WASM fallback; no `SharedArrayBuffer`). It now implements this contract and runs as a live Embed.
+- The exclusion criterion for Embed mode is "the app *functionally requires* cross-origin isolation (`SharedArrayBuffer`)", not "runs WASM/AI" and not "sets `COOP`/`COEP`" — see ADR 0002. bye-bg was initially assumed non-embeddable because of its isolation, but `COEP` does not block framing: bye-bg sets `COOP`/`COEP` for an optional multi-threaded-WASM speed-up yet runs fine without it (WebGPU primary, single-threaded WASM fallback), so it implements this contract and runs as a live Embed — un-isolated inside the iframe (no `SharedArrayBuffer`), isolated standalone.
 
 ## Phase 2 as built
 

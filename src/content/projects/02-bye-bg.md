@@ -24,7 +24,9 @@ stack: ["React", "ONNX Runtime Web", "WebGPU", "WebAssembly"]
 
 bye-bg removes the background from an image entirely in the browser — no uploads, no
 accounts, works offline. The AI model runs locally via ONNX Runtime Web, on WebGPU
-(primary) with a single-threaded WASM fallback. Neither path requires `SharedArrayBuffer`,
-so the deploy stays un-isolated (no COOP/COEP) and can be a live co-mounted Embed in the
-Showcase under the embed contract (`frame-ancestors` + readiness handshake — see ADR 0004).
-On mobile it falls back to its Media gallery (see ADR 0002).
+(primary) with a single-threaded WASM fallback. Its deploy sets COOP/COEP to enable
+multi-threaded WASM (`SharedArrayBuffer`) but does not require it, so it runs as a live
+co-mounted Embed under the embed contract (`frame-ancestors` + readiness handshake — see
+ADR 0004): inside the Showcase iframe it runs un-isolated, without `SharedArrayBuffer`
+(WebGPU / single-threaded WASM), while standalone it keeps the multi-threaded path. On
+mobile it falls back to its Media gallery (see ADR 0002).
