@@ -192,8 +192,8 @@
   scrollbar-width: none;
 }
 .selector::-webkit-scrollbar { display: none; }
-/* The tablist holds only the Project tabs (ARIA); it shares the row layout with the
-   sibling easter-egg button. min-width:0 lets it shrink so the row can scroll. */
+/* The tablist holds every tab (the Project tabs + the Portfolio tab). min-width:0 lets
+   it shrink so the row can scroll. */
 .selector-list {
   display: flex;
   align-items: stretch;
@@ -519,65 +519,53 @@
 .stage--embed[data-embed-mobile] .embed { display: block; }
 .stage--embed[data-embed-mobile] .media-gallery--mobile { display: none; }
 
-/* ---- Easter egg: black-hole pull → message → settle (Phase 3) ----------------- */
-/* The home tab toggles .easter-egg on .showcase. Reduced motion is the DEFAULT: the
-   pull only runs inside (prefers-reduced-motion: no-preference); otherwise the message
-   simply fades in. Compositor-only properties (transform/opacity/filter) → zero CLS,
-   nothing runs at idle (the keyframes are inert until the class is applied). */
-.tab--egg { margin-left: auto; padding: 0 0.8rem; }
-.tab--egg svg { opacity: 0.8; }
+/* ---- Portfolio portal: rift canvas behind the reused Presentation window ---------- */
+.tab--portfolio { /* a normal tab, attached to the others; no margin-left:auto */ }
 
-/* The dark core that "eats" the starfield — a fixed, centered radial gradient that
-   scales up underneath the contracting cosmos. Inert until the egg is active. */
-.egg-core {
-  position: fixed;
+.stage--portal { position: relative; }
+
+/* The WebGL canvas fills the stage frame, behind the page window. */
+.rift-canvas {
+  position: absolute;
   inset: 0;
-  z-index: -1;                 /* same stacking band as .cosmos */
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(circle at 50% 50%, #000 0%, #000 18%, transparent 42%);
-  transform: scale(0);
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
 }
 
-/* The branded message, overlaid (fixed) so it never affects document flow → no CLS. */
-.egg-message {
-  position: fixed;
+/* The page window: the reused Presentation, centered above the canvas, revealed via a
+   clip-path so it appears to open through the rift. Compositor-only (clip-path), and the
+   reveal only animates under no-preference. */
+.portal-window {
+  position: absolute;
   inset: 0;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  margin: 0;
-  pointer-events: none;
-  opacity: 0;
-  font-family: var(--font-geist-mono, ui-monospace, monospace);
-  letter-spacing: 0.04em;
-  color: color-mix(in oklch, white 88%, var(--color-accent));
-  text-shadow: 0 0 24px color-mix(in oklch, var(--color-accent) 60%, transparent);
+  z-index: 2;
+  /* a glowing fracture rim around the window */
+  box-shadow:
+    inset 0 0 0 1.5px color-mix(in oklch, var(--accent-bright, #3aa6ec) 70%, white),
+    0 0 26px 2px color-mix(in oklch, var(--color-accent) 60%, transparent);
 }
 
-/* Reduced-motion default: no pull, the message just fades in. */
-.showcase.easter-egg .egg-message { animation: egg-fade 0.5s ease 0.05s forwards; }
+/* Default (and reduced-motion / no-JS) state: window present, no animation. */
+.stage--portal .portal-window { clip-path: inset(0 0 0 0); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .showcase.easter-egg .cosmos {
-    will-change: transform, opacity, filter;
-    animation: blackhole 1.4s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  /* When armed (JS active), open the window from the centre. */
+  .stage--portal.portal-armed .portal-window {
+    animation: portal-open 700ms var(--intro-ease) both;
   }
-  .showcase.easter-egg .egg-core { animation: egg-core 1.4s cubic-bezier(0.7, 0, 0.84, 0) forwards; }
-  .showcase.easter-egg .egg-message { animation: egg-fade 0.6s ease 1.15s forwards; }
+}
+@keyframes portal-open {
+  from { clip-path: inset(50% 50% 50% 50%); }
+  to   { clip-path: inset(0 0 0 0); }
 }
 
-@keyframes blackhole {
-  0%   { transform: scale(1) rotate(0deg);        opacity: 1; filter: blur(0); }
-  70%  { transform: scale(0.5) rotate(380deg);    opacity: 0.85; filter: blur(1px); }
-  100% { transform: scale(0.02) rotate(540deg);   opacity: 0; filter: blur(3px); }
+/* Fallback backdrop: a static nebula gradient stands in for the WebGL scene. */
+.stage--portal.portal-fallback .rift-canvas {
+  background:
+    radial-gradient(120% 90% at 50% 50%, color-mix(in oklch, var(--color-accent) 22%, transparent), transparent 60%),
+    var(--space);
 }
-@keyframes egg-core {
-  0%   { transform: scale(0);   opacity: 0; }
-  60%  { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(2.2); opacity: 1; }
-}
-@keyframes egg-fade {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
+/* WebGL path: the canvas paints itself; ensure no gradient leaks through. */
+.stage--portal.portal-webgl .rift-canvas { background: var(--space); }
