@@ -113,5 +113,11 @@ if (typeof document !== 'undefined') {
       { threshold: 0 },
     );
     io.observe(panel);
+
+    // Arm on load if the portal is already the active Stage: a #portfolio deep-link makes
+    // the controller call setActive (and dispatch showcase:activate) at its module-eval
+    // time, which runs before this script is imported — so that initial event is missed.
+    // The panel being un-hidden is the controller's source of truth for "active".
+    if (!panel.hidden) void arm();
   }
 }
