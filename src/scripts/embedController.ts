@@ -179,7 +179,7 @@ if (showcase) {
   });
 
   // Selector intent → warm the hovered/focused Project's origin.
-  const tablist = document.querySelector('.selector[role="tablist"]');
+  const tablist = document.querySelector('.selector-list[role="tablist"]');
   const onIntent = (e: Event) => {
     const tab = (e.target as HTMLElement).closest<HTMLElement>('[role="tab"]');
     const id = tab?.dataset.project;
