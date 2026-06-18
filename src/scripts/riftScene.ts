@@ -45,7 +45,6 @@ const frag = /* glsl */ `
   uniform vec3 uEnergy;      // violet
 
   float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-  float hash3(vec3 p){ return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
 
   float noise(vec2 p){
     vec2 i = floor(p), f = fract(p);
@@ -122,7 +121,7 @@ const frag = /* glsl */ `
     // Angular fracture lines radiating from the centre (electric cracks).
     float spokes = warpedFbm(vec2(ang * 6.0, 3.0));
     float spokeMask = smoothstep(0.62, 0.78, spokes);
-    float spoke = spokeMask * smoothstep(front + 0.05, 0.0, crackR) * (1.0 - edge * 0.0);
+    float spoke = spokeMask * smoothstep(front + 0.05, 0.0, crackR);
 
     // Hot core: a bright, blown-out centre that opens during the rupture and dims as it
     // settles into shimmer. This is the "tear" the rift opens from.
@@ -184,12 +183,25 @@ export function createRiftScene(
   host.className = '';
   owner?.insertBefore(canvas, host.nextSibling);
 
-  const renderer = new WebGLRenderer({
-    canvas,
-    antialias: false, // fullscreen quad has no geometry edges; MSAA would only cost fill rate
-    alpha: false,
-    powerPreference: 'low-power',
-  });
+  // WebGLRenderer construction can throw on per-canvas GL context-creation failure even when
+  // the orchestrator's capability probe (on a different canvas) passed — live-context limits,
+  // GPU process reset, failIfMajorPerformanceCaveat, driver quirks. If it throws here the host
+  // has already been stripped of its CSS role and the throwaway is in the DOM, so restore the
+  // host's role and drop the orphan before rethrowing — that way the orchestrator's fallback
+  // path renders on the pristine host canvas instead of a dead leftover.
+  let renderer: WebGLRenderer;
+  try {
+    renderer = new WebGLRenderer({
+      canvas,
+      antialias: false, // fullscreen quad has no geometry edges; MSAA would only cost fill rate
+      alpha: false,
+      powerPreference: 'low-power',
+    });
+  } catch (e) {
+    host.className = hostClass;
+    canvas.remove();
+    throw e;
+  }
   const scene = new Scene();
   const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
   // Timer (the supported successor to the deprecated Clock): elapsed time advances only
