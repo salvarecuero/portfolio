@@ -86,13 +86,4 @@ if (tablist && showcase) {
     const id = projectFromHash(location.hash, ids) ?? ids[0];
     activate(id);
   });
-
-  // Easter egg: a non-Project button toggles .easter-egg on the showcase, which drives a
-  // one-shot black-hole pull → branded message → settle (pure CSS in showcase.css). It is
-  // not a tab and carries no data-project, so it never touches the switching model above.
-  const egg = document.querySelector<HTMLButtonElement>('[data-easter-egg]');
-  egg?.addEventListener('click', () => {
-    const on = showcase!.classList.toggle('easter-egg');
-    egg.setAttribute('aria-pressed', on ? 'true' : 'false');
-  });
 }
