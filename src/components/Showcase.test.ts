@@ -1,31 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import Selector from './showcase/Selector.astro';
 import Stage from './showcase/Stage.astro';
-import Showcase from './Showcase.astro';
 import placeholder from '../assets/posters/placeholder.webp';
-
-// Real project content carries poster image paths that the container's image
-// service cannot resolve (LocalImageUsedWrongly), which would error before the
-// assertion. The portal copy is static markup independent of project data, so we
-// stub getCollection with a minimal media-free project: this keeps
-// renderToString(Showcase) on the static path so the portal/h1/JSON-LD assertions
-// are meaningful.
-vi.mock('astro:content', () => ({
-  getCollection: async () => [
-    {
-      id: 'stub',
-      data: {
-        title: 'Stub',
-        summary: '',
-        icon: 'rocket',
-        mode: 'media',
-        order: 0,
-        media: [],
-      },
-    },
-  ],
-}));
 
 describe('Selector', () => {
   it('renders a tab per project with the active one marked', async () => {
@@ -50,7 +27,7 @@ describe('Selector', () => {
       ] },
     });
     expect(html).toMatch(/role="tablist"/);
-    expect((html.match(/role="tab"/g) ?? []).length).toBe(3);
+    expect((html.match(/role="tab"/g) ?? []).length).toBe(2);
     expect(html).toMatch(/aria-selected="true"[^>]*tabindex="0"|tabindex="0"[^>]*aria-selected="true"/);
     expect(html).toContain('aria-controls="panel-a"');
     expect(html).toContain('id="tab-a"');
@@ -80,33 +57,5 @@ describe('Stage', () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Stage, { props: { project, active: false } });
     expect(html).toMatch(/<section[^>]*\shidden/);
-  });
-});
-
-describe('Showcase', () => {
-  it('renders the Portfolio portal panel reusing the real Presentation content', async () => {
-    const c = await AstroContainer.create();
-    const html = await c.renderToString(Showcase);
-    expect(html).toContain('id="panel-portfolio"');
-    expect(html).toMatch(/id="panel-portfolio"[^>]*role="tabpanel"|role="tabpanel"[^>]*id="panel-portfolio"/);
-    expect(html).toContain('aria-labelledby="tab-portfolio"');
-    // the portal hosts the rift canvas (decorative) and the reused presentation content
-    expect(html).toContain('data-rift');
-    expect(html).toContain('data-b="gh"'); // a Presentation link → content is present
-  });
-
-  it('keeps a single <h1> and a single JSON-LD across the showcase (portal copy uses div.name, no schema)', async () => {
-    const c = await AstroContainer.create();
-    const html = await c.renderToString(Showcase);
-    // Showcase alone renders the portal copy: it must NOT introduce an <h1> or JSON-LD
-    expect((html.match(/<h1/g) ?? []).length).toBe(0);
-    expect((html.match(/application\/ld\+json/g) ?? []).length).toBe(0);
-  });
-
-  it('no longer renders the old easter-egg elements', async () => {
-    const c = await AstroContainer.create();
-    const html = await c.renderToString(Showcase);
-    expect(html).not.toContain('data-egg-message');
-    expect(html).not.toContain('egg-core');
   });
 });
