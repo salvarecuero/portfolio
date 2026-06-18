@@ -519,12 +519,18 @@
 .stage--embed[data-embed-mobile] .embed { display: block; }
 .stage--embed[data-embed-mobile] .media-gallery--mobile { display: none; }
 
-/* ---- Portfolio portal: rift canvas behind the reused Presentation window ---------- */
+/* ---- Portfolio portal: a "tear" composition -------------------------------------
+   The rift (WebGL or fallback gradient) is the BACKDROP filling the stage; the reused
+   Presentation is glimpsed THROUGH a centered organic tear. The window is masked so the
+   Presentation only paints inside the tear and feathers out at the edge, and a drop-shadow
+   rim glow follows that irregular alpha so the boundary reads as a torn, glowing rift lip.
+   The opaque .pres-world wall no longer covers the stage — the rift is visible around it. */
 .tab--portfolio { /* a normal tab, attached to the others; no margin-left:auto */ }
 
 .stage--portal { position: relative; }
 
-/* The WebGL canvas fills the stage frame, behind the page window. */
+/* The rift backdrop fills the stage frame behind the tear. It MUST stay visible — nothing
+   opaque covers the whole stage anymore (that was the shipped bug). */
 .rift-canvas {
   position: absolute;
   inset: 0;
@@ -534,34 +540,68 @@
   z-index: 0;
 }
 
-/* The page window: the reused Presentation, centered above the canvas, revealed via a
-   clip-path so it appears to open through the rift. Compositor-only (clip-path), and the
-   reveal only animates under no-preference. */
+/* The tear window: a centered box (NOT inset:0) holding the reused Presentation. A feathered
+   organic mask clips the Presentation to the tear; overflow:hidden keeps the wall inside it. */
 .portal-window {
   position: absolute;
   inset: 0;
+  margin: auto;
+  width: min(80vw, 44rem);
+  height: min(74vh, 38rem);
   z-index: 2;
-  /* a glowing fracture rim around the window */
-  box-shadow:
-    inset 0 0 0 1.5px color-mix(in oklch, var(--accent-bright, #3aa6ec) 70%, white),
-    0 0 26px 2px color-mix(in oklch, var(--color-accent) 60%, transparent);
+  overflow: hidden;
+  /* Rim glow that follows the irregular mask: drop-shadow respects the alpha edge, so the
+     glow traces the torn shape (an inset box-shadow rim would only trace the rectangle). */
+  filter:
+    drop-shadow(0 0 22px color-mix(in oklch, var(--color-accent) 55%, transparent))
+    drop-shadow(0 0 6px color-mix(in oklch, var(--accent-bright, #3aa6ec) 65%, transparent));
 }
 
-/* Default (and reduced-motion / no-JS) state: window present, no animation. */
-.stage--portal .portal-window { clip-path: inset(0 0 0 0); }
+/* WebGL path: a soft elliptical feather is enough — the shader draws its bright jagged
+   fracture rim right over this mask boundary, so the EDGE reads as "torn following the
+   cracks". Cheap radial feather, GPU-friendly. */
+.portal-window {
+  --tear-feather: radial-gradient(ellipse 52% 54% at 50% 49%, #000 58%, rgba(0,0,0,0.6) 78%, transparent 100%);
+  -webkit-mask-image: var(--tear-feather);
+  mask-image: var(--tear-feather);
+}
+
+/* Fallback path (no WebGL): the shader isn't there to draw a torn rim, so make the aperture
+   IRREGULAR with a procedural mask — several offset elliptical radial gradients composited
+   into one organic, non-circular torn shape (no downloaded assets, no SVG-filter raster
+   pitfalls; resolution- and size-independent). The union of the lobes reads as a jagged tear
+   rather than a clean ellipse; each gradient feathers to transparent at its own edge. */
+.stage--portal.portal-fallback .portal-window {
+  --tear-irregular:
+    radial-gradient(ellipse 46% 50% at 48% 47%, #000 60%, transparent 100%),
+    radial-gradient(ellipse 30% 26% at 70% 36%, #000 55%, transparent 100%),
+    radial-gradient(ellipse 26% 32% at 30% 66%, #000 52%, transparent 100%),
+    radial-gradient(ellipse 24% 22% at 66% 70%, #000 50%, transparent 100%),
+    radial-gradient(ellipse 22% 24% at 33% 32%, #000 50%, transparent 100%);
+  -webkit-mask-image: var(--tear-irregular);
+  mask-image: var(--tear-irregular);
+  /* union the lobes: any lobe contributes opacity (default mask-composite is add/over). */
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Default (and reduced-motion / no-JS) state: tear present at full scale, no animation. */
+.stage--portal .portal-window { transform: none; opacity: 1; }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* When armed (JS active), open the window from the centre. */
+  /* Rupture reveal: when armed (JS active), the tear opens from the centre — scale + opacity
+     only (compositor-friendly), in spirit-sync with the shader rupture. */
   .stage--portal.portal-armed .portal-window {
-    animation: portal-open 700ms var(--intro-ease) both;
+    animation: portal-rupture 700ms var(--intro-ease) both;
   }
 }
-@keyframes portal-open {
-  from { clip-path: inset(50% 50% 50% 50%); }
-  to   { clip-path: inset(0 0 0 0); }
+@keyframes portal-rupture {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
 }
 
-/* Fallback backdrop: a static nebula gradient stands in for the WebGL scene. */
+/* Fallback backdrop: a static nebula gradient stands in for the WebGL scene, so the area
+   AROUND the tear still shows cosmos. */
 .stage--portal.portal-fallback .rift-canvas {
   background:
     radial-gradient(120% 90% at 50% 50%, color-mix(in oklch, var(--color-accent) 22%, transparent), transparent 60%),

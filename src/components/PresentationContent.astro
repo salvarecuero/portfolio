@@ -12,8 +12,12 @@ interface Props {
   /** true → hero <Image loading="eager" fetchpriority="high"> (the real section's LCP);
       false → lazy/auto for the portal copy (cache-hit, never blocks first paint). */
   priority?: boolean;
+  /** true → `.pres-world.compact`: the stacked/centered layout (photo on top, text
+      centered, type scaled down) applied unconditionally so the Presentation fits a
+      narrow portal window. Does not affect the non-compact hero appearance. */
+  compact?: boolean;
 }
-const { heading = "h1", priority = false } = Astro.props;
+const { heading = "h1", priority = false, compact = false } = Astro.props;
 const Name = heading; // "h1" | "div" — rendered as a dynamic tag below
 
 const { name, role, stack, socials, cvUrl } = presentation;
@@ -22,7 +26,7 @@ const [givenName, ...familyParts] = name.split(" ");
 const familyName = familyParts.join(" ");
 ---
 
-<div class="pres-world">
+<div class:list={["pres-world", { compact }]}>
   <div class="band">
     <div class="intro">
       <Name class="name"><span class="given">{givenName} </span><span class="family">{familyName}</span></Name>
@@ -421,5 +425,67 @@ const familyName = familyParts.join(" ");
       height: auto;
       width: min(58vw, 380px); /* size by width when stacked; preserves the square ratio */
     }
+  }
+
+  /* =================== compact (portal) =================== */
+  /* The portal copy renders into a ~44rem-wide centered window glimpsed through the rift
+     tear. Apply the same stacked/centered layout the responsive query uses (photo on top,
+     text centered, single-column stack), but UNCONDITIONALLY (window width, not viewport
+     width, is the constraint), and scale the type down so name + photo + strapline + stack
+     + links all read clearly inside the tear. The hero (.pres-world without .compact) is
+     untouched. */
+  .pres-world.compact .band {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 1rem;
+    max-width: 40rem;
+  }
+  .pres-world.compact .intro {
+    align-items: center;
+    order: 2;
+    gap: 0.85rem;
+  }
+  .pres-world.compact .role,
+  .pres-world.compact .name {
+    white-space: normal;
+  }
+  .pres-world.compact .tagline,
+  .pres-world.compact .stack,
+  .pres-world.compact .links {
+    justify-content: center;
+  }
+  .pres-world.compact .subject {
+    order: 1;
+    justify-self: center;
+    height: auto;
+    width: min(36vw, 190px); /* small bust so the whole stack fits the tear */
+  }
+  /* Type scale: tuned so the stacked content reads inside ~44rem × 38rem. */
+  .pres-world.compact .name {
+    font-size: clamp(1.6rem, 4.4vw, 2.3rem);
+  }
+  .pres-world.compact .role {
+    font-size: 0.92rem;
+  }
+  .pres-world.compact .tagline {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    row-gap: 0.9em;
+  }
+  .pres-world.compact .stack {
+    gap: 1.1rem 1.4rem;
+  }
+  .pres-world.compact .stack-ic {
+    width: 26px;
+    height: 26px;
+  }
+  .pres-world.compact .stack-lb {
+    font-size: 0.64rem;
+  }
+  .pres-world.compact .links {
+    gap: 0.6rem;
+  }
+  .pres-world.compact .lnk {
+    padding: 0.42em 0.85em;
   }
 </style>

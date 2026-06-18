@@ -24,4 +24,24 @@ describe('PresentationContent', () => {
     const html = await c.renderToString(PresentationContent, { props: { heading: 'h1', priority: true } });
     expect(html).not.toContain('application/ld+json');
   });
+
+  it('adds the compact modifier to .pres-world when compact', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(PresentationContent, { props: { heading: 'div', compact: true } });
+    expect(html).toMatch(/class="pres-world compact"/);
+  });
+
+  it('has no compact class on .pres-world by default', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(PresentationContent, { props: { heading: 'h1', priority: true } });
+    expect(html).toMatch(/class="pres-world"/);
+    expect(html).not.toContain('pres-world compact');
+  });
+
+  it('compact + heading="div" still has no <h1> and no JSON-LD', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(PresentationContent, { props: { heading: 'div', compact: true } });
+    expect((html.match(/<h1/g) ?? []).length).toBe(0);
+    expect(html).not.toContain('application/ld+json');
+  });
 });
