@@ -42,6 +42,14 @@ if (typeof document !== 'undefined') {
     let handle: RiftHandle | null = null;
     let armed = false;
     let loadFailed = false;
+    let armGen = 0;
+    let docHidden = false;
+    let offscreen = false;
+
+    // Combine the two pause sources: the scene must stay paused while EITHER the document
+    // is hidden OR the panel is off-screen, so neither input resumes RAF while the other
+    // still requires it (last-writer-wins between the two listeners would otherwise resume).
+    const updatePaused = () => handle?.setPaused(docHidden || offscreen);
 
     const accent: [number, number, number] = [0.169, 0.561, 0.839]; // #2b8fd6
     const energy: [number, number, number] = [0.545, 0.424, 1.0];   // violet
@@ -49,6 +57,7 @@ if (typeof document !== 'undefined') {
     const arm = async () => {
       if (armed) return;
       armed = true;
+      const gen = ++armGen;
       panel.classList.add('portal-armed');
 
       const reveal = chooseReveal({
@@ -64,10 +73,12 @@ if (typeof document !== 'undefined') {
 
       try {
         const { createRiftScene } = await import('./riftScene');
-        if (!armed) return; // disarmed during the await
+        if (gen !== armGen) return; // superseded by a newer arm/disarm during the await
         handle = createRiftScene(canvas, { accent, energy });
         panel.classList.add('portal-webgl');
+        updatePaused(); // apply current hidden/off-screen state to the freshly created scene
       } catch {
+        if (gen !== armGen) return; // stale failed import must not flip state for a newer generation
         loadFailed = true;
         panel.classList.add('portal-fallback');
       }
@@ -76,6 +87,7 @@ if (typeof document !== 'undefined') {
     const disarm = () => {
       if (!armed) return;
       armed = false;
+      armGen++; // invalidate any in-flight arm even with no re-arm
       handle?.dispose();
       handle = null;
       panel.classList.remove('portal-armed', 'portal-webgl', 'portal-fallback');
@@ -89,9 +101,15 @@ if (typeof document !== 'undefined') {
     });
 
     // Pause the scene when the document is hidden or the showcase scrolls off-screen.
-    document.addEventListener('visibilitychange', () => handle?.setPaused(document.hidden));
+    document.addEventListener('visibilitychange', () => {
+      docHidden = document.hidden;
+      updatePaused();
+    });
     const io = new IntersectionObserver(
-      (entries) => handle?.setPaused(!entries[0]?.isIntersecting),
+      (entries) => {
+        offscreen = !entries[0]?.isIntersecting;
+        updatePaused();
+      },
       { threshold: 0 },
     );
     io.observe(panel);
