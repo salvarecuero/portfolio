@@ -41,6 +41,7 @@ const frag = /* glsl */ `
   uniform vec2 uRes;
   uniform float uTime;
   uniform float uProgress;   // 0 at rupture start -> 1 settled
+  uniform float uFrameR;     // settled rupture radius — frames the centered window's edge
   uniform vec3 uAccent;      // brand sky #2b8fd6
   uniform vec3 uEnergy;      // violet
 
@@ -106,11 +107,14 @@ const frag = /* glsl */ `
     vec3 nebCol = mix(uAccent, uEnergy, smoothstep(0.3, 0.8, nb));
     col += nebCol * nb * nebPull;
 
-    // --- Centre-origin fracture ---
-    // The rupture front expands from r=0 outward as progress climbs. Radial fracture
-    // filaments (angularly varying, warped) make the edge jagged like cracked glass
-    // rather than a clean ring.
-    float front = uProgress * 0.95;
+    // --- Centre-origin fracture, FRAMING the centered portal window ---
+    // uFrameR is the rupture's settled radius: it is sized to roughly match the centered
+    // tear window's half-extent (in these aspect-corrected, vertical-normalised coords), so
+    // the brightest fracture/energy concentrates around the window's edge and reads as the
+    // torn rim of the tear, with cracks radiating OUTWARD into the surrounding cosmos and the
+    // centre (behind the window) calmer. The front sweeps from 0 to uFrameR as progress
+    // climbs, then holds at the framing radius instead of expanding past the stage.
+    float front = uProgress * uFrameR;
     float filament = warpedFbm(vec2(ang * 2.5, r * 5.0 - uTime * 0.12));
     float crackR = r + (filament - 0.5) * 0.18;        // perturb radius by the crack noise
 
@@ -118,15 +122,20 @@ const frag = /* glsl */ `
     float edgeW = mix(0.015, 0.05, calm);               // edge fattens slightly as it calms
     float edge = smoothstep(edgeW, 0.0, abs(crackR - front));
 
-    // Angular fracture lines radiating from the centre (electric cracks).
+    // Angular fracture lines radiating from the centre OUTWARD past the rim into the cosmos.
+    // Gated to start at the rim and reach beyond it so the cracks read as tearing outward
+    // from the tear's edge rather than filling the calm window interior.
     float spokes = warpedFbm(vec2(ang * 6.0, 3.0));
     float spokeMask = smoothstep(0.62, 0.78, spokes);
-    float spoke = spokeMask * smoothstep(front + 0.05, 0.0, crackR);
+    float spoke = spokeMask
+      * smoothstep(front - 0.04, front + 0.02, crackR)   // begins at the rim
+      * smoothstep(front + uFrameR, front, crackR);       // fades outward into space
 
-    // Hot core: a bright, blown-out centre that opens during the rupture and dims as it
-    // settles into shimmer. This is the "tear" the rift opens from.
-    float core = smoothstep(front, 0.0, crackR);
-    float corePulse = mix(1.0, 0.4, settle);
+    // Calm core: the centre behind the window stays quiet. A soft, dim fill that opens during
+    // the rupture and settles — NOT a blown-out hot core, so the glimpsed Presentation isn't
+    // washed out by the rift behind it.
+    float core = smoothstep(front, front * 0.4, crackR);
+    float corePulse = mix(0.6, 0.28, settle);
     vec3 coreCol = mix(uAccent, vec3(0.9, 0.95, 1.0), 0.5);
 
     // Edge colour: electric blue on the inside, violet on the outer lip of the crack.
@@ -136,21 +145,28 @@ const frag = /* glsl */ `
     // Additive glow (bloom-like falloff) around the rupture front.
     float glowFall = exp(-pow(abs(crackR - front) * 9.0, 1.4));
 
+    // The bright rim is the framing element — keep it lit after the rupture settles (it is the
+    // torn lip the masked window sits inside), so it does NOT fade out with the core.
+    float rimEnergy = mix(1.6, 1.0, settle);
+
     // Ambient shimmer once settled: low-frequency drift over the whole field, replacing the
     // hot rupture energy so the scene breathes instead of looping hot.
     float shimmer = 0.5 + 0.5 * sin(uTime * 0.6 + warpedFbm(uv * 1.5) * 6.28);
     float shimmerAmt = settle * 0.12;
 
-    // Composite the fracture energy.
-    col += edgeCol * edge * (1.4 * corePulse + 0.6);
-    col += edgeCol * glowFall * (0.5 + 0.5 * corePulse);
-    col += mix(uAccent, uEnergy, 0.5) * spoke * 0.5 * corePulse;
-    col += coreCol * core * (0.9 * corePulse);
+    // Composite the fracture energy. The bright edge + glow frame the window edge; cracks
+    // radiate outward; the calm core stays dim behind the glimpsed Presentation.
+    col += edgeCol * edge * rimEnergy;
+    col += edgeCol * glowFall * (0.45 + 0.35 * rimEnergy);
+    col += mix(uAccent, uEnergy, 0.5) * spoke * 0.55 * rimEnergy;
+    col += coreCol * core * corePulse;
     col += mix(uAccent, uEnergy, shimmer) * shimmerAmt;
 
-    // Subtle vignette to frame the tear and keep the corners in deep space.
+    // Vignette framing the tear: keep the corners in deep space and gently darken the calm
+    // centre behind the window so the glimpsed Presentation reads against a quiet backdrop.
     float vig = smoothstep(1.3, 0.2, r);
-    col *= mix(0.7, 1.0, vig);
+    float centreCalm = mix(0.55, 1.0, smoothstep(0.0, uFrameR, r));
+    col *= mix(0.7, 1.0, vig) * centreCalm;
     col *= calm;
 
     // Filmic-ish tone curve to tame the additive highlights without hard clipping.
@@ -213,6 +229,11 @@ export function createRiftScene(
     uRes: { value: new Vector2(1, 1) },
     uTime: { value: 0 },
     uProgress: { value: 0 },
+    // Framing radius (aspect-corrected, vertical-normalised units). The portal window is
+    // ~min(74vh,38rem) tall and centered; its half-height as a fraction of the stage half-
+    // height lands near this value, so the bright rupture rim concentrates around the
+    // window's edge and frames the tear rather than expanding off-stage.
+    uFrameR: { value: 0.34 },
     uAccent: { value: new Vector3(...opts.accent) },
     uEnergy: { value: new Vector3(...opts.energy) },
   };
