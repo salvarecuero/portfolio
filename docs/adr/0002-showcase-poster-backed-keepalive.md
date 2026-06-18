@@ -11,7 +11,8 @@ To achieve this: every Embed is backed by its **Poster** (the same visual layer 
 
 ## Consequences
 
-- **bye-bg is the exception:** its WASM AI models likely require cross-origin isolation (`COOP`/`COEP`), a header that applies to the whole page and would break the other iframes. So bye-bg goes in Media mode with an explicit launch (takeover/new tab), not as a simultaneous live Embed.
+- **Exclusion criterion — requires cross-origin isolation in production.** A Project can only be a live co-mounted Embed if its deploy does *not* set `COOP`/`COEP`: those headers put the page in cross-origin isolation, which is contagious to the parent and would force the whole Showcase into isolation, breaking the other iframes. The trigger for needing them is `SharedArrayBuffer` (multi-threaded WASM) as a *hard requirement* — not merely running WASM or an AI model. A Project that hard-requires isolation goes in Media mode with an explicit launch (takeover/new tab) instead.
+  - **No current Project hits this.** bye-bg was initially assumed to (and was placed in Media mode on that assumption), but verifying its source shows otherwise: inference runs on WebGPU (primary) or single-threaded WASM (fallback), neither of which needs `SharedArrayBuffer`. Its `COOP`/`COEP` headers exist only on the Vite **dev server** as an optional WASM multi-thread speed-up ("works without these but runs slower"); production is un-isolated. bye-bg is therefore a live Embed (mode `embed`), not Media.
 - Embeds are only possible on owned Projects, enabling `frame-ancestors` toward the portfolio domain; third-party sites are out of Embed mode.
 - Memory grows with each visited Project (bounded to the handful of Projects in the Showcase).
 

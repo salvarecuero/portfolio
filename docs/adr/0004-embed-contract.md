@@ -33,7 +33,7 @@ is the natural home for both sides of this mechanism.
 ## Consequences
 
 - The contract is the basis for a future skill that encapsulates the embed/optimization mechanism. Phase 2 is the reference implementation of that mechanism (`src/scripts/embedController.ts` + `embedLifecycle.ts`).
-- bye-bg is out of Embed mode (see ADR 0002): due to COEP it cannot coexist as a live iframe, so it does not implement this contract; it goes in Media mode with an explicit launch.
+- The exclusion criterion for Embed mode is "deploy hard-requires cross-origin isolation (`COOP`/`COEP`)", not "runs WASM/AI" — see ADR 0002. bye-bg was initially assumed to require isolation and placed in Media mode, but verification of its source showed it does not (WebGPU primary, single-threaded WASM fallback; no `SharedArrayBuffer`). It now implements this contract and runs as a live Embed.
 
 ## Phase 2 as built
 

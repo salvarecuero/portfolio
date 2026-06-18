@@ -1,7 +1,11 @@
 ---
 title: "bye-bg"
 summary: "Remove image backgrounds in your browser — 100% local, no uploads, works offline."
-mode: "media"
+mode: "embed"
+embed:
+  url: "https://bye-bg.salvarecuero.dev"
+  requiresLaunch: false
+  mobile: false
 media:
   - type: image
     src: ../../assets/showcase/bye-bg/poster.png
@@ -15,12 +19,12 @@ accent: "#0ea5e9"
 icon: "wand"
 links:
   live: "https://bye-bg.salvarecuero.dev"
-stack: ["React", "WebAssembly", "WebGPU"]
+stack: ["React", "ONNX Runtime Web", "WebGPU", "WebAssembly"]
 ---
 
 bye-bg removes the background from an image entirely in the browser — no uploads, no
-accounts, works offline. The AI model runs locally via WebAssembly/WebGPU, which means
-the page is cross-origin isolated (COOP/COEP). That isolation is incompatible with a live
-co-mounted iframe (it would force the whole Showcase into cross-origin isolation and break
-the other Embeds), so bye-bg is presented in Media mode with an explicit launch to the live
-app — see ADR 0002.
+accounts, works offline. The AI model runs locally via ONNX Runtime Web, on WebGPU
+(primary) with a single-threaded WASM fallback. Neither path requires `SharedArrayBuffer`,
+so the deploy stays un-isolated (no COOP/COEP) and can be a live co-mounted Embed in the
+Showcase under the embed contract (`frame-ancestors` + readiness handshake — see ADR 0004).
+On mobile it falls back to its Media gallery (see ADR 0002).
