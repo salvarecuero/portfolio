@@ -7,9 +7,10 @@ import placeholder from '../assets/posters/placeholder.webp';
 
 // Real project content carries poster image paths that the container's image
 // service cannot resolve (LocalImageUsedWrongly), which would error before the
-// assertion. The easter-egg message is static markup independent of project
-// data, so we stub getCollection with a minimal media-free project: this keeps
-// renderToString(Showcase) on the static path and makes the assertion meaningful.
+// assertion. The portal copy is static markup independent of project data, so we
+// stub getCollection with a minimal media-free project: this keeps
+// renderToString(Showcase) on the static path so the portal/h1/JSON-LD assertions
+// are meaningful.
 vi.mock('astro:content', () => ({
   getCollection: async () => [
     {
@@ -49,7 +50,7 @@ describe('Selector', () => {
       ] },
     });
     expect(html).toMatch(/role="tablist"/);
-    expect((html.match(/role="tab"/g) ?? []).length).toBe(2);
+    expect((html.match(/role="tab"/g) ?? []).length).toBe(3);
     expect(html).toMatch(/aria-selected="true"[^>]*tabindex="0"|tabindex="0"[^>]*aria-selected="true"/);
     expect(html).toContain('aria-controls="panel-a"');
     expect(html).toContain('id="tab-a"');
@@ -58,22 +59,6 @@ describe('Selector', () => {
     expect(html).toContain('data-accent="#abc"');
   });
 
-  it('keeps the easter-egg button OUTSIDE the tablist (ARIA: a tablist may only own tabs)', async () => {
-    const container = await AstroContainer.create();
-    const html = await container.renderToString(Selector, {
-      props: { projects: [
-        { id: 'a', title: 'Alpha', iconPath: 'M0 0', active: true, summary: '', media: [] },
-        { id: 'b', title: 'Beta', iconPath: 'M0 0', active: false, summary: '', media: [] },
-      ] },
-    });
-    // The tabs are <button>s (no nested <div>), so the first </div> after the tablist
-    // opening tag is the tablist's own close. The egg button must come AFTER it.
-    const tablistOpen = html.indexOf('role="tablist"');
-    const tablistClose = html.indexOf('</div>', tablistOpen);
-    const eggIdx = html.indexOf('data-easter-egg');
-    expect(tablistOpen).toBeGreaterThanOrEqual(0);
-    expect(eggIdx).toBeGreaterThan(tablistClose);
-  });
 });
 
 describe('Stage', () => {
@@ -99,9 +84,29 @@ describe('Stage', () => {
 });
 
 describe('Showcase', () => {
-  it('renders the easter-egg message element (hidden by default, present in DOM for CLS-free reveal)', async () => {
+  it('renders the Portfolio portal panel reusing the real Presentation content', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Showcase);
-    expect(html).toContain('data-egg-message');
+    expect(html).toContain('id="panel-portfolio"');
+    expect(html).toMatch(/id="panel-portfolio"[^>]*role="tabpanel"|role="tabpanel"[^>]*id="panel-portfolio"/);
+    expect(html).toContain('aria-labelledby="tab-portfolio"');
+    // the portal hosts the rift canvas (decorative) and the reused presentation content
+    expect(html).toContain('data-rift');
+    expect(html).toContain('data-b="gh"'); // a Presentation link → content is present
+  });
+
+  it('keeps a single <h1> and a single JSON-LD across the showcase (portal copy uses div.name, no schema)', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(Showcase);
+    // Showcase alone renders the portal copy: it must NOT introduce an <h1> or JSON-LD
+    expect((html.match(/<h1/g) ?? []).length).toBe(0);
+    expect((html.match(/application\/ld\+json/g) ?? []).length).toBe(0);
+  });
+
+  it('no longer renders the old easter-egg elements', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(Showcase);
+    expect(html).not.toContain('data-egg-message');
+    expect(html).not.toContain('egg-core');
   });
 });
