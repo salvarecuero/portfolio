@@ -13,15 +13,24 @@ async function render(p: any[]) {
 }
 
 describe('Selector', () => {
-  it('renders each title inside a .tab-label span so it can be ellipsized', async () => {
+  it('renders each project title inside a .tab-label span plus the Portfolio tab', async () => {
     const html = await render(projects);
-    expect((html.match(/class="tab-label"/g) ?? []).length).toBe(2);
-    // Tolerate Astro's injected data-astro-source-* attributes between the
-    // class and the tag close (see Stage.test.ts, same container renderer).
+    expect((html.match(/class="tab-label"/g) ?? []).length).toBe(3);
     expect(html).toMatch(/<span class="tab-label"[^>]*>Alpha Project<\/span>/);
+    expect(html).toMatch(/<span class="tab-label"[^>]*>Portfolio<\/span>/);
   });
   it('marks the active project tab', async () => {
     const html = await render(projects);
     expect(html).toMatch(/class="tab active"/);
+  });
+  it('renders the Portfolio tab as a real tab inside the tablist', async () => {
+    const html = await render(projects);
+    expect((html.match(/role="tab"/g) ?? []).length).toBe(3);
+    expect(html).toContain('id="tab-portfolio"');
+    expect(html).toContain('data-project="portfolio"');
+    expect(html).toContain('aria-controls="panel-portfolio"');
+    const tablistOpen = html.indexOf('role="tablist"');
+    const tablistClose = html.indexOf('</div>', tablistOpen);
+    expect(html.indexOf('id="tab-portfolio"')).toBeLessThan(tablistClose);
   });
 });

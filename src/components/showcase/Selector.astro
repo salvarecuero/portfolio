@@ -2,9 +2,9 @@
 import type { ShowcaseProject } from '../../lib/showcaseProjects';
 const { projects } = Astro.props as { projects: ShowcaseProject[] };
 ---
-{/* `.selector` is the visual chrome row; the tablist wraps ONLY the Project tabs so a
-    tablist owns only role="tab" children (ARIA). The easter-egg button is a sibling of
-    the tablist, not a member of it. */}
+{/* `.selector` is the visual chrome row; the tablist owns every role="tab" child. The
+    Portfolio tab is a real member of the tablist (last tab): it controls #panel-portfolio
+    like any Project tab, so it participates in switching, deep-links, and keyboard nav. */}
 <div class="selector">
   <div class="selector-list" role="tablist" aria-label="Projects">
     {projects.map((p) => (
@@ -23,13 +23,19 @@ const { projects } = Astro.props as { projects: ShowcaseProject[] };
         <span class="tab-label">{p.title}</span>
       </button>
     ))}
+    <button
+      class="tab tab--portfolio"
+      role="tab"
+      id="tab-portfolio"
+      data-project="portfolio"
+      data-accent="#2b8fd6"
+      aria-selected="false"
+      aria-controls="panel-portfolio"
+      tabindex="-1"
+      type="button"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10" /></svg>
+      <span class="tab-label">Portfolio</span>
+    </button>
   </div>
-  {/* Non-Project easter egg: a branded home glyph. Deliberately NOT role="tab" /
-      data-project and a SIBLING of the tablist, so it stays outside the tablist model —
-      it never touches Project switching, deep-links, keyboard nav, or the embed
-      lifecycle. The controller toggles .easter-egg, which plays a one-shot black-hole
-      pull → branded message → settle (pure CSS in showcase.css, reduced-motion safe). */}
-  <button class="tab tab--egg" type="button" data-easter-egg aria-pressed="false" aria-label="Portfolio — replay intro">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10" /></svg>
-  </button>
 </div>
