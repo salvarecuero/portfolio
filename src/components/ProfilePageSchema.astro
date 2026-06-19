@@ -1,6 +1,7 @@
 ---
 import { buildProfilePageSchema } from "../data/profilePageSchema";
 import { presentation } from "../data/presentation";
+import { siteOrigin } from "../lib/seo";
 
 interface Props {
   /** Absolute URL to the photo (resolved by the parent from Astro.site). */
@@ -8,7 +9,7 @@ interface Props {
 }
 
 const { imageUrl } = Astro.props;
-const siteUrl = Astro.site?.href ?? `${presentation.domain}/`;
+const siteUrl = siteOrigin(Astro.site, `${presentation.domain}/`);
 const schema = buildProfilePageSchema({ siteUrl, imageUrl });
 ---
 

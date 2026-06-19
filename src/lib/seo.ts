@@ -34,6 +34,14 @@ function originBase(site: URL | undefined, fallbackOrigin: string): URL {
   return new URL(fallbackOrigin.endsWith('/') ? fallbackOrigin : `${fallbackOrigin}/`);
 }
 
+/**
+ * Absolute site origin WITH a trailing slash (e.g. "https://salvarecuero.dev/"), used as the
+ * base for entity @ids and absolute URLs. Pass Astro.site (may be undefined) + a fallback origin.
+ */
+export function siteOrigin(site: URL | undefined, fallbackOrigin: string): string {
+  return originBase(site, fallbackOrigin).href;
+}
+
 export function buildSeoMeta(input: SeoInput): SeoMeta {
   const base = originBase(input.site, input.fallbackOrigin);
   const image = input.image ?? '/og.png';

@@ -6,6 +6,7 @@ import { presentation } from "../../data/presentation";
 import { projectSlug } from "../../lib/showcaseProjects";
 import { buildCreativeWorkSchema } from "../../data/creativeWorkSchema";
 import { buildBreadcrumbSchema } from "../../data/breadcrumbSchema";
+import { siteOrigin } from "../../lib/seo";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -19,7 +20,7 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const data = entry.data;
 
-const origin = (Astro.site ?? new URL(`${presentation.domain}/`)).href;
+const origin = siteOrigin(Astro.site, `${presentation.domain}/`);
 const pageUrl = new URL(Astro.url.pathname, origin).href;
 
 // Poster (media[0]) drives the OG image; it is either an image src or a video's poster still.

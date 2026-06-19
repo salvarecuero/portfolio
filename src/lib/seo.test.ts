@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildSeoMeta } from './seo';
+import { buildSeoMeta, siteOrigin } from './seo';
 
 const base = {
   fallbackOrigin: 'https://salvarecuero.dev',
@@ -33,5 +33,14 @@ describe('buildSeoMeta', () => {
     const o = buildSeoMeta({ ...base, site: undefined, image: '/custom.png', type: 'profile' });
     expect(o.ogImage).toBe('https://salvarecuero.dev/custom.png');
     expect(o.ogType).toBe('profile');
+  });
+});
+
+describe('siteOrigin', () => {
+  it('returns the site origin with a trailing slash', () => {
+    expect(siteOrigin(new URL('https://salvarecuero.dev'), 'https://x.dev')).toBe('https://salvarecuero.dev/');
+  });
+  it('falls back when site is undefined, normalizing the trailing slash', () => {
+    expect(siteOrigin(undefined, 'https://salvarecuero.dev')).toBe('https://salvarecuero.dev/');
   });
 });
