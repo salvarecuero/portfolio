@@ -1,11 +1,13 @@
 ---
-interface Props { links?: { live?: string; repo?: string }; title: string; }
-const { links, title } = Astro.props as Props;
-const hasLinks = Boolean(links?.live || links?.repo);
+interface Props { links?: { live?: string; repo?: string }; title: string; slug: string; }
+const { links, title, slug } = Astro.props as Props;
 ---
-{hasLinks && (
-  <nav class="projlinks" aria-label="Project links">
-    {links?.live && (
+<nav class="projlinks" aria-label="Project links">
+  <a class="lnk details" href={`/projects/${slug}`} aria-label={`Details — ${title}`}>
+    <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/></svg>
+    <span class="label">Details</span>
+  </a>
+  {links?.live && (
       <a class="lnk live" href={links.live} target="_blank" rel="noopener" aria-label={`Live site — ${title}`}>
         <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
         <span class="label">Live site</span>
@@ -18,4 +20,3 @@ const hasLinks = Boolean(links?.live || links?.repo);
       </a>
     )}
   </nav>
-)}
