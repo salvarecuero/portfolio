@@ -2,6 +2,12 @@ import type { CollectionEntry } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import { iconPath } from '../data/showcaseIcons';
 
+// Clean public slug for a project's own page (/projects/<slug>). The content id carries an
+// order prefix (e.g. "01-rangetube") for sorting; the slug strips it for a tidy URL.
+export function projectSlug(id: string): string {
+  return id.replace(/^\d+[-_]/, '');
+}
+
 export type EmbedMode = 'embed' | 'media' | 'custom';
 
 export type VideoSource = { src: string; type: string };
@@ -12,6 +18,7 @@ export type MediaItem =
 
 export interface ShowcaseProject {
   id: string;
+  slug: string;
   title: string;
   summary: string;
   iconPath: string;
@@ -33,6 +40,7 @@ export function toShowcaseProjects(
     .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
     .map((e, i) => ({
       id: e.id,
+      slug: projectSlug(e.id),
       title: e.data.title,
       summary: e.data.summary,
       iconPath: iconPath(e.data.icon),

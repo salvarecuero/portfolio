@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toShowcaseProjects } from './showcaseProjects';
+import { toShowcaseProjects, projectSlug } from './showcaseProjects';
 
 const img = { src: '/x.webp', width: 10, height: 10, format: 'webp' } as any;
 const raw = [
@@ -49,5 +49,25 @@ describe('toShowcaseProjects — embed fields', () => {
     const [p] = toShowcaseProjects([{ id: 'm', data: { ...base, mode: 'media' } }] as any);
     expect(p.mode).toBe('media');
     expect(p.embed).toBeUndefined();
+  });
+});
+
+describe('projectSlug', () => {
+  it('strips a leading order prefix (NN- or NN_)', () => {
+    expect(projectSlug('01-rangetube')).toBe('rangetube');
+    expect(projectSlug('02-bye-bg')).toBe('bye-bg');
+    expect(projectSlug('10_foo')).toBe('foo');
+  });
+  it('leaves ids without a numeric prefix unchanged', () => {
+    expect(projectSlug('plain')).toBe('plain');
+  });
+});
+
+describe('toShowcaseProjects — slug', () => {
+  it('derives a slug from the entry id', () => {
+    const out = toShowcaseProjects([
+      { id: '01-rangetube', data: { title: 'RangeTube', order: 0, summary: 's', mode: 'media', stack: [], media: [{ type: 'image', src: { src: '/x.webp', width: 10, height: 10, format: 'webp' }, alt: 'a' }] } },
+    ] as any);
+    expect(out[0].slug).toBe('rangetube');
   });
 });
