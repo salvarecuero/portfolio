@@ -19,4 +19,26 @@ describe('SEO.astro', () => {
     expect(html).toContain('rel="sitemap"');
     expect(html).toContain('"@type":"WebSite"');
   });
+
+  it('emits extra JSON-LD nodes passed via the jsonLd prop', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(SEO, {
+      props: {
+        title: 'RangeTube — loop a YouTube range',
+        description: 'desc',
+        image: '/_astro/poster.abc.png',
+        imageWidth: 1280,
+        imageHeight: 720,
+        jsonLd: [
+          { '@context': 'https://schema.org', '@type': 'CreativeWork', name: 'RangeTube' },
+          { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [] },
+        ],
+      },
+    });
+    expect(html).toContain('"@type":"CreativeWork"');
+    expect(html).toContain('"@type":"BreadcrumbList"');
+    expect(html).toMatch(/property="og:image" content="https:\/\/[^"]+\/_astro\/poster\.abc\.png"/);
+    expect(html).toContain('property="og:image:width" content="1280"');
+    expect(html).toContain('property="og:image:height" content="720"');
+  });
 });

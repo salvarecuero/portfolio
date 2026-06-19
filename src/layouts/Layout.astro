@@ -6,9 +6,15 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description?: string;
+  image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageAlt?: string;
+  type?: string;
+  jsonLd?: object | object[];
 }
 
-const { title, description } = Astro.props;
+const { title, description, image, imageWidth, imageHeight, imageAlt, type, jsonLd } = Astro.props;
 ---
 
 <!doctype html>
@@ -24,7 +30,16 @@ const { title, description } = Astro.props;
     <Font cssVariable="--font-oswald" />
     <Font cssVariable="--font-zilla" />
     <Font cssVariable="--font-outfit" preload />
-    <SEO title={title} description={description} />
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      imageWidth={imageWidth}
+      imageHeight={imageHeight}
+      imageAlt={imageAlt}
+      type={type}
+      jsonLd={jsonLd}
+    />
   </head>
   <body>
     <slot />
