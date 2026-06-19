@@ -5,7 +5,7 @@ import subject from "../assets/presentation/subject.png";
 import wall from "../assets/presentation/wall.webp";
 import { presentation } from "../data/presentation";
 import { stackIcons } from "../data/presentationIcons";
-import PersonSchema from "./PersonSchema.astro";
+import ProfilePageSchema from "./ProfilePageSchema.astro";
 
 const { name, role, stack, socials, cvUrl } = presentation;
 // Standout word by weight: given name 600, family name 300 (no accent colour).
@@ -80,7 +80,7 @@ const imageUrl = new URL(photo.src, Astro.site ?? `${presentation.domain}/`).hre
 
   <a class="cue" href="#showcase">Scroll<span aria-hidden="true">↓</span></a>
 
-  <PersonSchema imageUrl={imageUrl} />
+  <ProfilePageSchema imageUrl={imageUrl} />
 </section>
 
 <style define:vars={{ wallUrl: `url("${wall.src}")` }}>

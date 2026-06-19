@@ -1,5 +1,5 @@
 ---
-import { buildPersonSchema } from "../data/personSchema";
+import { buildProfilePageSchema } from "../data/profilePageSchema";
 import { presentation } from "../data/presentation";
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 
 const { imageUrl } = Astro.props;
 const siteUrl = Astro.site?.href ?? `${presentation.domain}/`;
-const schema = buildPersonSchema({ siteUrl, imageUrl });
+const schema = buildProfilePageSchema({ siteUrl, imageUrl });
 ---
 
 <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
