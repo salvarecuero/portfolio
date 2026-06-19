@@ -10,6 +10,7 @@ export interface PersonSchemaInput {
 export interface PersonSchema {
   "@context": "https://schema.org";
   "@type": "Person";
+  "@id": string;
   name: string;
   jobTitle: string;
   description: string;
@@ -25,6 +26,7 @@ export function buildPersonSchema({ siteUrl, imageUrl }: PersonSchemaInput): Per
   return {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": `${siteUrl}#person`,
     name: presentation.name,
     jobTitle: presentation.role,
     description: presentation.description,

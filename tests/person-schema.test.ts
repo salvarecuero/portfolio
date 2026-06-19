@@ -32,3 +32,7 @@ test("sameAs lists both socials", () => {
 test("knowsAbout matches the data module", () => {
   expect(schema.knowsAbout).toEqual([...presentation.knowsAbout]);
 });
+
+test("has a stable @id anchored at the site origin", () => {
+  expect(schema["@id"]).toBe("https://salvarecuero.dev/#person");
+});
