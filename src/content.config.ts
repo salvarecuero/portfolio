@@ -27,6 +27,10 @@ const projects = defineCollection({
     return z.object({
       title: z.string(),
       summary: z.string(),
+      // Long-form description as ordered paragraphs. Source of truth for the detail
+      // page body (replaces the former markdown body). Defaulted so media/custom
+      // Projects without prose still validate.
+      description: z.array(z.string()).default([]),
       // Presentation mode in the Showcase.
       mode: z.enum(["embed", "media", "custom"]),
       // Media set (desktop / landscape). media[0] is the Poster.
