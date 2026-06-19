@@ -15,7 +15,7 @@ interface Presentation {
 
 export const presentation = {
   name: "Salvador Recuero",
-  role: "Software Engineer",
+  role: "Full-Stack Software Engineer",
   // Visible chips — curated signal, not a laundry list.
   stack: ["TypeScript", "Node.js", "React", "Next.js", "Astro", "Docker", "AWS"],
   // Schema-only: broader set for crawlers (Person.knowsAbout). Not rendered.
@@ -25,9 +25,9 @@ export const presentation = {
     "CI/CD", "Web Performance",
   ],
   description:
-    "Salvador Recuero — Software Engineer building fast, reliable, " +
-    "well-engineered software across the full stack: TypeScript, Node.js, " +
-    "React/Next.js, Astro, AWS.",
+    "Salvador Recuero, Full-Stack Software Engineer. I build fast, " +
+    "reliable web apps with TypeScript, React/Next.js, Node.js and AWS " +
+    "— open to remote work.",
   domain: "https://salvarecuero.dev",
   socials: {
     github: "https://github.com/salvarecuero",

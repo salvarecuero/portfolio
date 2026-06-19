@@ -14,7 +14,7 @@ test("is a schema.org Person", () => {
 
 test("uses name and role as jobTitle", () => {
   expect(schema.name).toBe("Salvador Recuero");
-  expect(schema.jobTitle).toBe("Software Engineer");
+  expect(schema.jobTitle).toBe("Full-Stack Software Engineer");
 });
 
 test("carries the absolute url and image", () => {

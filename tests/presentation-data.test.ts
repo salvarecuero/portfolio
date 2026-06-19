@@ -3,7 +3,7 @@ import { presentation } from "../src/data/presentation";
 
 test("name and role", () => {
   expect(presentation.name).toBe("Salvador Recuero");
-  expect(presentation.role).toBe("Software Engineer");
+  expect(presentation.role).toBe("Full-Stack Software Engineer");
 });
 
 test("exposes visible stack chips in order", () => {
@@ -27,6 +27,6 @@ test("exposes a downloadable CV url", () => {
   expect(presentation.cvUrl).toMatch(/\.pdf$/);
 });
 
-test("description does not pigeonhole to web apps", () => {
-  expect(presentation.description.toLowerCase()).not.toContain("web app");
+test("description mentions web apps", () => {
+  expect(presentation.description.toLowerCase()).toContain("web app");
 });
