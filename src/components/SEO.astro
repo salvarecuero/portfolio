@@ -21,7 +21,8 @@ const meta = buildSeoMeta({
   type,
 });
 const imageAlt = `${presentation.name} — ${presentation.role}`;
-const website = buildWebsiteSchema({ siteUrl: meta.canonical });
+const origin = (Astro.site ?? new URL(`${presentation.domain}/`)).href;
+const website = buildWebsiteSchema({ siteUrl: origin });
 ---
 <title>{meta.title}</title>
 <meta name="description" content={meta.description} />

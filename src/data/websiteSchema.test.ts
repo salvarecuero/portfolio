@@ -3,11 +3,12 @@ import { buildWebsiteSchema } from './websiteSchema';
 import { presentation } from './presentation';
 
 describe('buildWebsiteSchema', () => {
-  it('builds a minimal WebSite node with the site url + author', () => {
+  it('builds a WebSite node with @id + author referencing the Person @id', () => {
     const s = buildWebsiteSchema({ siteUrl: 'https://salvarecuero.dev/' });
     expect(s['@type']).toBe('WebSite');
+    expect(s['@id']).toBe('https://salvarecuero.dev/#website');
     expect(s.url).toBe('https://salvarecuero.dev/');
     expect(s.name).toBe(presentation.name);
-    expect(s.author).toEqual({ '@type': 'Person', name: presentation.name });
+    expect(s.author).toEqual({ '@id': 'https://salvarecuero.dev/#person' });
   });
 });
