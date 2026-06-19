@@ -1,0 +1,152 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import { presentation } from "../data/presentation";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
+const { entry } = Astro.props;
+const { title, summary, stack, links, media } = entry.data;
+---
+
+<main class="project">
+  <a class="back" href="/">← {presentation.name}</a>
+
+  <article>
+    <header class="head">
+      <h1>{title}</h1>
+      <p class="summary">{summary}</p>
+
+      {stack.length > 0 && (
+        <ul class="stack" aria-label="Stack">
+          {stack.map((t) => <li>{t}</li>)}
+        </ul>
+      )}
+
+      {(links?.live || links?.repo) && (
+        <nav class="links" aria-label="Project links">
+          {links?.live && (
+            <a href={links.live} target="_blank" rel="noopener">Live site ↗</a>
+          )}
+          {links?.repo && (
+            <a href={links.repo} target="_blank" rel="noopener">Repository ↗</a>
+          )}
+        </nav>
+      )}
+    </header>
+
+    <div class="media">
+      {media.map((m) =>
+        m.type === "image" ? (
+          <Image
+            src={m.src}
+            alt={m.alt}
+            widths={[480, 960, 1440]}
+            sizes="(max-width: 820px) 100vw, 800px"
+          />
+        ) : (
+          <video controls playsinline poster={m.poster.src} aria-label={m.alt}>
+            {m.sources.map((s) => <source src={s.src} type={s.type} />)}
+          </video>
+        )
+      )}
+    </div>
+
+    <div class="body">
+      <slot />
+    </div>
+  </article>
+</main>
+
+<style>
+  .project {
+    min-height: 100dvh;
+    background: var(--color-bg, #020206);
+    color: var(--color-fg, #e8e8ee);
+    padding: clamp(1.5rem, 5vw, 4rem) clamp(1.25rem, 4vw, 2rem);
+    font-family: var(--font-geist), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  article {
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+  .back {
+    display: inline-block;
+    margin-bottom: 2.5rem;
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.85rem;
+    color: var(--color-fg-muted, #9a9aa8);
+    text-decoration: none;
+  }
+  .back:hover { color: var(--color-fg, #e8e8ee); }
+  h1 {
+    margin: 0 0 0.6rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+  }
+  .summary {
+    margin: 0 0 1.5rem;
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    color: var(--color-fg-muted, #b6b6c2);
+    line-height: 1.4;
+  }
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+  .stack li {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.78rem;
+    padding: 0.25em 0.7em;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    color: var(--color-fg-muted, #c4c4ce);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .links a {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: var(--accent, #3aa6ec);
+  }
+  .links a:hover { text-decoration: underline; }
+  .media {
+    display: grid;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+  .media :global(img),
+  .media :global(video) {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .body {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--color-fg, #d8d8e2);
+  }
+  .body :global(p) { margin: 0 0 1.1rem; }
+  .body :global(a) { color: var(--accent, #3aa6ec); }
+  .body :global(code) {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.92em;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+</style>
