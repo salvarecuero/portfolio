@@ -47,14 +47,9 @@ test("links to the GitHub and LinkedIn profiles", () => {
   expect(html).toContain(`href="${presentation.socials.linkedin}"`);
 });
 
-test("offers the CV as a download", () => {
-  expect(html).toMatch(/<a[^>]*href="\/cv\.pdf"[^>]*download/);
-});
-
 test("icon-only links carry accessible labels", () => {
   expect(html).toMatch(/aria-label="GitHub"/);
   expect(html).toMatch(/aria-label="LinkedIn"/);
-  expect(html).toMatch(/aria-label="Download CV"/);
 });
 
 test("includes the Person JSON-LD", () => {

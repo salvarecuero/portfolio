@@ -4,12 +4,6 @@ The portfolio is a static Astro build (`output: 'static'` default — **no adapt
 already on Cloudflare. This is the connect reference; the build artifacts (headers, sitemap, robots,
 OG image, Node pin) are committed.
 
-## Before the first deploy
-
-- **`public/cv.pdf` must exist.** The Presentation's "Download CV" pill links to `/cv.pdf`
-  (`presentation.cvUrl`). The file is not yet committed, so the link would 404 in production. Add
-  `public/cv.pdf` before deploying, or hide/repoint the CV pill — do not ship the 404.
-
 ## Project settings (Cloudflare dashboard → Pages → Create → Connect to Git)
 
 | Setting | Value |

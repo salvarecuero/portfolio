@@ -23,10 +23,6 @@ test("has both social profiles", () => {
   expect(presentation.socials.linkedin).toMatch(/linkedin\.com\/in\/salvarecuero/);
 });
 
-test("exposes a downloadable CV url", () => {
-  expect(presentation.cvUrl).toMatch(/\.pdf$/);
-});
-
 test("description mentions web apps and uses no em dash", () => {
   expect(presentation.description.toLowerCase()).toContain("web app");
   expect(presentation.description).not.toContain("—");

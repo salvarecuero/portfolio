@@ -10,7 +10,6 @@ interface Presentation {
   description: string;
   domain: string;
   socials: { github: string; linkedin: string };
-  cvUrl: string;
 }
 
 export const presentation = {
@@ -33,6 +32,4 @@ export const presentation = {
     github: "https://github.com/salvarecuero",
     linkedin: "https://www.linkedin.com/in/salvarecuero/",
   },
-  // Served as a static file from public/. The PDF asset itself is added separately.
-  cvUrl: "/cv.pdf",
 } as const satisfies Presentation;
