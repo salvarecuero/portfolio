@@ -9,6 +9,11 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://salvarecuero.dev',
 
+  // Inline all CSS into <style> tags. Total CSS is tiny (~7KB across the page); inlining
+  // removes the render-blocking stylesheet requests and their round-trips, which is the
+  // right trade-off for a small static site where first paint is the priority.
+  build: { inlineStylesheets: 'always' },
+
   // Presentation typography. Self-hosted + subset via Astro's Fonts API (no CDN):
   // Geist (display + body) and Geist Mono (role / stack / chip / links) carry the
   // engineer signal; the strapline uses three characterful faces, one weight each

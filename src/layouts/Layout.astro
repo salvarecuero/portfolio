@@ -29,7 +29,9 @@ const { title, description, image, imageWidth, imageHeight, imageAlt, type, json
     <Font cssVariable="--font-yellowtail" />
     <Font cssVariable="--font-oswald" />
     <Font cssVariable="--font-zilla" />
-    <Font cssVariable="--font-outfit" preload />
+    {/* Outfit is a Showcase-only face (below the fold); not preloaded so it does not
+        compete with the Presentation's LCP image for priority and bandwidth. */}
+    <Font cssVariable="--font-outfit" />
     <SEO
       title={title}
       description={description}
