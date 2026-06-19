@@ -16,7 +16,7 @@ interface Presentation {
 export const presentation = {
   name: "Salvador Recuero",
   role: "Full-Stack Software Engineer",
-  // Visible chips — curated signal, not a laundry list.
+  // Visible chips: curated signal, not a laundry list.
   stack: ["TypeScript", "Node.js", "React", "Next.js", "Astro", "Docker", "AWS"],
   // Schema-only: broader set for crawlers (Person.knowsAbout). Not rendered.
   knowsAbout: [
