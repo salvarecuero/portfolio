@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from "astro:content";
+import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import ProjectArticle from "../../components/ProjectArticle.astro";
 import { presentation } from "../../data/presentation";
@@ -17,7 +17,6 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
 const data = entry.data;
 
 const origin = siteOrigin(Astro.site, `${presentation.domain}/`);
@@ -54,7 +53,5 @@ const breadcrumb = buildBreadcrumbSchema([
   type="article"
   jsonLd={[creativeWork, breadcrumb]}
 >
-  <ProjectArticle entry={entry}>
-    <Content />
-  </ProjectArticle>
+  <ProjectArticle entry={entry} />
 </Layout>

@@ -1,6 +1,9 @@
 ---
 title: "bye-bg"
-summary: "Remove image backgrounds in your browser — 100% local, no uploads, works offline."
+summary: "Remove image backgrounds in your browser. Fully local, no uploads, works offline."
+description:
+  - "bye-bg removes the background from an image directly in the browser. Nothing is uploaded, there are no accounts, and it keeps working with the tab offline."
+  - "The cutout model runs locally on the device. It uses WebGPU where the browser supports it and falls back to WebAssembly where it does not, so the processing stays on the user's machine."
 mode: "embed"
 embed:
   url: "https://bye-bg.salvarecuero.dev"
@@ -9,11 +12,11 @@ embed:
 media:
   - type: image
     src: ../../assets/showcase/bye-bg/poster.png
-    alt: "bye-bg — in-browser background removal"
+    alt: "bye-bg: in-browser background removal"
 mediaMobile:
   - type: image
     src: ../../assets/showcase/bye-bg/poster-mobile.png
-    alt: "bye-bg on mobile — in-browser background removal"
+    alt: "bye-bg on mobile: in-browser background removal"
 order: 1
 accent: "#0ea5e9"
 icon: "wand"
@@ -21,12 +24,3 @@ links:
   live: "https://bye-bg.salvarecuero.dev"
 stack: ["React", "ONNX Runtime Web", "WebGPU", "WebAssembly"]
 ---
-
-bye-bg removes the background from an image entirely in the browser — no uploads, no
-accounts, works offline. The AI model runs locally via ONNX Runtime Web, on WebGPU
-(primary) with a single-threaded WASM fallback. Its deploy sets COOP/COEP to enable
-multi-threaded WASM (`SharedArrayBuffer`) but does not require it, so it runs as a live
-co-mounted Embed under the embed contract (`frame-ancestors` + readiness handshake — see
-ADR 0004): inside the Showcase iframe it runs un-isolated, without `SharedArrayBuffer`
-(WebGPU / single-threaded WASM), while standalone it keeps the multi-threaded path. On
-mobile it falls back to its Media gallery (see ADR 0002).
