@@ -26,8 +26,8 @@ export const presentation = {
   ],
   description:
     "Salvador Recuero, Full-Stack Software Engineer. I build fast, " +
-    "reliable web apps with TypeScript, React/Next.js, Node.js and AWS " +
-    "— open to remote work.",
+    "reliable web apps with TypeScript, React/Next.js, Node.js and AWS. " +
+    "Open to remote work.",
   domain: "https://salvarecuero.dev",
   socials: {
     github: "https://github.com/salvarecuero",

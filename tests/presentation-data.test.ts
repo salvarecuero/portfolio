@@ -27,6 +27,8 @@ test("exposes a downloadable CV url", () => {
   expect(presentation.cvUrl).toMatch(/\.pdf$/);
 });
 
-test("description mentions web apps", () => {
+test("description mentions web apps and uses no em dash", () => {
   expect(presentation.description.toLowerCase()).toContain("web app");
+  expect(presentation.description).not.toContain("—");
+  expect(presentation.description).toContain("Open to remote work.");
 });
