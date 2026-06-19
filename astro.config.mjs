@@ -3,9 +3,12 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
+import sitemap from '@astrojs/sitemap';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://salvarecuero.dev',
+
   // Presentation typography. Self-hosted + subset via Astro's Fonts API (no CDN):
   // Geist (display + body) and Geist Mono (role / stack / chip / links) carry the
   // engineer signal; the strapline uses three characterful faces, one weight each
@@ -60,8 +63,11 @@ export default defineConfig({
       fallbacks: ['system-ui', 'sans-serif'],
     },
   ],
+
   // The editor's TS server may flag a Vite PluginOption type mismatch here from pnpm's peer-differentiated vite copies; astro check, tsc and build are unaffected.
   vite: {
     plugins: [tailwindcss()]
-  }
+  },
+
+  integrations: [sitemap()]
 });

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://salvarecuero.dev/sitemap.xml
+Sitemap: https://salvarecuero.dev/sitemap-index.xml
