@@ -1,0 +1,59 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import ProjectArticle from "../../components/ProjectArticle.astro";
+import { presentation } from "../../data/presentation";
+import { projectSlug } from "../../lib/showcaseProjects";
+import { buildCreativeWorkSchema } from "../../data/creativeWorkSchema";
+import { buildBreadcrumbSchema } from "../../data/breadcrumbSchema";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((entry) => ({
+    params: { slug: projectSlug(entry.id) },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const data = entry.data;
+
+const origin = (Astro.site ?? new URL(`${presentation.domain}/`)).href;
+const pageUrl = new URL(Astro.url.pathname, origin).href;
+
+// Poster (media[0]) drives the OG image; it is either an image src or a video's poster still.
+const poster = data.media[0];
+const posterImg = poster.type === "image" ? poster.src : poster.poster;
+const ogImage = new URL(posterImg.src, origin).href;
+
+const title = `${data.title} — ${data.summary}`;
+
+const creativeWork = buildCreativeWorkSchema({
+  pageUrl,
+  personId: `${origin}#person`,
+  name: data.title,
+  description: data.summary,
+  image: ogImage,
+  keywords: data.stack,
+});
+const breadcrumb = buildBreadcrumbSchema([
+  { name: "Home", url: origin },
+  { name: data.title, url: pageUrl },
+]);
+---
+
+<Layout
+  title={title}
+  description={data.summary}
+  image={posterImg.src}
+  imageWidth={posterImg.width}
+  imageHeight={posterImg.height}
+  imageAlt={`${data.title} — ${data.summary}`}
+  type="article"
+  jsonLd={[creativeWork, breadcrumb]}
+>
+  <ProjectArticle entry={entry}>
+    <Content />
+  </ProjectArticle>
+</Layout>
