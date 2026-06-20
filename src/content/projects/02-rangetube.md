@@ -20,7 +20,7 @@ mediaMobile:
   - type: image
     src: ../../assets/showcase/rangetube/mobile-player.png
     alt: "RangeTube on mobile: the player with the range slider"
-order: 0
+order: 1
 accent: "#e8634c"
 icon: "range"
 links:
