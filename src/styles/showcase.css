@@ -22,6 +22,55 @@
   background: var(--space) url("../assets/showcase/cosmos.webp") center / cover;
 }
 
+/* Backdrop credit — sits in the bottom-right cosmos frame strip (the --showcase-pad band
+   below the Stage), aligned to the Stage's right edge. Muted-but-legible per CC BY 4.0:
+   visible at rest, brightening on hover. z-index lifts it above the transparent .to so the
+   links stay clickable. Absolute within .showcase, so it only shows on the Showcase. */
+.cosmos-credit {
+  position: absolute;
+  right: var(--showcase-pad);
+  bottom: 0;
+  height: var(--showcase-pad);
+  z-index: 2;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5ch;
+  font-family: var(--font-geist);
+  font-style: italic;
+  font-size: clamp(0.56rem, 1.6vw, 0.72rem);
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+}
+.cosmos-credit__mark {
+  font-style: normal;
+  font-size: 0.62em;
+  color: rgba(255, 255, 255, 0.4);
+}
+/* Drop the decorative mark on narrow viewports so the full (mandatory) credit fits. */
+@media (max-width: 380px) {
+  .cosmos-credit__mark {
+    display: none;
+  }
+}
+.cosmos-credit__sep {
+  opacity: 0.5;
+}
+.cosmos-credit a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.cosmos-credit a:hover,
+.cosmos-credit a:focus-visible {
+  color: rgba(255, 255, 255, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.35);
+  outline: none;
+}
+
 /* the Showcase section — transparent (no background) so the cosmos shows through as the
    frame. position:relative contains the absolutely-positioned .to. */
 .showcase {

@@ -28,6 +28,15 @@ const active = projects.find((p) => p.active) ?? projects[0];
       ))}
     </div>
   </div>
+
+  {/* Backdrop credit — CC BY 4.0 requires a clearly visible, unaltered, linked credit
+     for the ESA/Hubble image used as the cosmos. Lives in the bottom-right of the frame. */}
+  <p class="cosmos-credit">
+    <span class="cosmos-credit__mark" aria-hidden="true">✦</span>
+    <a href="https://esahubble.org/images/heic1806a/" target="_blank" rel="noopener noreferrer">NASA, ESA, and P. van Dokkum (Yale University)</a>
+    <span class="cosmos-credit__sep" aria-hidden="true">·</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
+  </p>
 </section>
 
 <script>
