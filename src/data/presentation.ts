@@ -9,6 +9,7 @@ interface Presentation {
   knowsAbout: readonly string[];
   description: string;
   domain: string;
+  email: string;
   socials: { github: string; linkedin: string };
 }
 
@@ -28,6 +29,7 @@ export const presentation = {
     "reliable web apps with TypeScript, React/Next.js, Node.js and AWS. " +
     "Open to remote work.",
   domain: "https://salvarecuero.dev",
+  email: "contact@salvarecuero.dev",
   socials: {
     github: "https://github.com/salvarecuero",
     linkedin: "https://www.linkedin.com/in/salvarecuero/",

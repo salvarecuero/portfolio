@@ -55,3 +55,24 @@ test("icon-only links carry accessible labels", () => {
 test("includes the Person JSON-LD", () => {
   expect(html).toContain('type="application/ld+json"');
 });
+
+test("renders the contact email address with a mailto send action", () => {
+  expect(html).toMatch(/<span class="contact-addr"[^>]*>contact@salvarecuero\.dev<\/span>/);
+  expect(html).toContain('href="mailto:contact@salvarecuero.dev"');
+  expect(html).toMatch(/aria-label="Send email"/);
+});
+
+test("contact box has a copy-to-clipboard button with an accessible label", () => {
+  expect(html).toMatch(/aria-label="Copy email address"/);
+});
+
+test("contact icons declare intrinsic width/height (no pre-CSS size flash)", () => {
+  // An SVG sized only by CSS balloons to the 300x150 replaced-element default until
+  // styles apply (a FOUC window in the dev server). Intrinsic attrs prevent the flash.
+  const icons = html.match(/<svg class="ic[ "][^>]*>/g) ?? [];
+  expect(icons.length).toBe(3);
+  for (const svg of icons) {
+    expect(svg).toMatch(/\bwidth="16"/);
+    expect(svg).toMatch(/\bheight="16"/);
+  }
+});

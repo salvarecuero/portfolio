@@ -16,6 +16,7 @@ export interface PersonSchema {
   description: string;
   url: string;
   image: string;
+  email: string;
   knowsAbout: string[];
   sameAs: string[];
 }
@@ -32,6 +33,7 @@ export function buildPersonSchema({ siteUrl, imageUrl }: PersonSchemaInput): Per
     description: presentation.description,
     url: siteUrl,
     image: imageUrl,
+    email: presentation.email,
     knowsAbout: [...presentation.knowsAbout],
     sameAs: [presentation.socials.github, presentation.socials.linkedin],
   };

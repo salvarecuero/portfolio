@@ -18,6 +18,10 @@ test("knowsAbout is a superset of the visible stack", () => {
   }
 });
 
+test("has a contact email", () => {
+  expect(presentation.email).toBe("contact@salvarecuero.dev");
+});
+
 test("has both social profiles", () => {
   expect(presentation.socials.github).toMatch(/github\.com\/salvarecuero/);
   expect(presentation.socials.linkedin).toMatch(/linkedin\.com\/in\/salvarecuero/);

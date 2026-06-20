@@ -8,7 +8,7 @@ import { stackIcons } from "../data/presentationIcons";
 import ProfilePageSchema from "./ProfilePageSchema.astro";
 import { siteOrigin } from "../lib/seo";
 
-const { name, role, stack, socials } = presentation;
+const { name, role, stack, socials, email } = presentation;
 // Standout word by weight: given name 600, family name 300 (no accent colour).
 const [givenName, ...familyParts] = name.split(" ");
 const familyName = familyParts.join(" ");
@@ -60,6 +60,25 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
         <a class="lnk" data-b="li" href={socials.linkedin} aria-label="LinkedIn" target="_blank" rel="noopener">
           <svg class="wm wm-li" viewBox="0 45 128 37" fill="currentColor" aria-hidden="true"><path d="M.85 51.73h4.94v17.98h9.14v4.56H.85V51.73zM17.11 59h4.74v15.26h-4.74zm2.37-7.59a2.75 2.75 0 11-2.75 2.75 2.75 2.75 0 012.75-2.75M41.69 51.73h4.74V65.2l5.38-6.22h5.81l-6.22 7.07 6.09 8.22h-5.96l-5.04-7.55h-.06v7.55h-4.74V51.73zM24.48 59H29v2.09h.06a5 5 0 014.49-2.47c4.81 0 5.69 3.16 5.69 7.27v8.38h-4.7v-7.43c0-1.77 0-4-2.47-4s-2.85 1.93-2.85 3.92v7.55h-4.74z"/><path d="M67.61 64.85a2.84 2.84 0 00-2.91-2.91 3.16 3.16 0 00-3.35 2.91zm4 6.77a8.35 8.35 0 01-6.48 3c-4.74 0-8.54-3.16-8.54-8.07s3.8-8.06 8.54-8.06c4.43 0 7.21 3.16 7.21 8.06v1.49h-11a3.54 3.54 0 003.57 3 4 4 0 003.38-1.87zM82.23 62.68A3.89 3.89 0 1086 66.57a3.6 3.6 0 00-3.8-3.89m8.2 11.58H86v-2a6 6 0 01-4.71 2.4c-4.56 0-7.56-3.29-7.56-7.94 0-4.27 2.66-8.19 7-8.19a5.73 5.73 0 014.87 2h.06v-8.8h4.74z"/><path d="M124.6 47H97.36A2.33 2.33 0 0095 49.34v27.35A2.33 2.33 0 0097.36 79h27.24a2.34 2.34 0 002.4-2.31V49.34a2.34 2.34 0 00-2.4-2.34zm-20.12 27.27h-4.74V59h4.74zm-2.37-17.34a2.75 2.75 0 112.75-2.75 2.75 2.75 0 01-2.75 2.75zm20.13 17.34h-4.74v-7.42c0-1.77 0-4-2.46-4s-2.85 1.93-2.85 3.92v7.55h-4.74V59H112v2.1h.06a5 5 0 014.49-2.46c4.8 0 5.69 3.16 5.69 7.27z"/></svg>
         </a>
+
+        {/* Contact: the email address with a copy (JS-only, progressively enhanced) and a
+            mailto send action. Neutral ink — our own action, off the accent, like the
+            former CV pill. */}
+        <div class="contact" data-email={email}>
+          <span class="contact-addr">{email}</span>
+          <button type="button" class="contact-btn contact-copy" aria-label="Copy email address">
+            <span class="ic-wrap">
+              <svg class="ic ic-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2"/></svg>
+              <svg class="ic ic-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+            <span class="tip" aria-hidden="true">Copy</span>
+          </button>
+          <a class="contact-btn contact-send" href={`mailto:${email}`} aria-label="Send email">
+            <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            <span class="tip" aria-hidden="true">Email</span>
+          </a>
+          <span class="sr-only" role="status" aria-live="polite" data-copy-status></span>
+        </div>
       </nav>
     </div>
 
@@ -79,6 +98,35 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
 
   <ProfilePageSchema imageUrl={imageUrl} />
 </section>
+
+<script>
+  // Copy-to-clipboard for the contact email. Progressive enhancement: the button is
+  // CSS-hidden until `html.js`, and the mailto + visible address work without this.
+  const box = document.querySelector<HTMLElement>(".contact");
+  const btn = box?.querySelector<HTMLButtonElement>(".contact-copy");
+  if (box && btn) {
+    const tip = btn.querySelector<HTMLElement>(".tip");
+    const status = box.querySelector<HTMLElement>("[data-copy-status]");
+    const email = box.dataset.email ?? "";
+    let timer: number | undefined;
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(email);
+      } catch {
+        return; // clipboard blocked — the address is still visible and selectable
+      }
+      btn.classList.add("is-copied");
+      if (tip) tip.textContent = "Copied!";
+      if (status) status.textContent = "Email address copied";
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        btn.classList.remove("is-copied");
+        if (tip) tip.textContent = "Copy";
+        if (status) status.textContent = "";
+      }, 1600);
+    });
+  }
+</script>
 
 <style define:vars={{ wallUrl: `url("${wall.src}")` }}>
   /* Presentation lives in its own light, textured "wall" world (the Showcase stays
@@ -362,6 +410,112 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     outline-offset: 3px;
   }
 
+  /* =================== contact — email box: copy + send =================== */
+  .contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    /* Geist sans for the address + tooltips (unifies with the name/headings) */
+    font-family: var(--font-geist), system-ui, sans-serif;
+    font-weight: 500;
+    border-radius: 999px;
+    padding: 0.34em 0.4em 0.34em 1.05em; /* tuned so the box height matches the GH/LI pills */
+    background: rgba(255, 255, 255, 0.4);
+    color: var(--p-ink);
+    /* neutral ink, off the accent: our own action, not a brand and not "the promise" */
+    border: 1px solid rgba(38, 34, 31, 0.22);
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .contact:hover {
+    background: rgba(255, 255, 255, 0.78);
+    border-color: rgba(38, 34, 31, 0.5);
+  }
+  .contact-addr {
+    font-size: 0.9rem;
+    letter-spacing: 0.005em;
+    user-select: all; /* one click selects the whole address (no-JS copy path) */
+    margin-right: 0.2rem;
+  }
+
+  .contact-btn {
+    position: relative; /* tooltip anchor */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6em;
+    height: 1.6em;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--p-ink-soft);
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.16s ease, background 0.16s ease;
+  }
+  .contact-btn:hover {
+    color: var(--p-ink);
+    background: rgba(38, 34, 31, 0.06);
+  }
+  .contact-btn:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  /* the copy action needs the clipboard API: hidden until JS, never a dead button */
+  .contact-copy { display: none; }
+  :global(html.js) .contact-copy { display: inline-flex; }
+
+  .ic { width: 16px; height: 16px; display: block; }
+  /* morph: copy icon and check stacked, cross-fading with a small "stamp" */
+  .contact-copy .ic-wrap {
+    position: relative;
+    width: 16px;
+    height: 16px;
+  }
+  .contact-copy .ic {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .contact-copy .ic-check {
+    opacity: 0;
+    transform: scale(0.6) rotate(-90deg);
+    color: var(--accent);
+  }
+  .contact-copy.is-copied .ic-copy {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  .contact-copy.is-copied .ic-check {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+
+  .tip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 0.3em 0.5em;
+    border-radius: 6px;
+    background: var(--p-ink);
+    color: #f3f1ee;
+    font-size: 0.66rem;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.14s ease, transform 0.14s ease;
+  }
+  .contact-btn:hover .tip,
+  .contact-btn:focus-visible .tip,
+  .contact-copy.is-copied .tip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
   /* subject cutout — real silhouette over the matching sheet.
      Circular fade: solid core covers the shoulders; the bottom curves off
      (no horizontal cut) with a very thin feather. */
@@ -421,6 +575,15 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     .w-fast .streaks i { animation: none; opacity: 0.45; }
     .chip::after { animation: none; }
     .stack li:hover .stack-ic { transform: none; }
+    /* contact: instant icon swap, no hover nudge, tooltip without slide (feedback kept) */
+    .contact-copy .ic { transition: opacity 0.18s ease; }
+    .contact-copy .ic-check,
+    .contact-copy.is-copied .ic-copy,
+    .contact-copy.is-copied .ic-check { transform: none; }
+    .tip { transition: opacity 0.14s ease; }
+    .contact-btn:hover .tip,
+    .contact-btn:focus-visible .tip,
+    .contact-copy.is-copied .tip { transform: translateX(-50%); }
   }
 
   /* Below this width the subject (a fixed ~600px square) leaves the text column too

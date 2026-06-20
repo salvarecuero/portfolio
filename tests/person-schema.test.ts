@@ -33,6 +33,10 @@ test("knowsAbout matches the data module", () => {
   expect(schema.knowsAbout).toEqual([...presentation.knowsAbout]);
 });
 
+test("carries the contact email", () => {
+  expect(schema.email).toBe("contact@salvarecuero.dev");
+});
+
 test("has a stable @id anchored at the site origin", () => {
   expect(schema["@id"]).toBe("https://salvarecuero.dev/#person");
 });
