@@ -37,6 +37,12 @@ const active = projects.find((p) => p.active) ?? projects[0];
     <span class="cosmos-credit__sep" aria-hidden="true">·</span>
     <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
   </p>
+
+  {/* Backdrop reveal toggle — fades the foreground out so the cosmos shows through.
+     Bottom-left, mirroring the credit. Shown only after the intro (html.js.intro-done). */}
+  <button type="button" class="backdrop-toggle" aria-pressed="false" aria-label="Reveal backdrop">
+    <span class="backdrop-toggle__mark" aria-hidden="true">✦</span>
+  </button>
 </section>
 
 <script>
@@ -67,4 +73,8 @@ const active = projects.find((p) => p.active) ?? projects[0];
 
 <script>
   import '../scripts/embedController';
+</script>
+
+<script>
+  import '../scripts/cosmosReveal';
 </script>

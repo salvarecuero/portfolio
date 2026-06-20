@@ -71,6 +71,56 @@
   outline: none;
 }
 
+/* Backdrop reveal — a persistent toggle (.is-revealing on the .showcase root) fades the
+   foreground (.to: Selector + Stage viewport) out so the fixed cosmos shows through. The
+   toggle button and the cosmos credit are excluded so they stay visible/usable over the
+   bare backdrop. While revealed, .to is pointer-events:none, so the Selector and any live
+   embeds underneath are inert until the foreground is restored. */
+.showcase.is-revealing .to {
+  opacity: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .to { transition: opacity 0.5s var(--intro-ease); }
+}
+
+/* Toggle control — mirrors the cosmos credit: bottom band of the frame, bottom-left,
+   muted at rest and bright on hover/focus or while active (aria-pressed). Hidden until the
+   intro has finished so it does not clutter the reveal animation. */
+.backdrop-toggle {
+  position: absolute;
+  left: var(--showcase-pad);
+  bottom: 0;
+  height: var(--showcase-pad);
+  z-index: 2;
+  display: none;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-geist);
+  font-style: italic;
+  font-size: clamp(0.56rem, 1.6vw, 0.72rem);
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.2s ease;
+}
+html.js.intro-done .backdrop-toggle {
+  display: inline-flex;
+}
+.backdrop-toggle:hover,
+.backdrop-toggle:focus-visible,
+.backdrop-toggle[aria-pressed="true"] {
+  color: rgba(255, 255, 255, 0.92);
+  outline: none;
+}
+.backdrop-toggle__mark {
+  font-style: normal;
+  font-size: 0.9em;
+}
+
 /* the Showcase section — transparent (no background) so the cosmos shows through as the
    frame. position:relative contains the absolutely-positioned .to. */
 .showcase {
