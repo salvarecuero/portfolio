@@ -51,11 +51,13 @@ describe('Stage', () => {
     expect(html).toContain('id="panel-alpha"');
     expect(html).toContain('aria-labelledby="tab-alpha"');
     expect(html).not.toMatch(/<section[^>]*\shidden/);
+    expect(html).toMatch(/class="[^"]*\bis-active\b/); // SSR / no-JS: only the active Stage paints
   });
 
-  it('renders an inactive Stage hidden', async () => {
+  it('renders an inactive Stage hidden and not active', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Stage, { props: { project, active: false } });
     expect(html).toMatch(/<section[^>]*\shidden/);
+    expect(html).not.toMatch(/\bis-active\b/);
   });
 });

@@ -82,27 +82,48 @@
   background: transparent;
 }
 /* stage-viewport — the persistent 1fr cell of the .to grid that holds every Project's
-   Stage (render-all keep-alive). Only the active Stage is shown; the rest carry [hidden].
-   The View Transition is NAMED here (not on each Stage) so the crossfade is scoped to this
-   region: the persistent element's before/after pixels are morphed, while the Selector,
-   the cosmos and the $ showcase intro — all outside this name — stay still. */
+   Stage (render-all keep-alive). All Stages are STACKED in the same grid cell so the
+   outgoing and incoming Stage can crossfade in place; only the active one is visible.
+   The swap is a plain CSS crossfade (not the View Transitions API) ON PURPOSE: a view
+   transition snapshots the WHOLE document and freezes it for the swap, which rasterises
+   and repaints the Selector tabs every time (they read as "reloading"). A scoped CSS
+   crossfade leaves the tabs as live DOM, so only the Stage region animates. */
 .stage-viewport {
   position: relative;
   display: grid;
   min-height: 0;
-  view-transition-name: stage-viewport;
 }
+.stage-viewport > .stage { grid-area: 1 / 1; }
+
+/* Visibility is class-driven: the active Stage paints, the rest are visibility:hidden
+   (kept in layout for the crossfade, but out of the a11y tree and tab order). The
+   [hidden] rule is the SSR / no-JS fallback — the controller clears it on init and
+   drives .is-active instead, so the Stage can stay painted while it fades out. */
+.stage { visibility: hidden; }
+.stage.is-active { visibility: visible; }
 .stage[hidden] { display: none; }
 
-/* reduced-motion safety net: the controller already skips startViewTransition under
-   reduce, but neutralise the transition group too in case a switch is wrapped anyway. */
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(stage-viewport),
-  ::view-transition-old(stage-viewport),
-  ::view-transition-new(stage-viewport) {
-    animation: none;
+/* Resting opacity once the intro has played (root carries .intro-done). Kept as plain
+   rules — NOT an animation fill — so the crossfade's stage-in/out can override during a
+   swap and the Stage reverts cleanly afterwards. While the intro is still running, the
+   beat-window reveal (gated :not(.intro-done)) governs opacity instead. */
+html.js.intro-done .stage { opacity: 0; }
+html.js.intro-done .stage.is-active { opacity: 1; }
+
+/* Crossfade the swap (motion only). The controller tags the incoming Stage .is-entering
+   and the outgoing .is-leaving for the duration, then clears them. The selectors are made
+   more specific than the intro reveal (`html.js.intro-play .stage`) so these animations
+   win the cascade over the intro's held opacity — otherwise the filled opacity:1 would
+   pin both Stages and block the fade. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .stage-viewport > .stage.is-entering { animation: stage-in 0.24s var(--intro-ease) both; }
+  html.js .stage-viewport > .stage.is-leaving {
+    visibility: visible;
+    animation: stage-out 0.24s var(--intro-ease) both;
   }
 }
+@keyframes stage-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes stage-out { from { opacity: 1; } to { opacity: 0; } }
 
 .stage {
   position: relative;
@@ -414,25 +435,25 @@
   html.js .cmd .word {
     width: 0;
   }
-  html.js .stage {
+  html.js:not(.intro-done) .stage {
     opacity: 0;
     transform: translateY(6px);
   }
-  html.js .tab.active {
+  html.js:not(.intro-done) .tab.active {
     opacity: 0;
     transform: translateY(6px);
   } /* rides WITH the Stage */
-  html.js .tab:not(.active) {
+  html.js:not(.intro-done) .tab:not(.active) {
     opacity: 0;
     transform: translateY(-6px);
   }
-  html.js .projlinks {
+  html.js:not(.intro-done) .projlinks {
     opacity: 0;
     transform: translate(-50%, 8px);
   }
 
   /* intro-play (Showcase entered view) → run the locked reveal once, hold the end */
-  html.js.intro-play .cmd {
+  html.js.intro-play:not(.intro-done) .cmd {
     display: grid;
   }
   html.js.intro-play .cmd .line {
@@ -441,16 +462,16 @@
   html.js.intro-play .cmd .word {
     animation: cmd-type var(--intro-cycle) steps(8) both;
   }
-  html.js.intro-play .stage {
+  html.js.intro-play:not(.intro-done) .stage {
     animation: beat-window var(--intro-cycle) var(--intro-ease) both;
   }
-  html.js.intro-play .tab.active {
+  html.js.intro-play:not(.intro-done) .tab.active {
     animation: beat-window var(--intro-cycle) var(--intro-ease) both;
   }
-  html.js.intro-play .tab:not(.active) {
+  html.js.intro-play:not(.intro-done) .tab:not(.active) {
     animation: beat-inactive var(--intro-cycle) var(--intro-ease) both;
   }
-  html.js.intro-play .projlinks {
+  html.js.intro-play:not(.intro-done) .projlinks {
     animation: beat-links var(--intro-cycle) var(--intro-ease) both;
   }
 }

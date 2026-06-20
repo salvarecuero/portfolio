@@ -191,7 +191,7 @@ if (showcase) {
 
   // After the hero is interactive + idle: warm + mount the default Project, then warm the rest.
   const boot = () => onIdle(() => {
-    const active = document.querySelector<HTMLElement>('.stage[data-embed-url]:not([hidden])');
+    const active = document.querySelector<HTMLElement>('.stage[data-embed-url].is-active');
     if (active?.dataset.project) {
       const e = entries.get(active.dataset.project);
       if (e) warm(e.origin);

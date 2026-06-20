@@ -1,10 +1,17 @@
 /**
  * Client wiring for the Showcase Selector: switches the active Project (render-all +
- * toggle), animates the swap with a crossfade View Transition scoped to .stage-viewport,
- * keeps the #<project-id> hash in sync, and implements the APG tablist keyboard model.
- * Pure selection math lives in projectSelection.ts (unit-tested).
+ * toggle), crossfades the Stage swap in place with plain CSS (the Stages are stacked in
+ * one grid cell), keeps the #<project-id> hash in sync, and implements the APG tablist
+ * keyboard model. Pure selection math lives in projectSelection.ts (unit-tested).
+ *
+ * The swap deliberately does NOT use the View Transitions API: a view transition
+ * snapshots and freezes the whole document for the swap, which rasterises + repaints the
+ * Selector tabs every time (they read as "reloading"). A CSS crossfade scoped to the
+ * Stage leaves the tabs as live DOM.
  */
 import { projectFromHash, nextTab, prevTab } from './projectSelection';
+
+const SWAP_MS = 240; // keep in sync with the stage-in/stage-out duration in showcase.css
 
 const reduceMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,43 +24,78 @@ if (tablist && showcase) {
   const ids = tabs.map((t) => t.dataset.project ?? '').filter(Boolean);
 
   const tabFor = (id: string) => tabs.find((t) => t.dataset.project === id);
+  const panelFor = (id: string) =>
+    document.getElementById(`panel-${id}`) as HTMLElement | null;
   const currentId = () =>
     tabs.find((t) => t.getAttribute('aria-selected') === 'true')?.dataset.project ?? ids[0];
 
-  // Synchronous DOM update: visibility, ARIA, roving tabindex, accent.
-  function setActive(id: string) {
+  // Move from SSR's [hidden] (display:none on inactive Stages) to class-driven
+  // visibility, so an outgoing Stage can stay painted while it fades out.
+  const panels = ids.map(panelFor).filter((p): p is HTMLElement => !!p);
+  panels.forEach((p) => { p.hidden = false; });
+
+  let finishSwap: (() => void) | null = null;
+
+  // Crossfade the active Stage. is-entering/is-leaving drive the CSS fade; they are
+  // cleared on animationend (with a timeout fallback) so only .is-active remains.
+  // `animate: false` snaps instantly (deep-link on load, reduced motion).
+  function crossfade(id: string, animate = true) {
+    const incoming = panelFor(id);
+    if (!incoming) return;
+    const outgoing = panels.find((p) => p !== incoming && p.classList.contains('is-active'));
+
+    finishSwap?.(); // settle any in-flight swap before starting the next (rapid switching)
+    if (!outgoing && incoming.classList.contains('is-active')) return;
+
+    if (!animate || reduceMotion()) {
+      panels.forEach((p) => p.classList.toggle('is-active', p === incoming));
+      return;
+    }
+
+    incoming.classList.add('is-active', 'is-entering');
+    outgoing?.classList.remove('is-active');
+    outgoing?.classList.add('is-leaving');
+
+    const onEnd = (e: AnimationEvent) => { if (e.target === incoming) finishSwap?.(); };
+    incoming.addEventListener('animationend', onEnd);
+    const timer = window.setTimeout(() => finishSwap?.(), SWAP_MS + 80);
+    finishSwap = () => {
+      finishSwap = null;
+      window.clearTimeout(timer);
+      incoming.removeEventListener('animationend', onEnd);
+      incoming.classList.remove('is-entering');
+      outgoing?.classList.remove('is-leaving');
+    };
+  }
+
+  // Synchronous DOM update: ARIA, roving tabindex, accent (live tabs — never frozen),
+  // then the Stage crossfade.
+  function setActive(id: string, animate = true) {
     for (const t of tabs) {
       const on = t.dataset.project === id;
       t.classList.toggle('active', on);
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
-      const panel = document.getElementById(`panel-${t.dataset.project}`);
-      if (panel) (panel as HTMLElement).hidden = !on;
     }
     const accent = tabFor(id)?.dataset.accent;
     if (accent) showcase!.style.setProperty('--accent', accent);
     else showcase!.style.removeProperty('--accent');
+    crossfade(id, animate);
     // Notify the embed controller (decoupled): mount/keep-alive the activated Project.
     showcase!.dispatchEvent(new CustomEvent('showcase:activate', { detail: { id } }));
   }
 
-  // Animated activation. `push` records a history entry; `focus` moves DOM focus.
+  // Activation. `push` records a history entry; `focus` moves DOM focus.
   // No-op when the target is already active: avoids duplicate history entries (which
-  // make the Back button appear dead) and a crossfade of identical pixels.
+  // make the Back button appear dead) and a needless crossfade.
   function activate(id: string, opts: { focus?: boolean; push?: boolean } = {}) {
     if (id === currentId()) return;
-    const run = () => {
-      setActive(id);
-      if (opts.focus) tabFor(id)?.focus();
-    };
-    const doc = document as Document & {
-      startViewTransition?: (cb: () => void) => void;
-    };
-    if (!reduceMotion() && typeof doc.startViewTransition === 'function') {
-      doc.startViewTransition(run);
-    } else {
-      run();
-    }
+    // A switch during the intro would otherwise restart the per-tab beat-* reveal (it
+    // holds opacity 0 for ~1s → tabs blink). Finalising the intro hands opacity to the
+    // resting rules so the swap just crossfades. Init/deep-link uses setActive, not this.
+    document.documentElement.classList.add('intro-done');
+    setActive(id);
+    if (opts.focus) tabFor(id)?.focus();
     if (opts.push) history.pushState({ project: id }, '', `#${id}`);
   }
 
@@ -77,7 +119,7 @@ if (tablist && showcase) {
   const initial = projectFromHash(location.hash, ids);
   if (initial) {
     history.replaceState({ project: initial }, '', `#${initial}`);
-    setActive(initial);
+    setActive(initial, false); // snap on load, no crossfade
     showcase.scrollIntoView();
   }
 

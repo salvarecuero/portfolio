@@ -6,7 +6,7 @@ const { project, active } = Astro.props as { project: ShowcaseProject; active: b
 const isEmbed = project.mode === 'embed' && !!project.embed;
 ---
 <section
-  class:list={["stage", { "stage--embed": isEmbed }]}
+  class:list={["stage", { "stage--embed": isEmbed, "is-active": active }]}
   role="tabpanel"
   id={`panel-${project.id}`}
   data-project={project.id}

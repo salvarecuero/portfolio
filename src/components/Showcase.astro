@@ -36,9 +36,13 @@ const active = projects.find((p) => p.active) ?? projects[0];
   const showcase = document.getElementById('showcase');
   if (showcase) {
     const play = () => {
-      root.classList.remove('intro-play');
+      root.classList.remove('intro-play', 'intro-done');
       void (showcase as HTMLElement).offsetWidth; // reflow → clean (re)start
       root.classList.add('intro-play');
+      // After the reveal, hand opacity control from the beat-window fill to the resting
+      // rules (.intro-done) so Stage switching can crossfade without re-triggering the intro.
+      const cycle = parseFloat(getComputedStyle(root).getPropertyValue('--intro-cycle')) || 2800;
+      window.setTimeout(() => root.classList.add('intro-done'), cycle);
     };
     const handle = createIntroTrigger(play, 0.6);
     const io = new IntersectionObserver((entries) => {
