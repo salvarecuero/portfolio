@@ -92,22 +92,18 @@
   .to { transition: opacity 0.5s var(--intro-ease); }
 }
 
-/* Reveal toggle — a flex item left of the credit in the .cosmos-meta band: an eye icon plus
-   a short label, slightly larger and brighter than the credit so it reads as the actionable
-   control. Hidden until the intro has finished so it does not clutter the reveal animation. */
+/* Reveal toggle — an icon-only flex item left of the credit in the .cosmos-meta band, a
+   touch brighter than the credit so it reads as the actionable control. Hidden until the
+   intro has finished so it does not clutter the reveal animation. */
 .backdrop-toggle {
   display: none;
   align-items: center;
-  gap: 0.6ch;
   margin: 0;
   padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
-  font-family: var(--font-geist);
-  font-style: italic;
   font-size: clamp(0.62rem, 1.7vw, 0.8rem);
-  letter-spacing: 0.01em;
   line-height: 1;
   color: rgba(255, 255, 255, 0.62);
   transition: color 0.2s ease;
@@ -121,33 +117,20 @@ html.js.intro-done .backdrop-toggle {
   color: rgba(255, 255, 255, 0.95);
   outline: none;
 }
-.backdrop-toggle__icon {
-  display: inline-flex;
-}
-/* Eye glyph — sized a touch above the label cap height for presence. */
 .backdrop-toggle__glyph {
-  width: 1.15em;
-  height: 1.15em;
+  width: 1.35em;
+  height: 1.35em;
 }
-/* Icon + label swap on state: the "view/eye" pair at rest, the "hide/eye-off" pair while
-   revealed. Driven by aria-pressed (kept in sync by the controller) so no extra JS is needed. */
-.backdrop-toggle__glyph--hide,
-.backdrop-toggle__label--hide {
+/* Glyph swap on state: the "view/eye" glyph at rest, the "hide/eye-off" glyph while revealed.
+   Driven by aria-pressed (kept in sync by the controller) so no extra JS is needed. */
+.backdrop-toggle__glyph--hide {
   display: none;
 }
-.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__glyph--show,
-.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__label--show {
+.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__glyph--show {
   display: none;
 }
-.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__glyph--hide,
-.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__label--hide {
+.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__glyph--hide {
   display: inline;
-}
-/* On narrow viewports keep just the eye icon so the full (mandatory) credit always fits. */
-@media (max-width: 480px) {
-  .backdrop-toggle__label {
-    display: none;
-  }
 }
 
 /* the Showcase section — transparent (no background) so the cosmos shows through as the
