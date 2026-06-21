@@ -24,4 +24,17 @@ if (showcase && button) {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') reveal.restore();
   });
+
+  // Restore the foreground once the Showcase stops being the dominant section (scrolled
+  // away while revealed), so returning lands on the live UI rather than the bare cosmos. The
+  // fade-back runs off-screen. A 0.5 threshold (not 0) avoids the flush-boundary case: with
+  // scroll-snap the section rests exactly below the viewport, where ratio 0 is an ambiguous
+  // intersection the observer may never report. The intro is one-shot (introTrigger
+  // unobserves after firing), so the '$ showcase' reveal never replays on return.
+  const exitObserver = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) reveal.restore();
+    }
+  }, { threshold: 0.5 });
+  exitObserver.observe(showcase);
 }
