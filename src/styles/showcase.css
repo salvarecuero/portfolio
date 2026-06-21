@@ -20,6 +20,82 @@
   z-index: -1;
   pointer-events: none;
   background: var(--space) url("../assets/showcase/cosmos.webp") center / cover;
+
+  /* Ambient drift — a slow, never-ending float for depth. transform-only (GPU-composited,
+     no layout/paint), so it stays within the performance budget. The zoom midpoint is >1 on
+     purpose: it leaves overflow margin so the rotation/translate never reveal the cover edges. */
+  --drift-x: 1.2%;
+  --drift-y: 0.8%;
+  --drift-rotate: 1.2deg;
+  --drift-zoom: 1.1; /* baseline scale (overflow margin per side ≈ (zoom - 1) / 2) */
+  --drift-breathe: 0.04; /* zoom amplitude around the midpoint */
+  will-change: transform;
+  animation: cosmos-drift 22s linear infinite;
+}
+
+/* translate traces a CLOSED ellipse (cos,sin around a full turn) so the path never reverses
+   — that is what keeps the motion at constant speed with no perceptible stop, unlike a
+   back-and-forth oscillation that must hit zero velocity at each turnaround. Rotation tracks
+   the x-phase; zoom breathes 90deg out of phase so its extremes never coincide with a
+   translate extreme. 0% == 100% for a seamless loop; 8 steps keep the ellipse round. */
+@keyframes cosmos-drift {
+  0%    { transform: translate(var(--drift-x), 0)                                          rotate(var(--drift-rotate))               scale(var(--drift-zoom)); }
+  12.5% { transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * 0.707)) rotate(calc(var(--drift-rotate) * 0.707)) scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707)); }
+  25%   { transform: translate(0, var(--drift-y))                                          rotate(0deg)                              scale(calc(var(--drift-zoom) + var(--drift-breathe))); }
+  37.5% { transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * 0.707)) rotate(calc(var(--drift-rotate) * -0.707)) scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707)); }
+  50%   { transform: translate(calc(var(--drift-x) * -1), 0)                               rotate(calc(var(--drift-rotate) * -1))    scale(var(--drift-zoom)); }
+  62.5% { transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * -0.707)) rotate(calc(var(--drift-rotate) * -0.707)) scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707)); }
+  75%   { transform: translate(0, calc(var(--drift-y) * -1))                               rotate(0deg)                              scale(calc(var(--drift-zoom) - var(--drift-breathe))); }
+  87.5% { transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * -0.707)) rotate(calc(var(--drift-rotate) * 0.707)) scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707)); }
+  100%  { transform: translate(var(--drift-x), 0)                                          rotate(var(--drift-rotate))               scale(var(--drift-zoom)); }
+}
+
+/* Intro pass — during the $ showcase reveal the slow 22s drift advances too little to
+   register, so the cosmos runs the SAME drift ellipse at a faster 12s loop pace while the
+   intro plays, then settles to 22s. A DISTINCT keyframe name (identical path to cosmos-drift)
+   is required so the intro-done handoff RESTARTS the loop — changing only the duration on the
+   same name would not restart it and would jump to a mismatched phase. */
+@keyframes cosmos-drift-intro {
+  0%    { transform: translate(var(--drift-x), 0)                                          rotate(var(--drift-rotate))               scale(var(--drift-zoom)); }
+  12.5% { transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * 0.707)) rotate(calc(var(--drift-rotate) * 0.707)) scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707)); }
+  25%   { transform: translate(0, var(--drift-y))                                          rotate(0deg)                              scale(calc(var(--drift-zoom) + var(--drift-breathe))); }
+  37.5% { transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * 0.707)) rotate(calc(var(--drift-rotate) * -0.707)) scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707)); }
+  50%   { transform: translate(calc(var(--drift-x) * -1), 0)                               rotate(calc(var(--drift-rotate) * -1))    scale(var(--drift-zoom)); }
+  62.5% { transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * -0.707)) rotate(calc(var(--drift-rotate) * -0.707)) scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707)); }
+  75%   { transform: translate(0, calc(var(--drift-y) * -1))                               rotate(0deg)                              scale(calc(var(--drift-zoom) - var(--drift-breathe))); }
+  87.5% { transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * -0.707)) rotate(calc(var(--drift-rotate) * 0.707)) scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707)); }
+  100%  { transform: translate(var(--drift-x), 0)                                          rotate(var(--drift-rotate))               scale(var(--drift-zoom)); }
+}
+
+/* Honor reduced-motion: hold the backdrop still at the zoom midpoint. */
+@media (prefers-reduced-motion: reduce) {
+  .cosmos {
+    animation: none;
+    transform: scale(var(--drift-zoom));
+  }
+}
+
+/* Two-speed drift, gated like the rest of the intro and kept inside no-preference so
+   reduced-motion stays static (base .cosmos slow loop also covers the no-JS path). */
+@media (prefers-reduced-motion: no-preference) {
+  /* Pre-intro: the drift paused at its rest pose (0%), so it does not advance until the
+     reveal — this makes the elapsed time at intro-done deterministically --intro-cycle. */
+  html.js:not(.intro-done) .cosmos {
+    animation: cosmos-drift-intro 12s linear infinite;
+    animation-play-state: paused;
+  }
+  /* Showcase entered view: run the drift at the faster 12s pace during the intro. */
+  html.js.intro-play:not(.intro-done) .cosmos {
+    animation-play-state: running;
+  }
+  /* Intro finished: continue the SAME ellipse at the slow 22s pace, offset so the first frame
+     lands on the phase the 12s pace reached at handoff — no positional jump, only the pace
+     dropping. delay = -(--intro-cycle / 12s) * 22s = -(2.8/12) * 22 ≈ -5.133s. Keep in sync if
+     --intro-cycle or either period changes. */
+  html.js.intro-done .cosmos {
+    animation: cosmos-drift 22s linear infinite;
+    animation-delay: -5.133s;
+  }
 }
 
 /* Backdrop meta band — the reveal toggle + the (CC BY 4.0 mandated) credit share the
