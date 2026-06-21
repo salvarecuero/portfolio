@@ -10,6 +10,30 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
-# Astro content-hashes these — safe to cache forever.
+# Astro content-hashes these (JS, CSS, images, and the self-hosted fonts under
+# /_astro/fonts) — the filename changes when the content does, so a new build never
+# collides with a cached file. Safe to cache forever; the browser never revalidates.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Non-hashed brand assets that change rarely. A week of browser cache lets repeat visits
+# skip even the conditional (304) request; stale-while-revalidate refreshes in the
+# background. A redesign needing an instant swap can rename the file or Purge Everything.
+/favicon.ico
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/favicon.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# Social preview. Bounded to a day fresh so a redesign propagates next-day; crawlers
+# refetch on their own cadence regardless of this header.
+/og.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+# Everything else (HTML pages, robots.txt, the sitemaps) is intentionally NOT listed here.
+# It inherits Cloudflare Pages' default `Cache-Control: public, max-age=0, must-revalidate`
+# plus an ETag: the browser revalidates with a cheap conditional request and gets a 304
+# when unchanged, so a new deployment is served instantly. Pinning HTML to a longer cache
+# (here or via a zone-level "Cache Everything" rule) is the one thing that would break
+# deploy invalidation. See docs/adr/0006-caching-and-deploy-invalidation.md.
