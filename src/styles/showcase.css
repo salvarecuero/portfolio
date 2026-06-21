@@ -22,16 +22,24 @@
   background: var(--space) url("../assets/showcase/cosmos.webp") center / cover;
 }
 
-/* Backdrop credit — sits in the bottom-right cosmos frame strip (the --showcase-pad band
-   below the Stage), aligned to the Stage's right edge. Muted-but-legible per CC BY 4.0:
-   visible at rest, brightening on hover. z-index lifts it above the transparent .to so the
-   links stay clickable. Absolute within .showcase, so it only shows on the Showcase. */
-.cosmos-credit {
+/* Backdrop meta band — the reveal toggle + the (CC BY 4.0 mandated) credit share the
+   bottom-right cosmos frame strip (the --showcase-pad band below the Stage), aligned to the
+   Stage's right edge. The toggle sits left of the credit. z-index lifts the row above the
+   transparent .to so the links/button stay clickable. Absolute within .showcase, so it only
+   shows on the Showcase. */
+.cosmos-meta {
   position: absolute;
   right: var(--showcase-pad);
   bottom: 0;
   height: var(--showcase-pad);
   z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 1.75ch;
+}
+
+/* Backdrop credit — muted-but-legible per CC BY 4.0: visible at rest, brightening on hover. */
+.cosmos-credit {
   margin: 0;
   display: flex;
   align-items: center;
@@ -84,17 +92,13 @@
   .to { transition: opacity 0.5s var(--intro-ease); }
 }
 
-/* Toggle control — mirrors the cosmos credit: bottom band of the frame, bottom-left,
-   muted at rest and bright on hover/focus or while active (aria-pressed). Hidden until the
-   intro has finished so it does not clutter the reveal animation. */
+/* Reveal toggle — a flex item left of the credit in the .cosmos-meta band: an eye icon plus
+   a short label, slightly larger and brighter than the credit so it reads as the actionable
+   control. Hidden until the intro has finished so it does not clutter the reveal animation. */
 .backdrop-toggle {
-  position: absolute;
-  left: var(--showcase-pad);
-  bottom: 0;
-  height: var(--showcase-pad);
-  z-index: 2;
   display: none;
   align-items: center;
+  gap: 0.6ch;
   margin: 0;
   padding: 0;
   border: 0;
@@ -102,9 +106,10 @@
   cursor: pointer;
   font-family: var(--font-geist);
   font-style: italic;
-  font-size: clamp(0.56rem, 1.6vw, 0.72rem);
+  font-size: clamp(0.62rem, 1.7vw, 0.8rem);
+  letter-spacing: 0.01em;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.62);
   transition: color 0.2s ease;
 }
 html.js.intro-done .backdrop-toggle {
@@ -113,12 +118,36 @@ html.js.intro-done .backdrop-toggle {
 .backdrop-toggle:hover,
 .backdrop-toggle:focus-visible,
 .backdrop-toggle[aria-pressed="true"] {
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.95);
   outline: none;
 }
-.backdrop-toggle__mark {
-  font-style: normal;
-  font-size: 0.9em;
+.backdrop-toggle__icon {
+  display: inline-flex;
+}
+/* Eye glyph — sized a touch above the label cap height for presence. */
+.backdrop-toggle__glyph {
+  width: 1.15em;
+  height: 1.15em;
+}
+/* Icon + label swap on state: the "view/eye" pair at rest, the "hide/eye-off" pair while
+   revealed. Driven by aria-pressed (kept in sync by the controller) so no extra JS is needed. */
+.backdrop-toggle__glyph--hide,
+.backdrop-toggle__label--hide {
+  display: none;
+}
+.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__glyph--show,
+.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__label--show {
+  display: none;
+}
+.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__glyph--hide,
+.backdrop-toggle[aria-pressed="true"] .backdrop-toggle__label--hide {
+  display: inline;
+}
+/* On narrow viewports keep just the eye icon so the full (mandatory) credit always fits. */
+@media (max-width: 480px) {
+  .backdrop-toggle__label {
+    display: none;
+  }
 }
 
 /* the Showcase section — transparent (no background) so the cosmos shows through as the

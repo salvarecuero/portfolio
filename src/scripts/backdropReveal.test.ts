@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { createBackdropReveal, backdropAria } from './backdropReveal';
 
 describe('backdropAria', () => {
-  it('maps the normal state to an un-pressed "Reveal backdrop" control', () => {
-    expect(backdropAria(false)).toEqual({ pressed: 'false', label: 'Reveal backdrop' });
+  it('maps the normal state to an un-pressed "View backdrop" control', () => {
+    expect(backdropAria(false)).toEqual({ pressed: 'false', label: 'View backdrop' });
   });
   it('maps the revealed state to a pressed "Hide backdrop" control', () => {
     expect(backdropAria(true)).toEqual({ pressed: 'true', label: 'Hide backdrop' });

@@ -12,7 +12,7 @@ export interface BackdropAria {
 export function backdropAria(revealed: boolean): BackdropAria {
   return revealed
     ? { pressed: 'true', label: 'Hide backdrop' }
-    : { pressed: 'false', label: 'Reveal backdrop' };
+    : { pressed: 'false', label: 'View backdrop' };
 }
 
 /**
