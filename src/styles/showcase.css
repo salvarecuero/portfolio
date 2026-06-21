@@ -469,6 +469,45 @@ html.js.intro-done .stage.is-active { opacity: 1; }
 }
 .tab.active { flex: 0 0 auto; }
 .tab:not(.active) { flex: 0 1 auto; }
+/* Brand logo lockups: each tab shows its Project's real site logo in place of a
+   generic glyph + title. Brand colours are intrinsic to each mark; inactive tabs
+   dim the whole lockup so the active tab keeps its emphasis. */
+.tab-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.tab:not(.active) .tab-logo { opacity: 0.62; }
+.tab.active .tab-logo { opacity: 1; }
+.tab-logo-word {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+/* Simple Tools: gradient hex mark (the "iconito") beside the wordmark. */
+.tab-logo--sts .tab-logo-mark {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  opacity: 1;
+}
+/* RangeTube: self-contained coral wordmark — wide aspect, not a square glyph.
+   All-caps with no descender, so a slightly smaller height keeps its cap-height
+   visually in line with the other tabs' marks. */
+.tab .tab-logo--rangetube {
+  width: auto;
+  height: 14px;
+  flex: none;
+  opacity: 1;
+}
+.tab:not(.active) .tab-logo--rangetube { opacity: 0.62; }
+.tab.active .tab-logo--rangetube { opacity: 1; }
+/* bye-bg: "bye" inherits the tab colour, "-bg" keeps the brand accent.
+   No inter-glyph gap — the wordmark reads as a single token "bye-bg". */
+.tab-logo--byebg { gap: 0; }
+.tab-logo--byebg .tab-logo-accent { font-weight: 700; }
 .lnk {
   display: inline-flex;
   align-items: center;

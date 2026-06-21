@@ -1,5 +1,6 @@
 ---
 import type { ShowcaseProject } from '../../lib/showcaseProjects';
+import ProjectLogo from './ProjectLogo.astro';
 const { projects } = Astro.props as { projects: ShowcaseProject[] };
 ---
 {/* `.selector` is the visual chrome row; the tablist owns every role="tab" child —
@@ -19,8 +20,7 @@ const { projects } = Astro.props as { projects: ShowcaseProject[] };
         tabindex={p.active ? 0 : -1}
         type="button"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d={p.iconPath} /></svg>
-        <span class="tab-label">{p.title}</span>
+        <ProjectLogo slug={p.slug} title={p.title} iconPath={p.iconPath} accent={p.accent} />
       </button>
     ))}
   </div>
