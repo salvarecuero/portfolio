@@ -17,7 +17,7 @@ mediaMobile:
   - type: image
     src: ../../assets/showcase/bye-bg/poster-mobile.png
     alt: "bye-bg on mobile: in-browser background removal"
-order: 0
+order: 1
 accent: "#0ea5e9"
 icon: "wand"
 links:
