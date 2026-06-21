@@ -61,10 +61,11 @@ const active = projects.find((p) => p.active) ?? projects[0];
 </section>
 
 <script>
-  import { createIntroTrigger } from '../scripts/introTrigger';
+  import { createIntroController } from '../scripts/introTrigger';
   const root = document.documentElement;
   const showcase = document.getElementById('showcase');
   if (showcase) {
+    let doneTimer = 0;
     const play = () => {
       root.classList.remove('intro-play', 'intro-done');
       void (showcase as HTMLElement).offsetWidth; // reflow → clean (re)start
@@ -72,12 +73,25 @@ const active = projects.find((p) => p.active) ?? projects[0];
       // After the reveal, hand opacity control from the beat-window fill to the resting
       // rules (.intro-done) so Stage switching can crossfade without re-triggering the intro.
       const cycle = parseFloat(getComputedStyle(root).getPropertyValue('--intro-cycle')) || 2800;
-      window.setTimeout(() => root.classList.add('intro-done'), cycle);
+      doneTimer = window.setTimeout(() => root.classList.add('intro-done'), cycle);
     };
-    const handle = createIntroTrigger(play, 0.6);
+    // Leaving the Showcase mid-intro: finish it now so the fixed $ showcase overlay does not
+    // linger over the Presentation. No replay — returning lands on the resting state.
+    const settle = () => {
+      window.clearTimeout(doneTimer);
+      root.classList.add('intro-done');
+    };
+    const decide = createIntroController(0.6, 0.5);
     const io = new IntersectionObserver((entries) => {
-      if (handle(entries)) io.unobserve(showcase);
-    }, { threshold: [0, 0.6, 1] });
+      for (const e of entries) {
+        const action = decide(e);
+        if (action === 'play') play();
+        else if (action === 'settle') {
+          settle();
+          io.unobserve(showcase);
+        }
+      }
+    }, { threshold: [0, 0.5, 0.6, 1] });
     io.observe(showcase);
   }
 </script>
