@@ -81,13 +81,21 @@ const liveHost = links?.live ? new URL(links.live).host : null;
       {media.map((m, i) => (
         <figure class="mat">
           {m.type === "image" ? (
-            <Image
-              class="frame"
-              src={m.src}
-              alt={m.alt}
-              widths={[480, 960, 1440]}
-              sizes="(max-width: 860px) 100vw, 820px"
-            />
+            <button
+              class="frame-trigger"
+              type="button"
+              aria-label="Open larger image"
+              data-lightbox-trigger
+              data-full={m.src.src}
+              data-alt={m.alt}
+              data-cap={i === 0 && liveHost ? liveHost : ""}
+            >
+              <Image class="frame" src={m.src} alt={m.alt} widths={[480, 960, 1440]} sizes="(max-width: 860px) 100vw, 820px" />
+              <span class="frame-hint" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                Click to enlarge
+              </span>
+            </button>
           ) : (
             <video class="frame" controls playsinline poster={m.poster.src} aria-label={m.alt}>
               {m.sources.map((s) => <source src={s.src} type={s.type} />)}
@@ -112,6 +120,19 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     </footer>
   </div>
 </main>
+
+<div class="lightbox" data-lightbox aria-hidden="true">
+  <figure class="lightbox-fig">
+    <button class="lightbox-close" type="button" aria-label="Close" data-lightbox-close>✕</button>
+    <img data-lightbox-img alt="" />
+    <figcaption class="lightbox-cap" data-lightbox-cap></figcaption>
+  </figure>
+</div>
+
+<script>
+  import { initLightbox } from "../scripts/lightbox";
+  initLightbox();
+</script>
 
 <style>
   /* The Project's own readable page: the warm, light "wall" world of the Presentation,
@@ -331,6 +352,32 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     color: #8a857c;
     padding: 0.6rem 0.2rem 0.1rem;
   }
+
+  /* image lightbox trigger + hint, and the single overlay it opens */
+  .frame-trigger { display: block; width: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; position: relative; }
+  .frame-hint {
+    position: absolute; right: 1rem; bottom: 0.9rem;
+    display: inline-flex; align-items: center; gap: 0.45ch;
+    font-family: var(--font-geist), system-ui, sans-serif; font-size: 0.78rem; font-weight: 500;
+    color: #fff; background: rgba(0, 0, 0, 0.6); padding: 0.4em 0.8em; border-radius: 999px;
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); pointer-events: none;
+  }
+  .frame-hint svg { width: 14px; height: 14px; }
+  .lightbox {
+    position: fixed; inset: 0; z-index: 100; display: none; place-items: center;
+    padding: clamp(1rem, 4vw, 3rem); background: rgba(12, 10, 9, 0.82);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  }
+  .lightbox.open { display: grid; }
+  .lightbox-fig { position: relative; margin: 0; max-width: min(1100px, 94vw); max-height: 90vh; display: flex; flex-direction: column; gap: 0.7rem; }
+  .lightbox-fig img { display: block; max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 10px; box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8); }
+  .lightbox-cap { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.76rem; color: #d8d4cd; text-align: center; }
+  .lightbox-close {
+    position: absolute; top: -0.6rem; right: -0.6rem; width: 40px; height: 40px; border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.25); background: rgba(20, 17, 15, 0.9); color: #fff;
+    font-size: 1.1rem; cursor: pointer; display: grid; place-items: center;
+  }
+  .lightbox-close:hover { background: #fff; color: #14110f; }
 
   /* prose: narrower reading column for a comfortable line length */
   .body {

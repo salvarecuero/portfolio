@@ -102,4 +102,14 @@ describe("ProjectArticle", () => {
     expect(html).toContain("Back");
     expect(html).toContain("Salvador Recuero");
   });
+
+  it("wraps media images in a lightbox trigger and renders the overlay once", async () => {
+    const html = await render();
+    expect(html).toMatch(/data-lightbox-trigger[^>]*data-full=/);
+    expect(html).toContain("Click to enlarge");
+    // single overlay container with the close + image hooks
+    expect((html.match(/data-lightbox(?![-\w])/g) ?? []).length).toBe(1);
+    expect(html).toContain("data-lightbox-close");
+    expect(html).toContain("data-lightbox-img");
+  });
 });
