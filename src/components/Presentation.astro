@@ -41,7 +41,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
           const icon = stackIcons[tech];
           return (
             <li style={icon ? `--brand:${icon.brand}` : undefined}>
-              {icon && (
+              {icon && "path" in icon && (
                 <svg class="stack-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d={icon.path} />
                 </svg>

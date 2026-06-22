@@ -8,7 +8,7 @@ const entry = {
   data: {
     title: "Demo Project",
     summary: "A short summary of the demo.",
-    stack: ["React", "Astro"],
+    stack: ["React", "Sablier", "NoSuchTech"],
     links: { live: "https://demo.example.com" },
     media: [{ type: "image" as const, src: placeholder, alt: "demo overview" }],
     accent: "#e8634c",
@@ -42,8 +42,20 @@ describe("ProjectArticle", () => {
   it("renders the stack chips and the live link", async () => {
     const html = await render();
     expect(html).toContain("React");
-    expect(html).toContain("Astro");
+    expect(html).toContain("Sablier");
+    expect(html).toContain("NoSuchTech");
     expect(html).toContain("https://demo.example.com");
+  });
+
+  it("renders the stack as icon pills: svg glyph, mask glyph, and text fallback", async () => {
+    const html = await render();
+    // React -> simple-icons SVG path inside a stack <li>
+    expect(html).toMatch(/<li[^>]*>[\s\S]*?<svg[\s\S]*?<\/svg>[\s\S]*?React[\s\S]*?<\/li>/);
+    // Sablier -> mask span carrying the data-URI, no <svg>
+    expect(html).toMatch(/class="[^"]*mask-ic[^"]*"[^>]*--m:url\('data:image\/webp/);
+    expect(html).toContain("Sablier");
+    // NoSuchTech -> plain text pill (no glyph), label still present
+    expect(html).toContain("NoSuchTech");
   });
 
   it("applies the per-Project accent as a token override", async () => {
