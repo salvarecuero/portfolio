@@ -21,3 +21,13 @@ Phase 5 (design iteration) is **deferred by decision**: the current hand-crafted
 (performance-first), and the items above — type scale, base palette, dark/light, the primitives set,
 and the concrete per-Project accent token definitions — are revisited in a dedicated future session.
 The token-as-source-of-truth foundation already supports that iteration without structural change.
+
+## Custom stack icons
+
+Stack glyphs come from `src/data/presentationIcons.ts`. Each is either a
+simple-icons SVG path or, for a brand with no simple-icons glyph, a small
+`data:`-URI WebP used as a CSS `mask` over `background: currentColor`. The mask
+form tints ink → brand on hover exactly like the SVG paths, so custom logos stay
+visually consistent. Regenerate a mask asset with `node scripts/gen-stack-icons.mjs`
+(sharp → 40×40 lossless WebP → base64). Glyphs are inlined to keep zero extra
+network requests. A technology not in the registry renders as a plain text pill.

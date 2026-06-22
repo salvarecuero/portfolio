@@ -1,10 +1,18 @@
-// Brand icons for the Presentation stack (mono → hover brand). `brand` is the
-// hover colour, tuned to read on the light wall (React/Astro/AWS overridden from
-// the simple-icons defaults). Keyed by the exact stack name in presentation.ts.
-// A stack glyph is EITHER a simple-icons single SVG path (rendered with
-// fill: currentColor) OR a `data:`-URI used as a CSS mask (background:
-// currentColor) for brands with no simple-icons glyph. Both tint ink -> brand
-// identically. See the "Custom stack icon" note in docs/design-system.md.
+// Shared stack-icon registry — consumed by the Presentation and the Tool page.
+// Keyed by the exact stack name. `brand` is the hover colour, tuned to read on
+// the light wall (React/Astro/AWS overridden from the simple-icons defaults).
+// An entry is EITHER a simple-icons single SVG path ({ brand, path }, rendered
+// with fill: currentColor) OR a data:-URI used as a CSS mask ({ brand, mask },
+// background: currentColor) for brands with no simple-icons glyph. Both tint
+// ink → brand on hover identically. A name absent from this map falls back to a
+// plain text pill.
+//
+// Adding a CUSTOM (non-simple-icons) brand:
+//   1. Start from a transparent-background logo (any color; only alpha matters).
+//   2. node scripts/gen-stack-icons.mjs  — uses sharp to emit a 40×40 lossless
+//      WebP as a base64 data-URI (Sablier example: ~2.3 KB). Adjust the script's
+//      source path / brand hex, then paste the printed `{ brand, mask }` entry.
+// Keep glyphs INLINE (path or data-URI) so the page makes no extra requests.
 export type StackIcon =
   | { brand: string; path: string }
   | { brand: string; mask: string };
