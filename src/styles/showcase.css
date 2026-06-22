@@ -781,7 +781,5 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   html.js .stage--embed:not(.embed-failed) .media-gallery--desktop { display: none; }
   .stage--embed .media-gallery--mobile { display: none; }
 }
-.stage--embed[data-embed-mobile] .embed { display: none; }
-.stage--embed[data-embed-mobile] .media-gallery--mobile { display: block; }
 html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .embed { display: block; }
 html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .media-gallery--mobile { display: none; }
