@@ -1,13 +1,15 @@
 /**
- * Live Embed lifecycle for the Showcase. Lazy-mounts a cross-origin <iframe> over a
- * Project's Poster, runs the two-way readiness handshake (with a graceful fallback),
- * fades the Poster out on reveal, keeps mounted embeds alive across switches (LRU-capped),
- * and warms embed origins at idle / on Selector intent. Pure logic: embedLifecycle.ts.
- * Plain processed module (no framework island) — mirrors showcaseController.ts.
+ * Live Embed lifecycle for the Showcase. Lazy-mounts a cross-origin <iframe> behind a flat
+ * loading cover, runs the two-way readiness handshake, and reveals the iframe ONLY on the
+ * handshake (fading the cover out). A delayed spinner appears if the wait becomes evident;
+ * if no handshake arrives (ceiling) or the iframe errors, the Stage falls back to its media
+ * gallery and the failure is remembered for the session. Mounted embeds are kept alive
+ * across switches (LRU-capped) and origins are warmed at idle / on Selector intent.
+ * Pure logic: embedLifecycle.ts.
  */
 import {
   PROTOCOL_VERSION, embedOrigin, isReadyMessage,
-  createRevealRace, lruEvict, shouldMount, type RevealRace,
+  createEmbedTimers, lruEvict, shouldMount, type EmbedTimers,
 } from './embedLifecycle';
 
 const LIVE_CAP = 3;
@@ -24,34 +26,38 @@ interface EmbedEntry {
   id: string;
   stage: HTMLElement;
   iframe: HTMLIFrameElement;
-  poster: HTMLElement;
+  cover: HTMLElement;
   url: string;
   origin: string;
   requiresLaunch: boolean;
   embedMobile: boolean;
   mounted: boolean;
   revealed: boolean;
-  race?: RevealRace;
+  failed: boolean;
+  timers?: EmbedTimers;
   helloTimer?: number;
-  posterEndHandler?: () => void;
+  coverEndHandler?: () => void;
 }
 
 const entries = new Map<string, EmbedEntry>();
 const mountOrder: string[] = [];
 const warmed = new Set<string>();
+// Embeds that failed the handshake this session render media directly on re-activation,
+// instead of re-attempting the iframe and waiting out the ceiling again.
+const failed = new Set<string>();
 
 function collect() {
   for (const stage of document.querySelectorAll<HTMLElement>('.stage[data-embed-url]')) {
     const id = stage.dataset.project;
     const iframe = stage.querySelector<HTMLIFrameElement>('iframe[data-embed-frame]');
-    const poster = stage.querySelector<HTMLElement>('[data-embed-poster]');
+    const cover = stage.querySelector<HTMLElement>('[data-embed-cover]');
     const url = stage.dataset.embedUrl;
-    if (!id || !iframe || !poster || !url) continue;
+    if (!id || !iframe || !cover || !url) continue;
     entries.set(id, {
-      id, stage, iframe, poster, url, origin: embedOrigin(url),
+      id, stage, iframe, cover, url, origin: embedOrigin(url),
       requiresLaunch: stage.dataset.embedRequiresLaunch !== undefined,
       embedMobile: stage.dataset.embedMobile !== undefined,
-      mounted: false, revealed: false,
+      mounted: false, revealed: false, failed: false,
     });
   }
 }
@@ -69,42 +75,64 @@ function warm(origin: string) {
 }
 
 function reveal(entry: EmbedEntry) {
-  if (entry.revealed) return;
+  if (entry.revealed || entry.failed) return;
   entry.revealed = true;
   if (entry.helloTimer) window.clearInterval(entry.helloTimer);
   entry.iframe.removeAttribute('inert');
   entry.iframe.removeAttribute('tabindex');
-  entry.stage.classList.add('embed-revealed'); // CSS fades the poster + drops the pointer shield
+  entry.stage.classList.remove('is-spinning');
+  entry.stage.classList.add('embed-revealed'); // CSS fades the cover + drops the click shield
   if (reduceMotion()) {
-    entry.poster.style.display = 'none';
+    entry.cover.style.display = 'none';
   } else {
     const onEnd = () => {
-      entry.poster.style.display = 'none';
-      entry.poster.removeEventListener('transitionend', onEnd);
-      entry.posterEndHandler = undefined;
+      entry.cover.style.display = 'none';
+      entry.cover.removeEventListener('transitionend', onEnd);
+      entry.coverEndHandler = undefined;
     };
-    // Tracked on the entry so unmount can detach it. Otherwise an eviction mid-fade
-    // leaves this listener attached; when unmount removes `embed-revealed` the poster's
-    // opacity transition reverses and fires transitionend, re-hiding a poster that
-    // should now be visible (blank Stage), and listeners accumulate across re-mounts.
-    entry.posterEndHandler = onEnd;
-    entry.poster.addEventListener('transitionend', onEnd);
+    // Tracked on the entry so unmount can detach it. Otherwise an eviction mid-fade leaves
+    // this listener attached; removing `embed-revealed` reverses the opacity transition and
+    // fires transitionend, re-hiding a cover that should now be visible.
+    entry.coverEndHandler = onEnd;
+    entry.cover.addEventListener('transitionend', onEnd);
   }
 }
 
+function fallback(entry: EmbedEntry) {
+  if (entry.revealed || entry.failed) return;
+  entry.failed = true;
+  failed.add(entry.id);
+  entry.timers?.cancel();
+  if (entry.helloTimer) window.clearInterval(entry.helloTimer);
+  entry.stage.classList.remove('is-spinning');
+  entry.stage.classList.add('embed-failed'); // CSS hides .embed, shows the media gallery
+  // Stop the broken/blocked iframe from holding the connection, and drop it from the live set.
+  entry.iframe.removeAttribute('src');
+  entry.iframe.setAttribute('inert', '');
+  entry.iframe.setAttribute('tabindex', '-1');
+  const i = mountOrder.indexOf(entry.id);
+  if (i !== -1) mountOrder.splice(i, 1);
+  entry.mounted = false;
+}
+
 function mount(entry: EmbedEntry) {
-  if (entry.mounted) return;
+  if (entry.mounted || entry.failed) return;
   entry.mounted = true;
-  entry.race = createRevealRace({ onReveal: () => reveal(entry) });
-  // load → grace reveal + parent "hello" (covers child-ready-before-parent-listener)
+  entry.timers = createEmbedTimers({
+    onSpinner: () => { if (!entry.revealed && !entry.failed) entry.stage.classList.add('is-spinning'); },
+    onReveal: () => reveal(entry),
+    onFallback: () => fallback(entry),
+  });
+  // load → parent "hello" retries (covers child-ready-before-parent-listener). The grace
+  // reveal is gone: reveal is handshake-only now.
   entry.iframe.addEventListener('load', () => {
-    entry.race?.onLoad();
     let tries = 0;
     entry.helloTimer = window.setInterval(() => {
       entry.iframe.contentWindow?.postMessage({ type: 'portfolio:hello', v: PROTOCOL_VERSION }, entry.origin);
-      if (++tries >= 10 || entry.revealed) window.clearInterval(entry.helloTimer);
+      if (++tries >= 10 || entry.revealed || entry.failed) window.clearInterval(entry.helloTimer);
     }, 250);
   }, { once: true });
+  entry.iframe.addEventListener('error', () => entry.timers?.onError(), { once: true });
   entry.iframe.src = entry.url; // the actual lazy load
 }
 
@@ -119,17 +147,17 @@ function touchLRU(id: string) {
 function unmount(id: string) {
   const entry = entries.get(id);
   if (!entry || !entry.mounted) return;
-  entry.race?.cancel();
+  entry.timers?.cancel();
   if (entry.helloTimer) window.clearInterval(entry.helloTimer);
-  if (entry.posterEndHandler) {
-    entry.poster.removeEventListener('transitionend', entry.posterEndHandler);
-    entry.posterEndHandler = undefined;
+  if (entry.coverEndHandler) {
+    entry.cover.removeEventListener('transitionend', entry.coverEndHandler);
+    entry.coverEndHandler = undefined;
   }
   entry.iframe.removeAttribute('src');
   entry.iframe.setAttribute('inert', '');
   entry.iframe.setAttribute('tabindex', '-1');
-  entry.stage.classList.remove('embed-revealed');
-  entry.poster.style.display = '';
+  entry.stage.classList.remove('embed-revealed', 'is-spinning');
+  entry.cover.style.display = '';
   entry.mounted = false;
   entry.revealed = false;
   const i = mountOrder.indexOf(id);
@@ -140,6 +168,7 @@ function maybeMount(id: string) {
   const entry = entries.get(id);
   if (!entry) return;
   if (!shouldMount({ mode: 'embed', isDesktop: isDesktop(), embedMobile: entry.embedMobile, requiresLaunch: entry.requiresLaunch })) return;
+  if (entry.failed) return; // already known bad → the stage already shows media (embed-failed)
   mount(entry);
   touchLRU(id);
 }
@@ -159,7 +188,7 @@ if (showcase) {
       if (e.source !== entry.iframe.contentWindow) continue;
       if (!isReadyMessage(e.data)) continue;
       entry.iframe.contentWindow?.postMessage({ type: 'portfolio:ack', v: PROTOCOL_VERSION }, entry.origin);
-      entry.race?.onMessage();
+      entry.timers?.onReady();
       break;
     }
   });
@@ -175,7 +204,7 @@ if (showcase) {
     const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-embed-launch]');
     const id = btn?.closest<HTMLElement>('.stage')?.dataset.project;
     const entry = id ? entries.get(id) : undefined;
-    if (entry) { mount(entry); touchLRU(entry.id); }
+    if (entry && !entry.failed) { mount(entry); touchLRU(entry.id); }
   });
 
   // Selector intent → warm the hovered/focused Project's origin.
