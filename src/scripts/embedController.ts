@@ -57,7 +57,7 @@ function collect() {
       id, stage, iframe, cover, url, origin: embedOrigin(url),
       requiresLaunch: stage.dataset.embedRequiresLaunch !== undefined,
       embedMobile: stage.dataset.embedMobile !== undefined,
-      mounted: false, revealed: false, failed: false,
+      mounted: false, revealed: false, failed: failed.has(id),
     });
   }
 }
