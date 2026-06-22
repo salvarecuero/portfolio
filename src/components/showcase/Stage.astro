@@ -19,6 +19,7 @@ const isEmbed = project.mode === 'embed' && !!project.embed;
   {isEmbed ? (
     <>
       <Embed project={project} />
+      <MediaGallery items={project.media} variant="desktop" />
       <MediaGallery items={project.mediaMobile ?? project.media} variant="mobile" />
     </>
   ) : (

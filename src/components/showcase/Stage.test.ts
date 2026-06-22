@@ -33,5 +33,6 @@ describe('Stage', () => {
     expect(html).toContain('data-embed-url="https://rangetube.netlify.app"');
     expect(html).toContain('data-embed-frame');
     expect(html).toContain('media-gallery--mobile');
+    expect(html).toContain('media-gallery--desktop');
   });
 });
