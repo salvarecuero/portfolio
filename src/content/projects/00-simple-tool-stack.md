@@ -1,6 +1,6 @@
 ---
 title: "Simple Tool Stack"
-summary: "Free image and text tools that run entirely in your browser. No uploads, no sign-up."
+summary: "A hub of small tools that each do one thing well. The quick ones run on your device; heavier jobs run server-side."
 description:
   - "Simple Tool Stack is a hub of small, focused image and text tools. The free ones run entirely in the browser, so files are processed on the device and never uploaded."
   - "The image tools compress, convert between formats, and strip EXIF metadata; the text tools clean and reshape copy, convert case, and generate URL slugs. Each runs instantly, with no server round trip."
