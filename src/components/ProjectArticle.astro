@@ -85,7 +85,7 @@ const liveHost = links?.live ? new URL(links.live).host : null;
               <button
                 class="frame-trigger"
                 type="button"
-                aria-label="Open larger image"
+                aria-label={`Click to enlarge: ${m.alt}`}
                 data-lightbox-trigger
                 data-full={m.src.src}
                 data-alt={m.alt}
@@ -208,7 +208,9 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     font-size: 0.8rem;
     line-height: 1.2;
   }
-  .back-txt small { display: block; color: #8a857c; font-size: 0.66rem; letter-spacing: 0.04em; }
+  /* #6b665c clears WCAG AA (4.99:1 on the --wall-fallback #eef0f1) while staying more
+     muted than the primary back label; #8a857c only reached 3.2:1. */
+  .back-txt small { display: block; color: #6b665c; font-size: 0.66rem; letter-spacing: 0.04em; }
   .back:hover { color: var(--ink); }
   .back:hover .back-ic { background: var(--ink); border-color: var(--ink); color: #fff; }
   .back--top { margin-bottom: clamp(1.5rem, 4vw, 2.25rem); }

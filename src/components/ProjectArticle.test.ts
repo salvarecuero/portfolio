@@ -122,6 +122,15 @@ describe("ProjectArticle", () => {
     expect(html).toContain("data-lightbox-img");
   });
 
+  it("gives the lightbox trigger an accessible name that includes its visible label", async () => {
+    // WCAG 2.5.3 (Label in Name): the button's visible text is "Click to enlarge",
+    // so its accessible name (aria-label) must contain that exact string.
+    const html = await render();
+    const btn = html.match(/<button[^>]*class="frame-trigger"[^>]*>/)?.[0] ?? "";
+    const label = btn.match(/aria-label="([^"]*)"/)?.[1] ?? "";
+    expect(label.toLowerCase()).toContain("click to enlarge");
+  });
+
   it("exposes the lightbox overlay as a labelled modal dialog", async () => {
     const html = await render();
     expect(html).toMatch(/data-lightbox[^>]*role="dialog"/);
