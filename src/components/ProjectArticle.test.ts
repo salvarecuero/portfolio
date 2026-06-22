@@ -121,4 +121,12 @@ describe("ProjectArticle", () => {
     expect(html).toContain("data-lightbox-close");
     expect(html).toContain("data-lightbox-img");
   });
+
+  it("exposes the lightbox overlay as a labelled modal dialog", async () => {
+    const html = await render();
+    expect(html).toMatch(/data-lightbox[^>]*role="dialog"/);
+    expect(html).toMatch(/data-lightbox[^>]*aria-modal="true"/);
+    // the dialog carries an accessible name (no visible heading inside it)
+    expect(html).toMatch(/data-lightbox[^>]*aria-label="[^"]+"/);
+  });
 });

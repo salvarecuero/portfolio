@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { setLightboxOpen } from "./lightbox";
+import { setLightboxOpen, trapFocusTarget } from "./lightbox";
 
 // Minimal fake element — node test env has no DOM.
 function fakeEl() {
@@ -26,5 +26,26 @@ describe("setLightboxOpen", () => {
     setLightboxOpen(el as any, false);
     expect(el._classes.has("open")).toBe(false);
     expect(el._attrs["aria-hidden"]).toBe("true");
+  });
+});
+
+describe("trapFocusTarget", () => {
+  const a = {} as any, b = {} as any, c = {} as any;
+
+  it("wraps to the last element on shift+tab from the first", () => {
+    expect(trapFocusTarget([a, b, c], a, true)).toBe(c);
+  });
+
+  it("wraps to the first element on tab from the last", () => {
+    expect(trapFocusTarget([a, b, c], c, false)).toBe(a);
+  });
+
+  it("returns null in the middle so the browser moves focus normally", () => {
+    expect(trapFocusTarget([a, b, c], b, false)).toBe(null);
+    expect(trapFocusTarget([a, b, c], b, true)).toBe(null);
+  });
+
+  it("returns null when there is nothing focusable", () => {
+    expect(trapFocusTarget([], null, false)).toBe(null);
   });
 });
