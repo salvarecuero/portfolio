@@ -702,9 +702,10 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   }
 }
 
-/* ---- Live Embed (Phase 2) ---------------------------------------------------- */
-/* The Embed fills the Stage; the Poster sits on top and fades out on reveal.
-   media[0] (Poster) is the only loading state — never a spinner (ADR 0002).
+/* ---- Live Embed -------------------------------------------------------------- */
+/* The iframe fills the Stage behind a flat loading cover (no Poster image, so the resolve
+   into the live app is seamless). The cover fades out on the readiness handshake; if the
+   handshake never arrives the Stage falls back to its media gallery (.embed-failed).
    .stage is already position:relative, so .embed's inset:0 is contained. */
 .stage--embed .embed {
   position: absolute;
@@ -721,25 +722,37 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   border: 0;
   display: block;
 }
-.embed-poster {
+/* Flat loading cover — a branded surface over the iframe until reveal. Holds the (delayed)
+   spinner and shields clicks to the not-yet-ready app. */
+.embed-cover {
   position: absolute;
   inset: 0;
-  z-index: 1;                 /* above the iframe until reveal */
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  background: var(--space);
   opacity: 1;
-  pointer-events: auto;       /* shield: block clicks to the not-yet-ready app */
+  pointer-events: auto;
   transition: opacity 0.4s ease;
-  background: var(--space);   /* matting for any residual sliver */
 }
-.embed-poster-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.stage--embed.embed-revealed .embed-poster {
+.stage--embed.embed-revealed .embed-cover {
   opacity: 0;
   pointer-events: none;       /* clicks now pass to the live app */
 }
+/* Spinner — hidden until the controller adds .is-spinning at the spinner delay, so a fast
+   load never flashes it (the instant-feel goal). Accent ring on the dark cover. */
+.embed-spinner { display: none; }
+.stage--embed.is-spinning .embed-spinner { display: block; }
+.embed-ring {
+  display: block;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--accent);
+  animation: embed-spin 0.8s linear infinite;
+}
+@keyframes embed-spin { to { transform: rotate(360deg); } }
 .embed-launch {
   position: absolute;
   inset: 0;
@@ -752,16 +765,23 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   border-radius: 999px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .embed-poster { transition: none; }
+  .embed-cover { transition: none; }
+  .embed-ring { animation: none; opacity: 0.6; }
 }
 
-/* Mobile gate (keep in sync with --showcase-embed-min). Default: live Embed >= breakpoint,
-   Media gallery below it. A [data-embed-mobile] Project shows the Embed on mobile too. */
+/* Visibility gate (keep in sync with --showcase-embed-min). The desktop media gallery is
+   the SSR/no-JS baseline AND the failure fallback; the live Embed replaces it only with JS
+   on a working (or still-loading) embed. Below the breakpoint the mobile gallery is the
+   baseline and no iframe is mounted. A [data-embed-mobile] Project mounts the Embed on
+   mobile too, so its mobile gallery becomes the no-JS / fallback baseline there. */
 .stage--embed .embed { display: none; }
 .stage--embed .media-gallery--mobile { display: block; }
 @media (min-width: 800px) {
-  .stage--embed .embed { display: block; }
+  html.js .stage--embed:not(.embed-failed) .embed { display: block; }
+  html.js .stage--embed:not(.embed-failed) .media-gallery--desktop { display: none; }
   .stage--embed .media-gallery--mobile { display: none; }
 }
-.stage--embed[data-embed-mobile] .embed { display: block; }
-.stage--embed[data-embed-mobile] .media-gallery--mobile { display: none; }
+.stage--embed[data-embed-mobile] .embed { display: none; }
+.stage--embed[data-embed-mobile] .media-gallery--mobile { display: block; }
+html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .embed { display: block; }
+html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .media-gallery--mobile { display: none; }
