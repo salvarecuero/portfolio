@@ -10,14 +10,16 @@ const project = {
 } as any;
 
 describe('Embed.astro', () => {
-  it('renders an iframe with NO src, inert, tabindex=-1, and a poster layer', async () => {
+  it('renders an iframe with NO src, inert, tabindex=-1, and a cover + spinner', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Embed, { props: { project } });
     expect(html).toContain('data-embed-frame');
     expect(html).not.toMatch(/<iframe[^>]*\ssrc=/);
     expect(html).toContain('inert');
     expect(html).toContain('tabindex="-1"');
-    expect(html).toContain('data-embed-poster');
+    expect(html).toContain('data-embed-cover');
+    expect(html).toContain('data-embed-spinner');
+    expect(html).not.toContain('data-embed-poster');
   });
 
   it('renders a launch button only when requiresLaunch', async () => {
