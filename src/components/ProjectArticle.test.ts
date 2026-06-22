@@ -36,7 +36,16 @@ describe("ProjectArticle", () => {
     const html = await render();
     expect(html).toContain("First paragraph of the description.");
     expect(html).toContain("Second paragraph of the description.");
-    expect((html.match(/class="body-p"/g) ?? []).length).toBe(2);
+    // two paragraphs total: one lead + one plain
+    expect((html.match(/class="body-p( lead)?"/g) ?? []).length).toBe(2);
+  });
+
+  it("marks only the first description paragraph as the lead", async () => {
+    const html = await render();
+    expect((html.match(/class="body-p lead"/g) ?? []).length).toBe(1);
+    expect((html.match(/class="body-p"/g) ?? []).length).toBe(1); // second paragraph, no lead
+    // lead is the first paragraph in source order
+    expect(html.indexOf('class="body-p lead"')).toBeLessThan(html.indexOf('class="body-p"'));
   });
 
   it("renders the stack chips and the live link", async () => {

@@ -77,47 +77,49 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   </header>
 
   <div class="shell">
-    <div class="media">
-      {media.map((m, i) => (
-        <figure class="mat">
-          {m.type === "image" ? (
-            <button
-              class="frame-trigger"
-              type="button"
-              aria-label="Open larger image"
-              data-lightbox-trigger
-              data-full={m.src.src}
-              data-alt={m.alt}
-              data-cap={i === 0 && liveHost ? liveHost : ""}
-            >
-              <Image class="frame" src={m.src} alt={m.alt} widths={[480, 960, 1440]} sizes="(max-width: 860px) 100vw, 820px" />
-              <span class="frame-hint" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                Click to enlarge
-              </span>
-            </button>
-          ) : (
-            <video class="frame" controls playsinline poster={m.poster.src} aria-label={m.alt}>
-              {m.sources.map((s) => <source src={s.src} type={s.type} />)}
-            </video>
-          )}
-          {i === 0 && liveHost && <figcaption class="cap">{liveHost}</figcaption>}
-        </figure>
-      ))}
-    </div>
+    <div class="col">
+      <div class="media">
+        {media.map((m, i) => (
+          <figure class="mat">
+            {m.type === "image" ? (
+              <button
+                class="frame-trigger"
+                type="button"
+                aria-label="Open larger image"
+                data-lightbox-trigger
+                data-full={m.src.src}
+                data-alt={m.alt}
+                data-cap={i === 0 && liveHost ? liveHost : ""}
+              >
+                <Image class="frame" src={m.src} alt={m.alt} widths={[480, 960, 1440]} sizes="(max-width: 860px) 100vw, 820px" />
+                <span class="frame-hint" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                  Click to enlarge
+                </span>
+              </button>
+            ) : (
+              <video class="frame" controls playsinline poster={m.poster.src} aria-label={m.alt}>
+                {m.sources.map((s) => <source src={s.src} type={s.type} />)}
+              </video>
+            )}
+            {i === 0 && liveHost && <figcaption class="cap">{liveHost}</figcaption>}
+          </figure>
+        ))}
+      </div>
 
-    <div class="body">
-      {description.map((p) => <p class="body-p">{p}</p>)}
-    </div>
+      <div class="body">
+        {description.map((p, i) => <p class={i === 0 ? "body-p lead" : "body-p"}>{p}</p>)}
+      </div>
 
-    <footer class="foot">
-      <a class="back" href="/">
-        <span class="back-ic" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        </span>
-        <span class="back-txt">Back<small>{presentation.name}</small></span>
-      </a>
-    </footer>
+      <footer class="foot">
+        <a class="back" href="/">
+          <span class="back-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </span>
+          <span class="back-txt">Back<small>{presentation.name}</small></span>
+        </a>
+      </footer>
+    </div>
   </div>
 </main>
 
@@ -326,6 +328,11 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     margin-inline: auto;
     padding: clamp(1.75rem, 4vw, 2.75rem) clamp(1.25rem, 5vw, 2.5rem) clamp(3rem, 7vw, 5rem);
   }
+  /* media + text share one column + left edge */
+  .col {
+    max-width: 50rem;
+    margin-inline: auto;
+  }
 
   /* media on a dark mat (the guiño to the Showcase) */
   .media {
@@ -379,15 +386,16 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   }
   .lightbox-close:hover { background: #fff; color: #14110f; }
 
-  /* prose: narrower reading column for a comfortable line length */
+  /* prose: shares the .col width; the lead paragraph carries the read in */
   .body {
-    font-size: 1.07rem;
-    line-height: 1.72;
+    font-size: 1.14rem;
+    line-height: 1.78;
     color: var(--ink-body);
-    max-width: 38rem;
+    max-width: 100%;
   }
   .body-p { margin: 0 0 1.15rem; }
   .body-p:last-child { margin-bottom: 0; }
+  .body-p.lead { font-size: 1.3rem; line-height: 1.5; color: var(--ink); margin-bottom: 1.2rem; }
 
   /* ---------- footer ---------- */
   .foot {
