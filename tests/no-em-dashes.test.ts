@@ -15,6 +15,11 @@ const projectFiles = readdirSync(projectsDir)
 
 const dataFiles = [
   fileURLToPath(new URL("../src/data/presentation.ts", import.meta.url)),
+  // Agent-facing markdown served at the deploy root (see ADR 0007). Hand-authored prose
+  // read by chatbots and crawlers, so it falls under the same no-em-dash rule.
+  fileURLToPath(new URL("../public/llms.txt", import.meta.url)),
+  fileURLToPath(new URL("../public/hire.md", import.meta.url)),
+  fileURLToPath(new URL("../public/contact.md", import.meta.url)),
 ];
 
 describe("no em dashes in committed prose", () => {

@@ -10,6 +10,20 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
+# Agent discovery (RFC 8288): advertise the sitemap on the homepage so crawlers and AI
+# agents can find the canonical URL set from the entry response alone, without first
+# fetching robots.txt. Scoped to `/` to avoid emitting it on every static asset response.
+/
+  Link: </sitemap-index.xml>; rel="sitemap"
+
+# Agent-facing markdown pages (/hire.md, /contact.md, /projects.md). Served so agents and
+# chatbots get clean prose instead of scraping HTML. A static .md would otherwise be sent
+# as a download (octet-stream); pin it to text/markdown. This also covers /projects.md: a
+# static build keeps the endpoint's body but not its Response Content-Type, so the type is
+# set here, not in the route.
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+
 # Astro content-hashes these (JS, CSS, images, and the self-hosted fonts under
 # /_astro/fonts) — the filename changes when the content does, so a new build never
 # collides with a cached file. Safe to cache forever; the browser never revalidates.
