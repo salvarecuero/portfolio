@@ -1,8 +1,20 @@
 # Showcase architecture: presentation modes + poster-backed keep-alive
 
-The Showcase displays each Project through one of three **Presentation modes**: Embed (real live app), Media (Poster only) and Custom view (a presentation built in the portfolio for non-web Projects). The UX goal is "you scroll and you are already inside a live Project", with no spinners.
+The Showcase displays each Project through one of three **Presentation modes**: Embed (real live app), Media (Poster only) and Custom view (a presentation built in the portfolio for non-web Projects). The UX goal is "you scroll and you are already inside a live Project", loading seamlessly.
 
-To achieve this: every Embed is backed by its **Poster** (the same visual layer as Media), and the live app fades in over it once it finishes mounting — the Poster is the only "loading state", never a spinner. Embeds are mounted lazily and kept alive (not unmounted when switching Projects), so returns are instant. The default Embed is prefetched during the Presentation's idle time (post-load / `requestIdleCallback`, so it does not affect the hero's Lighthouse metrics); the rest are prefetched on idle and on intent (hover/focus on the Selector).
+To achieve this: an Embed's live app loads behind a **flat cover** (a neutral `--space`
+surface, not a screenshot), and the cover fades out the moment the app signals readiness
+(ADR 0004 handshake) — so the resolve into the live app has no image→embed jump. A spinner
+is held off the cover until 600 ms have passed without a reveal, so a fast load (the common
+case) never shows one and reads as instant. If the handshake never arrives (a 4 s ceiling)
+or the iframe errors, the Stage falls back to the Project's **media gallery** (the same
+gallery as Media mode, also the SSR/no-JS baseline), and the failure is remembered for the
+session. Embeds are mounted lazily and kept alive (not unmounted when switching Projects),
+so returns are instant.
+
+This supersedes the original "Poster is the only loading state, never a spinner" model:
+`media[0]` is no longer the embed loading layer; the media gallery is now the embed
+*fallback*, not its base layer. The default Embed is prefetched during the Presentation's idle time (post-load / `requestIdleCallback`, so it does not affect the hero's Lighthouse metrics); the rest are prefetched on idle and on intent (hover/focus on the Selector).
 
 ## Considered Options
 
@@ -19,6 +31,6 @@ To achieve this: every Embed is backed by its **Poster** (the same visual layer 
 ## Phase 2 as built
 
 - **Keep-alive is toggle-only.** Switching never moves the iframe in the DOM — only the Stage's `hidden`/ARIA toggles. Reparenting an iframe reloads it (the browser detaches/re-attaches the document), which would defeat keep-alive; the render-all Stage model makes the toggle sufficient.
-- **LRU cap (3).** To bound renderer-process memory, at most 3 embeds stay live; mounting a 4th unsets `src` on the least-recently-used (restoring its Poster) so a later return re-mounts cleanly. Pure decision in `lruEvict` (unit-tested); wiring in `embedController.ts`.
+- **LRU cap (3).** To bound renderer-process memory, at most 3 embeds stay live; mounting a 4th unsets `src` on the least-recently-used (restoring its loading cover) so a later return re-mounts cleanly. Pure decision in `lruEvict` (unit-tested); wiring in `embedController.ts`.
 - **Mobile = Media fallback.** Below `--showcase-embed-min` (800px) an embed Project shows its Media gallery (`mediaMobile ?? media`) and mounts no iframe. A per-Project `embed.mobile` (default `false`) opts one Project into mounting the Embed on mobile too.
 - **Warming stays off the hero's critical path.** `preconnect`/`dns-prefetch` for embed origins are injected from JS at idle (post-`load` / `requestIdleCallback`) and on Selector hover/focus intent — never in the static `<head>` — so the first paint and the hero's Lighthouse metrics are unchanged. The iframe ships with no `src` (`loading="lazy"` is not relied on for `display:none` Stages) and is assigned `src` on first activation.

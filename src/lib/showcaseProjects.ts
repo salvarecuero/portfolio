@@ -27,7 +27,8 @@ export interface ShowcaseProject {
   mode: EmbedMode;
   embed?: { url: string; requiresLaunch: boolean; mobile: boolean };
   links?: { live?: string; repo?: string };
-  // Media set. media[0] is the Poster (base layer / anti-spinner / Embed fade-in).
+  // Media set. media[0] is the Poster for the media-gallery paths; for embeds the gallery is
+  // the no-JS baseline and the handshake-failure fallback, not a loading layer.
   media: MediaItem[];
   // Portrait set for narrow viewports; absent => fall back to `media`.
   mediaMobile?: MediaItem[];

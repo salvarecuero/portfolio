@@ -3,8 +3,10 @@ import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 
 // Showcase Project catalog. The schema reflects the Presentation modes (see CONTEXT.md)
-// and the embed contract (see docs/adr/0004). Media mode is a navigable set of media
-// items; media[0] is the Poster (base layer / anti-spinner / Embed fade-in source).
+// and the embed contract (see docs/adr/0004). `media` is a navigable gallery; media[0] is
+// the Poster for Media mode. For Embed mode `media` is the SSR/no-JS baseline and the
+// fallback shown when the readiness handshake never arrives (it is not the embed loading
+// layer — the live embed loads behind a flat cover, see ADR 0002).
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/[^_]*.{md,mdx}" }),
   schema: ({ image }) => {
@@ -33,7 +35,8 @@ const projects = defineCollection({
       description: z.array(z.string()).default([]),
       // Presentation mode in the Showcase.
       mode: z.enum(["embed", "media", "custom"]),
-      // Media set (desktop / landscape). media[0] is the Poster.
+      // Media set (desktop / landscape). media[0] is the Poster (Media mode); the gallery
+      // is also the Embed failure fallback / no-JS baseline.
       media: z.array(mediaItem).min(1),
       // Media set for narrow viewports (the mobile-rendered site, portrait). Optional;
       // falls back to `media` cover-cropped when absent.
