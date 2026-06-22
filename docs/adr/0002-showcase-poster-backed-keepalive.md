@@ -14,7 +14,9 @@ so returns are instant.
 
 This supersedes the original "Poster is the only loading state, never a spinner" model:
 `media[0]` is no longer the embed loading layer; the media gallery is now the embed
-*fallback*, not its base layer. The default Embed is prefetched during the Presentation's idle time (post-load / `requestIdleCallback`, so it does not affect the hero's Lighthouse metrics); the rest are prefetched on idle and on intent (hover/focus on the Selector).
+*fallback*, not its base layer.
+
+The default Embed is prefetched during the Presentation's idle time (post-load / `requestIdleCallback`, so it does not affect the hero's Lighthouse metrics); the rest are prefetched on idle and on intent (hover/focus on the Selector).
 
 ## Considered Options
 
