@@ -709,7 +709,8 @@ html.js.intro-done .stage.is-active { opacity: 1; }
 .stage--embed .embed {
   position: absolute;
   inset: 0;
-  border-radius: var(--stage-inner-radius, 0);
+  /* top-left stays square to merge with the active tab, matching the .stage frame. */
+  border-radius: 0 var(--stage-inner-radius, 0) var(--stage-inner-radius, 0) var(--stage-inner-radius, 0);
   overflow: hidden;
 }
 .embed-frame {
