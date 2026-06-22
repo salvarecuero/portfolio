@@ -79,4 +79,12 @@ describe("ProjectArticle", () => {
     const html = await render(noLive);
     expect(html).not.toContain('class="cap"');
   });
+
+  it("renders the back control as an icon circle with a two-line label", async () => {
+    const html = await render();
+    // a chevron svg inside the back control's icon circle
+    expect(html).toMatch(/class="[^"]*back[^"]*"[\s\S]*?<svg[\s\S]*?M15 18l-6-6 6-6/);
+    expect(html).toContain("Back");
+    expect(html).toContain("Salvador Recuero");
+  });
 });

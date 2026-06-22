@@ -26,7 +26,10 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   <header class="hero">
     <div class="hero-in">
       <a class="back back--top" href="/">
-        <span class="arrow" aria-hidden="true">←</span> {presentation.name}
+        <span class="back-ic" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </span>
+        <span class="back-txt">Back<small>{presentation.name}</small></span>
       </a>
 
       <p class="eyebrow">Project</p>
@@ -103,7 +106,10 @@ const liveHost = links?.live ? new URL(links.live).host : null;
 
     <footer class="foot">
       <a class="back" href="/">
-        <span class="arrow" aria-hidden="true">←</span> Back to {presentation.name}
+        <span class="back-ic" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </span>
+        <span class="back-txt">Back<small>{presentation.name}</small></span>
       </a>
     </footer>
   </div>
@@ -155,23 +161,35 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     padding: clamp(1.5rem, 5vw, 3rem) clamp(1.25rem, 5vw, 2.5rem) clamp(1.75rem, 4vw, 2.5rem);
   }
 
-  /* ---------- back link (mono, engineer signal) ---------- */
+  /* ---------- back control (icon circle + two-line label) ---------- */
   .back {
     display: inline-flex;
     align-items: center;
-    gap: 0.5ch;
-    font-family: var(--font-geist-mono), ui-monospace, monospace;
-    font-size: 0.85rem;
-    color: var(--ink-soft);
+    gap: 0.65rem;
     text-decoration: none;
-    transition: color 0.18s ease;
+    color: var(--ink-soft);
+    transition: color 0.22s ease;
   }
-  .back .arrow {
-    color: var(--ac);
-    transition: transform 0.18s ease;
+  .back-ic {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--ink);
+    transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
   }
+  .back-ic svg { width: 15px; height: 15px; }
+  .back-txt {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+  .back-txt small { display: block; color: #8a857c; font-size: 0.66rem; letter-spacing: 0.04em; }
   .back:hover { color: var(--ink); }
-  .back:hover .arrow { transform: translateX(-3px); }
+  .back:hover .back-ic { background: var(--ink); border-color: var(--ink); color: #fff; }
   .back--top { margin-bottom: clamp(1.5rem, 4vw, 2.25rem); }
   .back:focus-visible {
     outline: 2px solid var(--ac);
@@ -323,13 +341,12 @@ const liveHost = links?.live ? new URL(links.live).host : null;
 
   @media (prefers-reduced-motion: reduce) {
     .back,
-    .back .arrow,
+    .back-ic,
     .pill,
     .stack li,
     .stack-ic,
     .mask-ic {
       transition: none;
     }
-    .back:hover .arrow { transform: none; }
   }
 </style>
