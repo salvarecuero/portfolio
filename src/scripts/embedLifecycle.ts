@@ -18,32 +18,40 @@ export function isReadyMessage(data: unknown, version = PROTOCOL_VERSION): boole
   );
 }
 
-export interface RevealRace {
-  onMessage(): void; // valid ready message → reveal now
-  onLoad(): void;    // iframe load → reveal after the grace delay
-  cancel(): void;    // drop all pending timers (e.g. on unmount)
+export interface EmbedTimers {
+  onReady(): void; // valid handshake → reveal (once)
+  onError(): void; // iframe error → fallback (once)
+  cancel(): void;  // drop all pending timers (e.g. on unmount)
 }
 
 /**
- * First-wins, exactly-once reveal across {ready message, load+grace, hard ceiling}.
- * Whichever fires first wins; the rest are cancelled.
+ * Handshake-gated embed lifecycle timers. Reveal fires ONLY on the readiness handshake
+ * (onReady). Failure (onFallback) fires on the iframe error (onError) or when the ceiling
+ * elapses with no handshake. Reveal and fallback are mutually exclusive and exactly-once.
+ * The spinner (onSpinner) is independent: it fires once at the spinner delay if neither
+ * reveal nor fallback has settled, and is cancelled when one does.
  */
-export function createRevealRace(opts: {
+export function createEmbedTimers(opts: {
+  onSpinner: () => void;
   onReveal: () => void;
-  graceMs?: number;
-  ceilingMs?: number;
-}): RevealRace {
-  const graceMs = opts.graceMs ?? 400;
-  const ceilingMs = opts.ceilingMs ?? 3500;
-  let done = false;
+  onFallback: () => void;
+  spinnerMs?: number;
+  fallbackMs?: number;
+}): EmbedTimers {
+  const spinnerMs = opts.spinnerMs ?? 600;
+  const fallbackMs = opts.fallbackMs ?? 4000;
+  let settled = false;
   const timers: ReturnType<typeof setTimeout>[] = [];
   const clearAll = () => { for (const t of timers) clearTimeout(t); timers.length = 0; };
-  const reveal = () => { if (done) return; done = true; clearAll(); opts.onReveal(); };
-  timers.push(setTimeout(reveal, ceilingMs)); // ceiling armed immediately
+  const settle = (cb: () => void) => { if (settled) return; settled = true; clearAll(); cb(); };
+  // Spinner-delay: fires once if still unsettled (clearAll on settle prevents a late fire).
+  timers.push(setTimeout(() => { if (!settled) opts.onSpinner(); }, spinnerMs));
+  // Ceiling: give up on the embed and fall back to media.
+  timers.push(setTimeout(() => settle(opts.onFallback), fallbackMs));
   return {
-    onMessage: () => reveal(),
-    onLoad: () => { if (!done) timers.push(setTimeout(reveal, graceMs)); },
-    cancel: () => { done = true; clearAll(); },
+    onReady: () => settle(opts.onReveal),
+    onError: () => settle(opts.onFallback),
+    cancel: () => { settled = true; clearAll(); },
   };
 }
 
