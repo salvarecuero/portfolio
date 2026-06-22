@@ -47,6 +47,21 @@ describe("ProjectArticle", () => {
     expect(html).toContain("https://demo.example.com");
   });
 
+  it("renders the live CTA as a primary button above the stack", async () => {
+    const html = await render();
+    expect(html).toContain("https://demo.example.com");
+    expect(html).toMatch(/class="[^"]*cta[^"]*"[\s\S]*?Visit live site/);
+    // CTA appears before the stack list in source order
+    expect(html.indexOf("Visit live site")).toBeLessThan(html.indexOf('class="stack"'));
+  });
+
+  it("renders the repository as a secondary ghost link when present", async () => {
+    const withRepo = { entry: { ...entry, data: { ...entry.data, links: { ...entry.data.links, repo: "https://github.com/x/y" } } } };
+    const html = await render(withRepo);
+    expect(html).toMatch(/class="[^"]*ghost[^"]*"[\s\S]*?Repository/);
+    expect(html).toContain("https://github.com/x/y");
+  });
+
   it("renders the stack as icon pills: svg glyph, mask glyph, and text fallback", async () => {
     const html = await render();
     // React -> simple-icons SVG path inside a stack <li>
