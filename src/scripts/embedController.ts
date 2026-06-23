@@ -11,6 +11,12 @@ import {
   PROTOCOL_VERSION, embedOrigin, isReadyMessage,
   createEmbedTimers, lruEvict, shouldMount, type EmbedTimers,
 } from './embedLifecycle';
+import {
+  bounceShowcaseEscape,
+  cancelShowcaseEscapeBounce,
+  createEscapeState,
+  decideShowcaseEscape,
+} from './showcaseScrollEscape';
 
 const LIVE_CAP = 3;
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -40,6 +46,7 @@ interface EmbedEntry {
 }
 
 const entries = new Map<string, EmbedEntry>();
+const escapeState = createEscapeState();
 const mountOrder: string[] = [];
 const warmed = new Set<string>();
 // Embeds that failed the handshake this session render media directly on re-activation,
@@ -186,6 +193,24 @@ if (showcase) {
       if (!entry.mounted) continue;
       if (e.origin !== entry.origin) continue;
       if (e.source !== entry.iframe.contentWindow) continue;
+      const data = e.data as { type?: unknown; v?: unknown; deltaY?: unknown } | null;
+      if (data?.type === 'portfolio:scroll-escape' && data.v === PROTOCOL_VERSION) {
+        const main = document.querySelector<HTMLElement>('main');
+        if (!main || !showcase) break;
+        const action = decideShowcaseEscape({
+          deltaY: typeof data.deltaY === 'number' ? data.deltaY : -1,
+          scrollTop: main.scrollTop,
+          showcaseTop: showcase.offsetTop,
+          now: performance.now(),
+          state: escapeState,
+        });
+        if (action === 'bounce') bounceShowcaseEscape(main, showcase);
+        else if (action === 'allow') {
+          cancelShowcaseEscapeBounce();
+          main.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        break;
+      }
       if (!isReadyMessage(e.data)) continue;
       entry.iframe.contentWindow?.postMessage({ type: 'portfolio:ack', v: PROTOCOL_VERSION }, entry.origin);
       entry.timers?.onReady();

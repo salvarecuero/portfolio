@@ -94,7 +94,10 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     />
   </div>
 
-  <a class="cue" href="#showcase">Scroll<span aria-hidden="true">↓</span></a>
+  <a class="cue" href="#showcase" data-scroll-cue>
+    <span class="cue-label" data-scroll-cue-label>Scroll</span>
+    <span class="cue-arrow" aria-hidden="true" data-scroll-cue-arrow>↓</span>
+  </a>
 
   <ProfilePageSchema imageUrl={imageUrl} />
 </section>
@@ -556,18 +559,29 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     outline-offset: 6px;
     border-radius: 4px;
   }
-  .cue span {
+  .cue-arrow {
     font-size: 1rem;
     line-height: 1;
   }
+  .cue.is-escape {
+    color: var(--p-ink);
+    flex-direction: column-reverse;
+  }
   @media (prefers-reduced-motion: no-preference) {
-    .cue span {
+    .cue-arrow {
       animation: cue-bounce 1.8s ease-in-out infinite;
+    }
+    .cue.is-escape .cue-arrow {
+      animation-name: cue-bounce-up;
     }
   }
   @keyframes cue-bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(4px); }
+  }
+  @keyframes cue-bounce-up {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
   }
 
   /* honour reduced motion: still the streaks, the caret and the hover lift */

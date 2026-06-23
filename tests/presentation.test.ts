@@ -40,6 +40,9 @@ test("photo uses a descriptive alt text including the name", () => {
 
 test("scroll cue links to the Showcase", () => {
   expect(html).toMatch(/<a[^>]*href="#showcase"/);
+  expect(html).toContain("data-scroll-cue");
+  expect(html).toContain("data-scroll-cue-label");
+  expect(html).toContain("data-scroll-cue-arrow");
 });
 
 test("links to the GitHub and LinkedIn profiles", () => {
