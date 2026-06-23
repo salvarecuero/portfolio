@@ -23,7 +23,7 @@ const active = projects.find((p) => p.active) ?? projects[0];
     <div class="stage-viewport">
       {projects.map((p) => (
         <Stage project={p} active={p.active}>
-          <ProjectLinks links={p.links} title={p.title} slug={p.slug} />
+          <ProjectLinks links={p.links} title={p.title} slug={p.slug} mode={p.mode} />
         </Stage>
       ))}
     </div>
