@@ -36,6 +36,17 @@ export function clampPan(offset: number, scaledSize: number, viewportSize: numbe
   return Math.max(-limit, Math.min(limit, offset));
 }
 
+// Zoom level applied when the image is toggled to zoomed-in (2x the fitted size).
+export const ZOOM_SCALE = 2;
+
+export type ZoomState = { zoomed: boolean; offsetX: number; offsetY: number };
+
+// Toggle between fit and zoomed-in. Either direction resets the pan to origin so
+// the image is re-centered whenever the zoom level changes. Pure, unit-tested.
+export function toggleZoom(state: ZoomState): ZoomState {
+  return { zoomed: !state.zoomed, offsetX: 0, offsetY: 0 };
+}
+
 export function initLightbox(root: Document = document): void {
   const overlay = root.querySelector<HTMLElement>("[data-lightbox]");
   if (!overlay) return;

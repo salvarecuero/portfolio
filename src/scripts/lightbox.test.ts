@@ -65,3 +65,14 @@ describe("clampPan", () => {
     expect(clampPan(-100, 200, 100)).toBe(-50);
   });
 });
+
+describe("toggleZoom", () => {
+  it("zooms in from fit, leaving pan at origin", () => {
+    expect(toggleZoom({ zoomed: false, offsetX: 0, offsetY: 0 }))
+      .toEqual({ zoomed: true, offsetX: 0, offsetY: 0 });
+  });
+  it("zooms out and resets any pan offset back to origin", () => {
+    expect(toggleZoom({ zoomed: true, offsetX: 30, offsetY: -20 }))
+      .toEqual({ zoomed: false, offsetX: 0, offsetY: 0 });
+  });
+});
