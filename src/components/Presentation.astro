@@ -129,6 +129,58 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
       }, 1600);
     });
   }
+
+  // Wind: the "fast" word floats and ripples only while the pointer is moving, then
+  // eases back to rest after a short idle. Pointer-driven so the motion is
+  // intentional rather than relying on the browser pausing idle CSS animations.
+  // Disabled under reduced motion (the word then never animates).
+  const fast = document.querySelector<HTMLElement>(".w-fast");
+  if (fast && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const letters = Array.from(fast.querySelectorAll<HTMLElement>(".ch"));
+    const parts = [fast, ...letters];
+    const restTransform = (el: HTMLElement) => (el === fast ? "skewX(-11deg)" : "none");
+    let windTimer: number | undefined;
+    let settling = false;
+
+    const clearInline = () => {
+      parts.forEach((el) => (el.style.transform = ""));
+      settling = false;
+    };
+
+    const windOn = () => {
+      if (settling) clearInline(); // abandon the in-flight settle; the animation takes over
+      fast.classList.add("is-wind");
+    };
+
+    // Hand the keyframe animation off to a transition: pin the live transform inline,
+    // remove the animation, then set the rest value so `transition: transform` eases
+    // it home. Removing an animation alone does not fire a transition (the word would
+    // snap), so the handoff is what makes the settle smooth.
+    const windOff = () => {
+      const from = parts.map((el) => getComputedStyle(el).transform);
+      parts.forEach((el, i) => (el.style.transform = from[i]));
+      fast.classList.remove("is-wind");
+      void fast.offsetWidth; // reflow so `from` becomes the transition's start value
+      settling = true;
+      parts.forEach((el) => (el.style.transform = restTransform(el)));
+    };
+
+    // once the word's settle transition lands, drop the inline transforms so the
+    // next gust starts from the stylesheet's base
+    fast.addEventListener("transitionend", (e) => {
+      if (settling && e.propertyName === "transform" && e.target === fast) clearInline();
+    });
+
+    window.addEventListener(
+      "pointermove",
+      () => {
+        windOn();
+        clearTimeout(windTimer);
+        windTimer = window.setTimeout(windOff, 500);
+      },
+      { passive: true },
+    );
+  }
 </script>
 
 <style define:vars={{ wallUrl: `url("${wall.src}")` }}>
@@ -249,31 +301,41 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     position: relative;
     font-family: var(--font-oswald), sans-serif;
     font-weight: 600;
-    /* at-rest lean (also the reduced-motion fallback); fast-float folds it into
-       its keyframes since the animation overrides transform. */
+    /* resting lean; fast-float folds it into its keyframes since the animation
+       overrides transform. The transition eases the word back to rest when the
+       wind (pointer movement) stops and the .is-wind animation is removed. */
     transform: skewX(-11deg);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
     letter-spacing: -0.005em;
     padding: 0 0.14em;
     display: inline-block;
-    /* drift the whole word in X and Y so it reads as flying. transform-only, so
-       it never reflows the line - neighbours stay put. */
-    animation: fast-float 8s ease-in-out infinite;
   }
   .w-fast .label {
     position: relative;
     z-index: 1;
     color: var(--accent);
   }
-  /* per-letter ripple: a wave travels across the word (staggered delays) so the
-     baseline flexes like a flag in the wind. */
   .w-fast .ch {
     display: inline-block;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* The float and per-letter ripple run only while there is "wind": the script
+     adds .is-wind on pointer movement and removes it after a short idle, so the
+     motion is intentional rather than relying on the browser's idle-frame
+     throttling. Without JS (or at rest) the word stays still. Both are
+     transform-only, so the line never reflows - neighbours stay put.
+     fast-float drifts the whole word (X and Y peaks offset for an organic loop);
+     the staggered fast-flutter sends a wave across the letters (flag in wind). */
+  .w-fast.is-wind {
+    animation: fast-float 8s ease-in-out infinite;
+  }
+  .w-fast.is-wind .ch {
     animation: fast-flutter 2.8s ease-in-out infinite;
   }
-  .w-fast .ch:nth-child(1) { animation-delay: 0s; }
-  .w-fast .ch:nth-child(2) { animation-delay: 0.12s; }
-  .w-fast .ch:nth-child(3) { animation-delay: 0.24s; }
-  .w-fast .ch:nth-child(4) { animation-delay: 0.36s; }
+  .w-fast.is-wind .ch:nth-child(1) { animation-delay: 0s; }
+  .w-fast.is-wind .ch:nth-child(2) { animation-delay: 0.12s; }
+  .w-fast.is-wind .ch:nth-child(3) { animation-delay: 0.24s; }
+  .w-fast.is-wind .ch:nth-child(4) { animation-delay: 0.36s; }
   .w-fast .streaks {
     position: absolute;
     inset: -28% -10%;
@@ -625,8 +687,8 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
   @media (prefers-reduced-motion: reduce) {
     .w-fast .streaks i { animation: none; opacity: 0.45; }
     /* still the float and the per-letter ripple; the word rests skewed and flat */
-    .w-fast,
-    .w-fast .ch { animation: none; }
+    .w-fast.is-wind,
+    .w-fast.is-wind .ch { animation: none; }
     .chip::after { animation: none; }
     .stack li:hover .stack-ic { transform: none; }
     /* contact: instant icon swap, no hover nudge, tooltip without slide (feedback kept) */
