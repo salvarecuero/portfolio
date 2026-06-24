@@ -126,7 +126,9 @@ const liveHost = links?.live ? new URL(links.live).host : null;
 <div class="lightbox" data-lightbox role="dialog" aria-modal="true" aria-label="Enlarged image" aria-hidden="true">
   <figure class="lightbox-fig">
     <button class="lightbox-close" type="button" aria-label="Close" data-lightbox-close>✕</button>
-    <img data-lightbox-img alt="" />
+    <div class="lightbox-view">
+      <img data-lightbox-img alt="" />
+    </div>
     <figcaption class="lightbox-cap" data-lightbox-cap></figcaption>
   </figure>
 </div>
@@ -379,7 +381,14 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   }
   .lightbox.open { display: grid; }
   .lightbox-fig { position: relative; margin: 0; max-width: min(1100px, 94vw); max-height: 90vh; display: flex; flex-direction: column; gap: 0.7rem; }
-  .lightbox-fig img { display: block; max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 10px; box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8); }
+  .lightbox-view { overflow: hidden; border-radius: 10px; box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8); line-height: 0; }
+  .lightbox-view img {
+    display: block; max-width: 100%; max-height: 80vh; object-fit: contain;
+    cursor: zoom-in; touch-action: none; will-change: transform;
+    transform-origin: center center;
+  }
+  .lightbox-view img.is-zoomed { cursor: grab; }
+  .lightbox-view img.is-zoomed.is-dragging { cursor: grabbing; }
   .lightbox-cap { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.76rem; color: #d8d4cd; text-align: center; }
   .lightbox-close {
     position: absolute; top: -0.6rem; right: -0.6rem; width: 40px; height: 40px; border-radius: 999px;
