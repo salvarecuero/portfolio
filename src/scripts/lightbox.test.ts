@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { setLightboxOpen, trapFocusTarget } from "./lightbox";
 
-// Minimal fake element — node test env has no DOM.
+// Minimal fake element - node test env has no DOM.
 function fakeEl() {
   const classes = new Set<string>();
   const attrs: Record<string, string> = {};

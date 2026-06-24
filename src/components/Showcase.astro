@@ -13,7 +13,7 @@ const active = projects.find((p) => p.active) ?? projects[0];
 <section id="showcase" class="showcase" style={active?.accent ? `--accent:${active.accent}` : undefined}>
   <div class="cosmos" aria-hidden="true"></div>
 
-  {/* command overlay ($ showcase) — base display:none; shown only while the intro plays */}
+  {/* command overlay ($ showcase) - base display:none; shown only while the intro plays */}
   <div class="cmd" aria-hidden="true">
     <div class="line"><span class="p">$</span><span class="word">showcase</span><span class="caret"></span></div>
   </div>
@@ -29,11 +29,11 @@ const active = projects.find((p) => p.active) ?? projects[0];
     </div>
   </div>
 
-  {/* Backdrop meta — the reveal toggle and the (CC BY 4.0 mandated) credit share the
+  {/* Backdrop meta - the reveal toggle and the (CC BY 4.0 mandated) credit share the
      bottom-right frame band. The toggle sits left of the credit; both stay visible and
      usable over the bare cosmos while the foreground is faded out. */}
   <div class="cosmos-meta">
-    {/* Reveal toggle — fades the foreground out so the cosmos shows through. Shown only
+    {/* Reveal toggle - fades the foreground out so the cosmos shows through. Shown only
        after the intro (html.js.intro-done). Icon-only: the eye glyph swaps on aria-pressed;
        the accessible name lives on the button's aria-label (set by JS). */}
     <button type="button" class="backdrop-toggle" aria-pressed="false" aria-label="View backdrop">
@@ -49,7 +49,7 @@ const active = projects.find((p) => p.active) ?? projects[0];
       </svg>
     </button>
 
-    {/* Backdrop credit — CC BY 4.0 requires a clearly visible, unaltered, linked credit
+    {/* Backdrop credit - CC BY 4.0 requires a clearly visible, unaltered, linked credit
        for the ESA/Hubble image used as the cosmos. */}
     <p class="cosmos-credit">
       <span class="cosmos-credit__mark" aria-hidden="true">✦</span>
@@ -76,7 +76,7 @@ const active = projects.find((p) => p.active) ?? projects[0];
       doneTimer = window.setTimeout(() => root.classList.add('intro-done'), cycle);
     };
     // Leaving the Showcase mid-intro: finish it now so the fixed $ showcase overlay does not
-    // linger over the Presentation. No replay — returning lands on the resting state.
+    // linger over the Presentation. No replay - returning lands on the resting state.
     const settle = () => {
       window.clearTimeout(doneTimer);
       root.classList.add('intro-done');

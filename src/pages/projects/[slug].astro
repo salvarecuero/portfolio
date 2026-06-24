@@ -27,7 +27,7 @@ const poster = data.media[0];
 const posterImg = poster.type === "image" ? poster.src : poster.poster;
 const ogImage = new URL(posterImg.src, origin).href;
 
-const title = `${data.title} — ${data.summary}`;
+const title = `${data.title} - ${data.summary}`;
 
 const creativeWork = buildCreativeWorkSchema({
   pageUrl,
@@ -49,7 +49,7 @@ const breadcrumb = buildBreadcrumbSchema([
   image={posterImg.src}
   imageWidth={posterImg.width}
   imageHeight={posterImg.height}
-  imageAlt={`${data.title} — ${data.summary}`}
+  imageAlt={`${data.title} - ${data.summary}`}
   type="article"
   jsonLd={[creativeWork, breadcrumb]}
 >

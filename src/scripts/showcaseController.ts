@@ -68,7 +68,7 @@ if (tablist && showcase) {
     };
   }
 
-  // Synchronous DOM update: ARIA, roving tabindex, accent (live tabs — never frozen),
+  // Synchronous DOM update: ARIA, roving tabindex, accent (live tabs - never frozen),
   // then the Stage crossfade.
   function setActive(id: string, animate = true) {
     for (const t of tabs) {

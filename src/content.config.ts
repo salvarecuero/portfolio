@@ -6,7 +6,7 @@ import { glob } from "astro/loaders";
 // and the embed contract (see docs/adr/0004). `media` is a navigable gallery; media[0] is
 // the Poster for Media mode. For Embed mode `media` is the SSR/no-JS baseline and the
 // fallback shown when the readiness handshake never arrives (it is not the embed loading
-// layer — the live embed loads behind a flat cover, see ADR 0002).
+// layer - the live embed loads behind a flat cover, see ADR 0002).
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/[^_]*.{md,mdx}" }),
   schema: ({ image }) => {
@@ -47,7 +47,7 @@ const projects = defineCollection({
       accent: z.string().optional(),
       // Selector tab glyph: a key into src/data/showcaseIcons.ts (falls back to a default).
       icon: z.string().optional(),
-      // Embed contract — only for mode: "embed". See ADR 0004.
+      // Embed contract - only for mode: "embed". See ADR 0004.
       embed: z
         .object({
           url: z.url(),

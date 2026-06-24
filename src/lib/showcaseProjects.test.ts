@@ -31,7 +31,7 @@ describe('toShowcaseProjects', () => {
   });
 });
 
-describe('toShowcaseProjects — embed fields', () => {
+describe('toShowcaseProjects - embed fields', () => {
   const base = {
     title: 'X', summary: 's', media: [{ type: 'image', src: { src: '/p.webp', width: 10, height: 10, format: 'webp' }, alt: 'a' }],
     order: 0, stack: [],
@@ -63,7 +63,7 @@ describe('projectSlug', () => {
   });
 });
 
-describe('toShowcaseProjects — slug', () => {
+describe('toShowcaseProjects - slug', () => {
   it('derives a slug from the entry id', () => {
     const out = toShowcaseProjects([
       { id: '01-rangetube', data: { title: 'RangeTube', order: 0, summary: 's', mode: 'media', stack: [], media: [{ type: 'image', src: { src: '/x.webp', width: 10, height: 10, format: 'webp' }, alt: 'a' }] } },

@@ -1,12 +1,12 @@
 /**
  * Lifecycle decision for the Showcase intro from IntersectionObserver readings.
  *
- * - `play`   — the Showcase just became dominant (ratio >= playThreshold) for the first
+ * - `play`   - the Showcase just became dominant (ratio >= playThreshold) for the first
  *              time → start the intro.
- * - `settle` — the intro had started but the Showcase dropped below settleThreshold before
+ * - `settle` - the intro had started but the Showcase dropped below settleThreshold before
  *              it played to completion → finish it now so the fixed `$ showcase` overlay does
  *              not linger over the Presentation. Fires at most once.
- * - `none`   — no transition.
+ * - `none`   - no transition.
  *
  * Fires `play` at most once and `settle` at most once, so the intro never replays (this is
  * what prevents the ratio 0.6→1.0 restart and the replay-over-Presentation bugs). The two

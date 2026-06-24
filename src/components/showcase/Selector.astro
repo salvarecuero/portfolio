@@ -3,7 +3,7 @@ import type { ShowcaseProject } from '../../lib/showcaseProjects';
 import ProjectLogo from './ProjectLogo.astro';
 const { projects } = Astro.props as { projects: ShowcaseProject[] };
 ---
-{/* `.selector` is the visual chrome row; the tablist owns every role="tab" child —
+{/* `.selector` is the visual chrome row; the tablist owns every role="tab" child -
     one tab per Project. Each tab controls its matching Stage tabpanel (#panel-<id>),
     participating in switching, deep-links, and keyboard nav. */}
 <div class="selector">

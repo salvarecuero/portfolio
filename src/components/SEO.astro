@@ -36,7 +36,7 @@ const meta = buildSeoMeta({
   image,
   type,
 });
-const ogImageAlt = imageAlt ?? `${presentation.name} — ${presentation.role}`;
+const ogImageAlt = imageAlt ?? `${presentation.name} - ${presentation.role}`;
 // Default og.png is a known 1200x630; a per-page image carries its own dimensions (or none).
 const ogWidth = image ? imageWidth : 1200;
 const ogHeight = image ? imageHeight : 630;

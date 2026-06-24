@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Design tokens — source of truth for the design system. See docs/design-system.md.
+/* Design tokens - source of truth for the design system. See docs/design-system.md.
    Tailwind v4 consumes these tokens via @theme and generates utilities from them.
    The final visual is iterated later; this is the minimal foundation. */
 @theme {
@@ -16,7 +16,7 @@
   --radius-base: 0.5rem;
 }
 
-/* Showcase (dark cosmos world) tokens — consumed by src/styles/showcase.css.
+/* Showcase (dark cosmos world) tokens - consumed by src/styles/showcase.css.
    Distinct from the Presentation's scoped light palette. Per-Project accent is
    applied at runtime via the --accent override on the Showcase root. */
 :root {

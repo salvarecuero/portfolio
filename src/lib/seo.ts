@@ -1,7 +1,7 @@
 /**
  * Pure (DOM-free) SEO/social metadata resolution. The component (SEO.astro) passes in
  * Astro.site + Astro.url.pathname; this returns absolute URLs ready for the meta tags.
- * og:image MUST be absolute or social crawlers drop it — that is the reason this is a
+ * og:image MUST be absolute or social crawlers drop it - that is the reason this is a
  * tested seam rather than inline component logic.
  */
 export interface SeoInput {

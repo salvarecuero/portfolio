@@ -4,7 +4,7 @@ import { buildSeoMeta, siteOrigin } from './seo';
 const base = {
   fallbackOrigin: 'https://salvarecuero.dev',
   pathname: '/',
-  title: 'Salvador Recuero — Software Engineer',
+  title: 'Salvador Recuero - Software Engineer',
   description: 'desc',
 };
 

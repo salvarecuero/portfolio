@@ -62,7 +62,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
         </a>
 
         {/* Contact: the email address with a copy (JS-only, progressively enhanced) and a
-            mailto send action. Neutral ink — our own action, off the accent, like the
+            mailto send action. Neutral ink - our own action, off the accent, like the
             former CV pill. */}
         <div class="contact" data-email={email}>
           <span class="contact-addr">{email}</span>
@@ -116,7 +116,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
       try {
         await navigator.clipboard.writeText(email);
       } catch {
-        return; // clipboard blocked — the address is still visible and selectable
+        return; // clipboard blocked - the address is still visible and selectable
       }
       btn.classList.add("is-copied");
       if (tip) tip.textContent = "Copied!";
@@ -235,7 +235,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     font-weight: 400;
   }
 
-  /* Beautiful — script */
+  /* Beautiful - script */
   .w-beautiful {
     font-family: var(--font-yellowtail), cursive;
     font-size: 1.5em;
@@ -244,7 +244,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     white-space: nowrap;
   }
 
-  /* fast — leaning condensed + speed streaks (half behind the glyphs, half in front) */
+  /* fast - leaning condensed + speed streaks (half behind the glyphs, half in front) */
   .w-fast {
     position: relative;
     font-family: var(--font-oswald), sans-serif;
@@ -291,7 +291,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     100% { transform: translateX(-190%); opacity: 0; }
   }
 
-  /* reliable — sturdy slab + a static accent "foundation" underline */
+  /* reliable - sturdy slab + a static accent "foundation" underline */
   .w-reliable {
     font-family: var(--font-zilla), serif;
     font-weight: 700;
@@ -309,7 +309,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     background: var(--accent);
   }
 
-  /* apps. — neutral connector */
+  /* apps. - neutral connector */
   .w-apps {
     font-family: var(--font-geist), system-ui, sans-serif;
     font-weight: 400;
@@ -317,7 +317,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     color: var(--p-ink-soft);
   }
 
-  /* code chip — terminal token, baseline-aligned */
+  /* code chip - terminal token, baseline-aligned */
   .chip {
     font-family: var(--font-geist-mono), ui-monospace, monospace;
     font-weight: 600;
@@ -342,7 +342,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
   .chip .tok { color: var(--accent); }
   @keyframes blink { 50% { opacity: 0; } }
 
-  /* =================== stack — icons, mono → hover brand =================== */
+  /* =================== stack - icons, mono → hover brand =================== */
   .stack {
     display: flex;
     flex-wrap: wrap;
@@ -376,7 +376,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     transform: translateY(-3px);
   }
 
-  /* =================== links — pill, always-active brand colour =================== */
+  /* =================== links - pill, always-active brand colour =================== */
   .links {
     display: flex;
     align-items: center;
@@ -413,7 +413,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     outline-offset: 3px;
   }
 
-  /* =================== contact — email box: copy + send =================== */
+  /* =================== contact - email box: copy + send =================== */
   .contact {
     display: inline-flex;
     align-items: center;
@@ -519,7 +519,7 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     transform: translateX(-50%) translateY(0);
   }
 
-  /* subject cutout — real silhouette over the matching sheet.
+  /* subject cutout - real silhouette over the matching sheet.
      Circular fade: solid core covers the shoulders; the bottom curves off
      (no horizontal cut) with a very thin feather. */
   .subject {

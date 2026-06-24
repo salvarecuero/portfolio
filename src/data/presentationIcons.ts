@@ -1,4 +1,4 @@
-// Shared stack-icon registry — consumed by the Presentation and the Tool page.
+// Shared stack-icon registry - consumed by the Presentation and the Tool page.
 // Keyed by the exact stack name. `brand` is the hover colour, tuned to read on
 // the light wall (React/Astro/AWS overridden from the simple-icons defaults).
 // An entry is EITHER a simple-icons single SVG path ({ brand, path }, rendered
@@ -9,7 +9,7 @@
 //
 // Adding a CUSTOM (non-simple-icons) brand:
 //   1. Start from a transparent-background logo (any color; only alpha matters).
-//   2. node scripts/gen-stack-icons.mjs  — uses sharp to emit a 40×40 lossless
+//   2. node scripts/gen-stack-icons.mjs  - uses sharp to emit a 40×40 lossless
 //      WebP as a base64 data-URI (Sablier example: ~2.3 KB). Adjust the script's
 //      source path / brand hex, then paste the printed `{ brand, mask }` entry.
 // Keep glyphs INLINE (path or data-URI) so the page makes no extra requests.

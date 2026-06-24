@@ -14,7 +14,7 @@ describe('createIntroController', () => {
 
   it('never settles before it has played', () => {
     const next = createIntroController(0.6, 0.5);
-    expect(next(entry(true, 0.4))).toBe('none'); // below play, also below settle — but not played
+    expect(next(entry(true, 0.4))).toBe('none'); // below play, also below settle - but not played
     expect(next(entry(false, 0))).toBe('none'); // left view, but intro never started
   });
 

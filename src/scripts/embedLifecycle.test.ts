@@ -64,7 +64,7 @@ describe('createEmbedTimers', () => {
     expect(onFallback).toHaveBeenCalledTimes(1);
   });
 
-  it('reveal and fallback are mutually exclusive — first wins', () => {
+  it('reveal and fallback are mutually exclusive - first wins', () => {
     const { t, onReveal, onFallback } = make();
     t.onReady(); t.onError();
     expect(onReveal).toHaveBeenCalledTimes(1);

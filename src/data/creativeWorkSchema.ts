@@ -23,7 +23,7 @@ export interface CreativeWorkSchema {
   author: { "@id": string };
 }
 
-// Pure builder for schema.org/CreativeWork — one per project page. CreativeWork (not
+// Pure builder for schema.org/CreativeWork - one per project page. CreativeWork (not
 // SoftwareApplication) is used deliberately: the SoftwareApplication rich result requires
 // price + aggregateRating, unattainable for personal projects. This grants entity signal,
 // not a rich result. author references the Person @id to keep one connected graph.
