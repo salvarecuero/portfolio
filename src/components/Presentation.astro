@@ -529,6 +529,10 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domai
     /* override Tailwind preflight `img { max-width: 100% }`, which capped the width
        below intrinsic and squished the square portrait horizontally */
     max-width: none;
+    /* Decorative portrait: non-interactive so it reads as part of the backdrop -
+       no drag, no selection, no context menu, no cursor change. */
+    pointer-events: none;
+    user-select: none;
     -webkit-mask-image: radial-gradient(ellipse 58% 54.5% at 50% 45%, #000 96.5%, transparent 100%);
     mask-image: radial-gradient(ellipse 58% 54.5% at 50% 45%, #000 96.5%, transparent 100%);
   }
