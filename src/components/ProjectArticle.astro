@@ -401,7 +401,10 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   }
   .lightbox-cap { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.76rem; color: #d8d4cd; text-align: center; }
   .lightbox-close {
-    position: absolute; top: -0.6rem; right: -0.6rem; width: 40px; height: 40px; border-radius: 999px;
+    /* z-index lifts the button above the image: the image's will-change/transform
+       forms a stacking context that, being later in the DOM, would otherwise paint
+       over the (earlier, z-index:auto) close button where they overlap at the corner. */
+    position: absolute; z-index: 1; top: -0.6rem; right: -0.6rem; width: 40px; height: 40px; border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, 0.25); background: rgba(20, 17, 15, 0.9); color: #fff;
     font-size: 1.1rem; cursor: pointer; display: grid; place-items: center;
   }
