@@ -283,21 +283,20 @@ if (showcase) {
       maybeMount(active.dataset.project);
     }
     for (const entry of entries.values()) warm(entry.origin);
+    // Phase 2: registered after the active embed is mounted so liveCount is accurate (no
+    // preload→evict churn). One-shot; own observer (decoupled from the intro's classes). Fires
+    // immediately if the Showcase is already in view.
+    const preloadIO = new IntersectionObserver((obsEntries) => {
+      for (const e of obsEntries) {
+        if (e.isIntersecting) {
+          preloadIO.disconnect();
+          preloadRest();
+          break;
+        }
+      }
+    }, { threshold: 0.4 });
+    preloadIO.observe(showcase);
   });
   if (document.readyState === 'complete') boot();
   else window.addEventListener('load', boot, { once: true });
-
-  // Phase 2 trigger: first time the Showcase scrolls into view, preload the rest. Own one-shot
-  // observer (not coupled to the intro's intro-play/intro-done classes), per the per-script
-  // observer pattern. Fires immediately if the Showcase is already in view at init.
-  const preloadIO = new IntersectionObserver((obsEntries) => {
-    for (const e of obsEntries) {
-      if (e.isIntersecting) {
-        preloadIO.disconnect();
-        preloadRest();
-        break;
-      }
-    }
-  }, { threshold: 0.4 });
-  preloadIO.observe(showcase);
 }
