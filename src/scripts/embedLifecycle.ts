@@ -72,3 +72,28 @@ export function shouldMount(opts: {
   if (!opts.isDesktop && !opts.embedMobile) return false;
   return true;
 }
+
+/**
+ * Phase-2 preload decision: given the embed candidates (in ascending DOM order), the active
+ * Project, the live cap and current live count, and the network conditions, return the ordered
+ * list of Project ids to proactively mount. Skips the active (phase 1 / activation owns it),
+ * already-mounted, and failed entries; caps the queue to the remaining headroom; and
+ * short-circuits to [] on Save-Data or a 2g/slow-2g connection.
+ */
+export function proactiveMountQueue(opts: {
+  candidates: { id: string; mounted: boolean; failed: boolean }[];
+  activeId: string | null;
+  cap: number;
+  liveCount: number;
+  saveData: boolean;
+  effectiveType?: string;
+}): string[] {
+  if (opts.saveData) return [];
+  if (opts.effectiveType === '2g' || opts.effectiveType === 'slow-2g') return [];
+  const headroom = opts.cap - opts.liveCount;
+  if (headroom <= 0) return [];
+  return opts.candidates
+    .filter((c) => c.id !== opts.activeId && !c.mounted && !c.failed)
+    .slice(0, headroom)
+    .map((c) => c.id);
+}

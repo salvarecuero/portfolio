@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { embedOrigin, isReadyMessage, createEmbedTimers, lruEvict, shouldMount } from './embedLifecycle';
+import { embedOrigin, isReadyMessage, createEmbedTimers, lruEvict, shouldMount, proactiveMountQueue } from './embedLifecycle';
 
 describe('embedOrigin', () => {
   it('returns scheme+host+port only', () => {
@@ -93,5 +93,49 @@ describe('shouldMount', () => {
   it('skips mobile unless embedMobile', () => {
     expect(shouldMount({ ...d, isDesktop: false })).toBe(false);
     expect(shouldMount({ ...d, isDesktop: false, embedMobile: true })).toBe(true);
+  });
+});
+
+describe('proactiveMountQueue', () => {
+  const cand = (id: string, over: { mounted?: boolean; failed?: boolean } = {}) =>
+    ({ id, mounted: false, failed: false, ...over });
+  const base = {
+    candidates: [cand('a'), cand('b'), cand('c')], // ascending DOM order
+    activeId: 'a',
+    cap: 3,
+    liveCount: 1, // active already mounted by phase 1
+    saveData: false,
+    effectiveType: '4g',
+  };
+
+  it('returns the non-active embeds in DOM order', () => {
+    expect(proactiveMountQueue(base)).toEqual(['b', 'c']);
+  });
+
+  it('excludes already-mounted and failed embeds', () => {
+    const candidates = [cand('a'), cand('b', { mounted: true }), cand('c', { failed: true }), cand('d')];
+    expect(proactiveMountQueue({ ...base, candidates, liveCount: 2 })).toEqual(['d']);
+  });
+
+  it('respects cap headroom (cap - liveCount)', () => {
+    const candidates = [cand('a'), cand('b'), cand('c'), cand('d'), cand('e')];
+    expect(proactiveMountQueue({ ...base, candidates, liveCount: 1 })).toEqual(['b', 'c']);
+  });
+
+  it('returns empty when there is no headroom', () => {
+    expect(proactiveMountQueue({ ...base, liveCount: 3 })).toEqual([]);
+  });
+
+  it('short-circuits to empty under Save-Data', () => {
+    expect(proactiveMountQueue({ ...base, saveData: true })).toEqual([]);
+  });
+
+  it('short-circuits to empty on 2g / slow-2g', () => {
+    expect(proactiveMountQueue({ ...base, effectiveType: '2g' })).toEqual([]);
+    expect(proactiveMountQueue({ ...base, effectiveType: 'slow-2g' })).toEqual([]);
+  });
+
+  it('treats a missing effectiveType as not-slow', () => {
+    expect(proactiveMountQueue({ ...base, effectiveType: undefined })).toEqual(['b', 'c']);
   });
 });
