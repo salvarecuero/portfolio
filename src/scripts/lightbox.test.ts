@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { setLightboxOpen, trapFocusTarget } from "./lightbox";
+import { setLightboxOpen, trapFocusTarget, clampPan, toggleZoom, applyPan } from "./lightbox";
 
 // Minimal fake element - node test env has no DOM.
 function fakeEl() {
@@ -47,5 +47,21 @@ describe("trapFocusTarget", () => {
 
   it("returns null when there is nothing focusable", () => {
     expect(trapFocusTarget([], null, false)).toBe(null);
+  });
+});
+
+describe("clampPan", () => {
+  it("returns 0 when there is no overflow (image fits)", () => {
+    expect(clampPan(10, 100, 200)).toBe(0);
+    expect(clampPan(0, 200, 100)).toBe(0);
+  });
+  it("allows offsets within half the overflow", () => {
+    // overflow = 200-100 = 100, limit = 50
+    expect(clampPan(30, 200, 100)).toBe(30);
+    expect(clampPan(-30, 200, 100)).toBe(-30);
+  });
+  it("clamps to +/- half the overflow at the edges", () => {
+    expect(clampPan(100, 200, 100)).toBe(50);
+    expect(clampPan(-100, 200, 100)).toBe(-50);
   });
 });

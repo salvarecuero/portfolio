@@ -28,6 +28,14 @@ export function trapFocusTarget<T>(focusables: T[], active: T | null, shiftKey: 
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
+// Constrain a pan offset (one axis) so the scaled image's edges stay within the
+// viewport. The image is centered at offset 0; it can move at most half the
+// overflow in either direction. No overflow => no panning. Pure, unit-tested.
+export function clampPan(offset: number, scaledSize: number, viewportSize: number): number {
+  const limit = Math.max(0, scaledSize - viewportSize) / 2;
+  return Math.max(-limit, Math.min(limit, offset));
+}
+
 export function initLightbox(root: Document = document): void {
   const overlay = root.querySelector<HTMLElement>("[data-lightbox]");
   if (!overlay) return;
