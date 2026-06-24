@@ -307,24 +307,18 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.55);
     color: var(--ink-soft);
-    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    /* Non-interactive tags: keep the default arrow over the text label too. */
+    cursor: default;
   }
-  .stack li:hover {
-    background: #fff;
-    border-color: color-mix(in oklch, var(--brand, var(--ac)) 40%, var(--line));
-    color: var(--ink);
-  }
-  .stack-ic { width: 15px; height: 15px; color: var(--ink-soft); transition: color 0.2s ease; }
-  .stack li:hover .stack-ic { color: var(--brand, var(--ac)); }
-  /* mask glyph: raster logo tinted by currentColor - same ink->brand as the SVGs */
+  /* Icons carry their brand colour at rest - the tags are informational, not hover targets. */
+  .stack-ic { width: 15px; height: 15px; color: var(--brand, var(--ac)); }
+  /* mask glyph: raster logo tinted by its brand colour - same as the SVGs */
   .mask-ic {
     display: inline-block;
-    background: var(--ink-soft);
+    background: var(--brand, var(--ac));
     -webkit-mask: var(--m) center / contain no-repeat;
             mask: var(--m) center / contain no-repeat;
-    transition: background 0.2s ease;
   }
-  .stack li:hover .mask-ic { background: var(--brand, var(--ac)); }
 
   /* ---------- body region ---------- */
   .shell {
@@ -432,10 +426,7 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     .back,
     .back-ic,
     .cta,
-    .ghost,
-    .stack li,
-    .stack-ic,
-    .mask-ic {
+    .ghost {
       transition: none;
     }
   }
