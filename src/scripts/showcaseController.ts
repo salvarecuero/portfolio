@@ -10,6 +10,7 @@
  * Stage leaves the tabs as live DOM.
  */
 import { projectFromHash, nextTab, prevTab } from './projectSelection';
+import { decideHashSync } from './showcaseHashSync';
 
 const SWAP_MS = 240; // keep in sync with the stage-in/stage-out duration in showcase.css
 
@@ -121,6 +122,33 @@ if (tablist && showcase) {
     history.replaceState({ project: initial }, '', `#${initial}`);
     setActive(initial, false); // snap on load, no crossfade
     showcase.scrollIntoView();
+  }
+
+  // Keep the hash in sync with the scrolled-to section. The hash deep-links the Showcase
+  // on reload, so it must reflect the active Project while the Showcase is in view and be
+  // dropped once the Presentation is (else a reload jumps back into the Showcase). Scroll
+  // is not a discrete navigation, so this replaces the entry rather than stacking history.
+  const scrollRoot = showcase.closest('main');
+  if (scrollRoot) {
+    const sync = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.target !== showcase) continue;
+          const action = decideHashSync({
+            inShowcase: e.isIntersecting && e.intersectionRatio >= 0.5,
+            activeId: currentId(),
+            currentHash: location.hash,
+          });
+          if (action.type === 'set') {
+            history.replaceState({ project: action.id }, '', `#${action.id}`);
+          } else if (action.type === 'clear') {
+            history.replaceState(null, '', location.pathname + location.search);
+          }
+        }
+      },
+      { root: scrollRoot, threshold: [0, 0.5, 1] },
+    );
+    sync.observe(showcase);
   }
 
   // Back / forward through visited Projects.

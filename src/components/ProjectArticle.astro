@@ -138,6 +138,21 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   initLightbox();
 </script>
 
+<script>
+  import { arrivedFromHome } from "../scripts/projectBackNav";
+  // Back: if the user came from the Showcase (same-origin home referrer) and there is a
+  // history entry to return to, step back so their exact place - active Project and scroll
+  // - is restored. On direct entry the static href="/" stands and lands on the Presentation.
+  if (arrivedFromHome(document.referrer, location.origin) && history.length > 1) {
+    for (const link of document.querySelectorAll<HTMLAnchorElement>("a.back")) {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        history.back();
+      });
+    }
+  }
+</script>
+
 <style>
   /* The Project's own readable page: the warm, light "wall" world of the Presentation,
      carrying the Project's accent as its identity colour, with a deliberate dark media
