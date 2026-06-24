@@ -80,6 +80,8 @@ export function initLightbox(root: Document = document): void {
   const isOpen = () => overlay.classList.contains("open");
 
   let zoom: ZoomState = { zoomed: false, offsetX: 0, offsetY: 0 };
+  let dragging = false;
+  let moved = false;
 
   const applyTransform = () => {
     if (!img) return;
@@ -90,6 +92,8 @@ export function initLightbox(root: Document = document): void {
 
   const resetZoom = () => {
     zoom = { zoomed: false, offsetX: 0, offsetY: 0 };
+    dragging = false;
+    moved = false;
     img?.classList.remove("is-dragging");
     applyTransform();
   };
@@ -121,8 +125,6 @@ export function initLightbox(root: Document = document): void {
   // mouse and touch with one path; pointer capture keeps a drag tracking even
   // when it leaves the image.
   const MOVE_THRESHOLD = 6;
-  let dragging = false;
-  let moved = false;
   let startX = 0;
   let startY = 0;
   let base: ZoomState = zoom;
