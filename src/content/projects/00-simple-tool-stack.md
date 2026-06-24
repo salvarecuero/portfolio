@@ -16,7 +16,7 @@ media:
     alt: "Simple Tool Stack: the Image Compressor showing a before and after of a compressed photo, 92 percent smaller, with a download button"
   - type: image
     src: ../../assets/showcase/simple-tool-stack/homepage.png
-    alt: "Simple Tool Stack: the home page listing the image, PDF, text, converter, generator and developer tools"
+    alt: "Simple Tool Stack: the home page with the 'Free image and text tools, right in your browser' hero above the Image tools grid (compressor, converter, crop, resize, circle crop, EXIF remover)"
   - type: image
     src: ../../assets/showcase/simple-tool-stack/circle-crop.png
     alt: "Simple Tool Stack: the Circle Crop tool fitting a photo into a circular frame with output size options"
