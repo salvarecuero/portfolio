@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { setLightboxOpen, trapFocusTarget, clampPan, toggleZoom, applyPan } from "./lightbox";
+import { setLightboxOpen, trapFocusTarget, clampPan, zoomPan, nextZoom, applyPan } from "./lightbox";
 
 // Minimal fake element - node test env has no DOM.
 function fakeEl() {
@@ -66,13 +66,33 @@ describe("clampPan", () => {
   });
 });
 
-describe("toggleZoom", () => {
-  it("zooms in from fit, leaving pan at origin", () => {
-    expect(toggleZoom({ zoomed: false, offsetX: 0, offsetY: 0 }))
-      .toEqual({ zoomed: true, offsetX: 0, offsetY: 0 });
+describe("zoomPan", () => {
+  it("keeps the image centred when the click is at the centre", () => {
+    expect(zoomPan(0, 200, 100)).toBe(0);
   });
-  it("zooms out and resets any pan offset back to origin", () => {
-    expect(toggleZoom({ zoomed: true, offsetX: 30, offsetY: -20 }))
+  it("offsets toward the clicked point so it stays under the cursor", () => {
+    // scale = 200/100 = 2, offset = -rel * (scale-1) = -rel
+    expect(zoomPan(20, 200, 100)).toBe(-20);
+    expect(zoomPan(-30, 200, 100)).toBe(30);
+  });
+  it("clamps the offset so the image edges stay in view", () => {
+    // -100 would expose past the edge; limit is half the overflow = 50
+    expect(zoomPan(100, 200, 100)).toBe(-50);
+  });
+  it("returns 0 for a zero-size viewport (no geometry yet)", () => {
+    expect(zoomPan(50, 0, 0)).toBe(0);
+  });
+});
+
+describe("nextZoom", () => {
+  it("zooms in centred on the clicked point, clamped to the edges", () => {
+    expect(nextZoom({ zoomed: false, offsetX: 0, offsetY: 0 }, 20, 10, 200, 200, 100, 100))
+      .toEqual({ zoomed: true, offsetX: -20, offsetY: -10 });
+    expect(nextZoom({ zoomed: false, offsetX: 0, offsetY: 0 }, 100, -100, 200, 200, 100, 100))
+      .toEqual({ zoomed: true, offsetX: -50, offsetY: 50 });
+  });
+  it("zooms out to the centred fit, ignoring the click point", () => {
+    expect(nextZoom({ zoomed: true, offsetX: 30, offsetY: -20 }, 40, 40, 200, 200, 100, 100))
       .toEqual({ zoomed: false, offsetX: 0, offsetY: 0 });
   });
 });

@@ -41,10 +41,31 @@ export const ZOOM_SCALE = 2;
 
 export type ZoomState = { zoomed: boolean; offsetX: number; offsetY: number };
 
-// Toggle between fit and zoomed-in. Either direction resets the pan to origin so
-// the image is re-centered whenever the zoom level changes. Pure, unit-tested.
-export function toggleZoom(state: ZoomState): ZoomState {
-  return { zoomed: !state.zoomed, offsetX: 0, offsetY: 0 };
+// Pan offset (one axis) that keeps the point at `pointerRel` (signed distance from
+// the image centre, in fitted px) under the cursor after zooming, clamped so the
+// image edges stay in view. With scale = scaledSize/viewportSize, a point p maps to
+// scale*p + offset; holding it fixed gives offset = -p*(scale-1). Pure, unit-tested.
+export function zoomPan(pointerRel: number, scaledSize: number, viewportSize: number): number {
+  if (viewportSize <= 0) return 0;
+  const scale = scaledSize / viewportSize;
+  const offset = clampPan(-pointerRel * (scale - 1), scaledSize, viewportSize);
+  return offset === 0 ? 0 : offset; // normalise -0 (a centred click yields +0)
+}
+
+// Next zoom state for a toggle click at (relX, relY) - signed distances from the
+// image centre. Zooming in centres on the clicked point (clamped to the edges);
+// zooming out returns to the fitted, centred view. Pure, unit-tested.
+export function nextZoom(
+  state: ZoomState,
+  relX: number,
+  relY: number,
+  scaledW: number,
+  scaledH: number,
+  viewW: number,
+  viewH: number,
+): ZoomState {
+  if (state.zoomed) return { zoomed: false, offsetX: 0, offsetY: 0 };
+  return { zoomed: true, offsetX: zoomPan(relX, scaledW, viewW), offsetY: zoomPan(relY, scaledH, viewH) };
 }
 
 // Apply a drag delta to the pan offset, clamped per axis so the image edges stay
@@ -73,6 +94,9 @@ export function initLightbox(root: Document = document): void {
   const img = overlay.querySelector<HTMLImageElement>("[data-lightbox-img]");
   const cap = overlay.querySelector<HTMLElement>("[data-lightbox-cap]");
   const closeBtn = overlay.querySelector<HTMLElement>("[data-lightbox-close]");
+  // The non-transformed wrapper around the image: its box stays put while the image
+  // animates its transform, so it is the stable reference for the click-to-zoom centre.
+  const view = overlay.querySelector<HTMLElement>("[data-lightbox-view]");
   const triggers = root.querySelectorAll<HTMLButtonElement>("[data-lightbox-trigger]");
 
   // The element focus returns to when the dialog closes (the trigger that opened it).
@@ -176,7 +200,16 @@ export function initLightbox(root: Document = document): void {
       img.classList.remove("is-dragging");
       if (img.hasPointerCapture(ev.pointerId)) img.releasePointerCapture(ev.pointerId);
       if (!moved) {
-        zoom = toggleZoom(zoom);
+        // Centre the zoom on the clicked point, measured against the wrapper: its box
+        // matches the fitted image but does not move while the image transform
+        // animates (reading the image rect mid-animation gives a wrong centre).
+        const ref = view ?? img;
+        const rect = ref.getBoundingClientRect();
+        const relX = ev.clientX - (rect.left + rect.width / 2);
+        const relY = ev.clientY - (rect.top + rect.height / 2);
+        const scaledW = ref.clientWidth * ZOOM_SCALE;
+        const scaledH = ref.clientHeight * ZOOM_SCALE;
+        zoom = nextZoom(zoom, relX, relY, scaledW, scaledH, ref.clientWidth, ref.clientHeight);
         applyTransform();
       }
     };
