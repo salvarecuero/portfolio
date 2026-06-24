@@ -48,10 +48,11 @@ const website = buildWebsiteSchema({ siteUrl: origin });
 <meta name="description" content={meta.description} />
 <link rel="canonical" href={meta.canonical} />
 
-<!-- Favicons (svg primary, ico fallback, apple-touch for iOS) + browser chrome colour -->
+<!-- Favicons (svg primary, ico fallback, apple-touch for iOS), web app manifest, browser chrome colour -->
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
 <meta name="theme-color" content="#020206" />
 
 <!-- Open Graph -->
