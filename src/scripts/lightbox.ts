@@ -79,6 +79,21 @@ export function initLightbox(root: Document = document): void {
   let lastFocused: HTMLElement | null = null;
   const isOpen = () => overlay.classList.contains("open");
 
+  let zoom: ZoomState = { zoomed: false, offsetX: 0, offsetY: 0 };
+
+  const applyTransform = () => {
+    if (!img) return;
+    const scale = zoom.zoomed ? ZOOM_SCALE : 1;
+    img.style.transform = `translate(${zoom.offsetX}px, ${zoom.offsetY}px) scale(${scale})`;
+    img.classList.toggle("is-zoomed", zoom.zoomed);
+  };
+
+  const resetZoom = () => {
+    zoom = { zoomed: false, offsetX: 0, offsetY: 0 };
+    img?.classList.remove("is-dragging");
+    applyTransform();
+  };
+
   triggers.forEach((btn) => {
     btn.addEventListener("click", () => {
       const src = btn.getAttribute("data-full") ?? "";
@@ -86,6 +101,7 @@ export function initLightbox(root: Document = document): void {
       const caption = btn.getAttribute("data-cap") ?? "";
       if (img) { img.src = src; img.alt = alt; }
       if (cap) { cap.textContent = caption; cap.hidden = !caption; }
+      resetZoom();
       lastFocused = root.activeElement as HTMLElement | null;
       setLightboxOpen(overlay, true);
       closeBtn?.focus();
@@ -95,9 +111,61 @@ export function initLightbox(root: Document = document): void {
   const close = () => {
     if (!isOpen()) return;
     setLightboxOpen(overlay, false);
+    resetZoom();
     lastFocused?.focus();
     lastFocused = null;
   };
+
+  // Click/tap toggles fit <-> zoomed; while zoomed, drag pans. A small movement
+  // threshold separates a pan-drag from a toggle-click. Pointer events cover
+  // mouse and touch with one path; pointer capture keeps a drag tracking even
+  // when it leaves the image.
+  const MOVE_THRESHOLD = 6;
+  let dragging = false;
+  let moved = false;
+  let startX = 0;
+  let startY = 0;
+  let base: ZoomState = zoom;
+
+  if (img) {
+    img.addEventListener("pointerdown", (e) => {
+      const ev = e as PointerEvent;
+      dragging = true;
+      moved = false;
+      startX = ev.clientX;
+      startY = ev.clientY;
+      base = zoom;
+      img.setPointerCapture(ev.pointerId);
+      if (zoom.zoomed) img.classList.add("is-dragging");
+    });
+
+    img.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      const ev = e as PointerEvent;
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+      if (Math.abs(dx) > MOVE_THRESHOLD || Math.abs(dy) > MOVE_THRESHOLD) moved = true;
+      if (!zoom.zoomed) return;
+      const scaledW = img.clientWidth * ZOOM_SCALE;
+      const scaledH = img.clientHeight * ZOOM_SCALE;
+      zoom = applyPan(base, dx, dy, scaledW, scaledH, img.clientWidth, img.clientHeight);
+      applyTransform();
+    });
+
+    const endDrag = (e: Event) => {
+      if (!dragging) return;
+      const ev = e as PointerEvent;
+      dragging = false;
+      img.classList.remove("is-dragging");
+      if (img.hasPointerCapture(ev.pointerId)) img.releasePointerCapture(ev.pointerId);
+      if (!moved) {
+        zoom = toggleZoom(zoom);
+        applyTransform();
+      }
+    };
+    img.addEventListener("pointerup", endDrag);
+    img.addEventListener("pointercancel", endDrag);
+  }
 
   closeBtn?.addEventListener("click", close);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
