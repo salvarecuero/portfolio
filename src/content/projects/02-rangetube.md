@@ -11,15 +11,18 @@ embed:
   mobile: false
 media:
   - type: image
-    src: ../../assets/showcase/rangetube/overview.png
-    alt: "RangeTube: a YouTube video loaded with a start/end range selected below the player"
+    src: ../../assets/showcase/rangetube/working.png
+    alt: "RangeTube on desktop: a YouTube video loaded, with the loop start and end set on the range slider below the player"
+  - type: image
+    src: ../../assets/showcase/rangetube/start.png
+    alt: "RangeTube on desktop: the home screen with the YouTube URL input under the wordmark"
 mediaMobile:
   - type: image
-    src: ../../assets/showcase/rangetube/mobile-home.png
-    alt: "RangeTube on mobile: the URL entry home screen"
+    src: ../../assets/showcase/rangetube/working-mobile.png
+    alt: "RangeTube on mobile: a loaded video with the loop range set on the slider"
   - type: image
-    src: ../../assets/showcase/rangetube/mobile-player.png
-    alt: "RangeTube on mobile: the player with the range slider"
+    src: ../../assets/showcase/rangetube/start-mobile.png
+    alt: "RangeTube on mobile: the home screen with the YouTube URL input"
 order: 2
 accent: "#e8634c"
 icon: "range"

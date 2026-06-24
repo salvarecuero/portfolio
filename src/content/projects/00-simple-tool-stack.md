@@ -12,12 +12,30 @@ embed:
   mobile: true
 media:
   - type: image
-    src: ../../assets/showcase/simple-tool-stack/poster.png
-    alt: "Simple Tool Stack: free in-browser image and text tools"
+    src: ../../assets/showcase/simple-tool-stack/image-compressor-result.png
+    alt: "Simple Tool Stack: the Image Compressor showing a before and after of a compressed photo, 92 percent smaller, with a download button"
+  - type: image
+    src: ../../assets/showcase/simple-tool-stack/homepage.png
+    alt: "Simple Tool Stack: the home page listing the image, PDF, text, converter, generator and developer tools"
+  - type: image
+    src: ../../assets/showcase/simple-tool-stack/circle-crop.png
+    alt: "Simple Tool Stack: the Circle Crop tool fitting a photo into a circular frame with output size options"
+  - type: image
+    src: ../../assets/showcase/simple-tool-stack/merge-pdf.png
+    alt: "Simple Tool Stack: the Merge PDF tool with two files queued to combine into one document"
+  - type: image
+    src: ../../assets/showcase/simple-tool-stack/image-compressor.png
+    alt: "Simple Tool Stack: the Image Compressor controls with quality, target size and email modes and output format options"
 mediaMobile:
   - type: image
-    src: ../../assets/showcase/simple-tool-stack/poster-mobile.png
-    alt: "Simple Tool Stack on mobile: free in-browser image and text tools"
+    src: ../../assets/showcase/simple-tool-stack/homepage-mobile.png
+    alt: "Simple Tool Stack on mobile: the home page headline and the start of the image tools list"
+  - type: image
+    src: ../../assets/showcase/simple-tool-stack/circle-crop-mobile.png
+    alt: "Simple Tool Stack on mobile: the Circle Crop tool with a photo in a circular frame and output size options"
+  - type: image
+    src: ../../assets/showcase/simple-tool-stack/date-duration-mobile.png
+    alt: "Simple Tool Stack on mobile: the Date Duration Calculator showing the days between two dates"
 order: 0
 accent: "#6366F1"
 icon: "layers"
