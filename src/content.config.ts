@@ -2,7 +2,7 @@ import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 
-// Showcase Project catalog. The schema reflects the Presentation modes (see CONTEXT.md)
+// Showcase Project catalog. The schema reflects the Presentation modes (embed/media/custom)
 // and the embed contract (see docs/adr/0004). `media` is a navigable gallery; media[0] is
 // the Poster for Media mode. For Embed mode `media` is the SSR/no-JS baseline and the
 // fallback shown when the readiness handshake never arrives (it is not the embed loading

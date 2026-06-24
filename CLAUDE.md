@@ -2,7 +2,6 @@
 
 Personal portfolio, v2. v1 is frozen at tag `v1.0`; v2 starts from scratch on the `v2` branch.
 
-- Domain language: see [CONTEXT.md](./CONTEXT.md).
 - Architecture decisions: see [docs/adr/](./docs/adr/).
 - Design foundation: see [docs/design-system.md](./docs/design-system.md).
 
@@ -41,5 +40,5 @@ Personal portfolio, v2. v1 is frozen at tag `v1.0`; v2 starts from scratch on th
 
 ## Conventions
 
-- **English only.** All text committed to the repo — code, comments, commit messages, docs, ADRs, CONTEXT — is in English. (i18n with an EN/ES switch is a possible future consideration, not in scope now.)
-- **Technical objectivity in the record.** Every commit message, code comment and doc (including ADRs and CONTEXT.md) describes *what* changes and, when relevant, *why* — but the "why" **only when it has technical grounding** (an architecture trade-off, a fix for a measurable bug, a performance constraint). It never references session conversations, personal or situational explanations, or the private motivation behind a decision. If a justification has no technical grounding, it is omitted.
+- **English only.** All text committed to the repo — code, comments, commit messages, docs, ADRs — is in English. (i18n with an EN/ES switch is a possible future consideration, not in scope now.)
+- **Technical objectivity in the record.** Every commit message, code comment and doc (including ADRs) describes *what* changes and, when relevant, *why* — but the "why" **only when it has technical grounding** (an architecture trade-off, a fix for a measurable bug, a performance constraint). It never references session conversations, personal or situational explanations, or the private motivation behind a decision. If a justification has no technical grounding, it is omitted.

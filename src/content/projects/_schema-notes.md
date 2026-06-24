@@ -8,7 +8,7 @@ Files prefixed with `_` (like this one) are excluded from the loader.
 Main fields:
 
 - `title`, `summary`
-- `mode`: `embed` | `media` | `custom` (see CONTEXT.md)
+- `mode`: `embed` | `media` | `custom`
 - `media`: the Media set (ordered). Each item is `{ type: image, src, alt }` or
   `{ type: video, poster, sources: [{ src, type }], alt }`. `media[0]` is the Poster
   for Media mode (for Embeds the gallery is the no-JS baseline / handshake-failure

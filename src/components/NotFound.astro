@@ -1,0 +1,180 @@
+---
+import { Image } from "astro:assets";
+import wall from "../assets/presentation/wall.webp";
+import barsinso from "../assets/barsinso-and-me.png";
+---
+
+<section class="notfound">
+  <div class="stack">
+    <div class="copy">
+      <p class="code">404</p>
+      <p class="lead">Oh, I know that feeling. I've landed on my share of 404s too.</p>
+      <p class="line">But hey, here's a photo of Barsinso and me. He's the best.</p>
+    </div>
+
+    <figure class="polaroid">
+      <Image
+        class="photo"
+        src={barsinso}
+        alt="Salva holding his cat Barsinso in his arms, outdoors"
+        widths={[240, 480]}
+        sizes="240px"
+        loading="eager"
+      />
+      <figcaption class="caption">Barsinso & me</figcaption>
+    </figure>
+
+    <a class="back" href="/">
+      <span class="back-ic" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </span>
+      <span class="back-txt">Back to the homepage<small>(even if that means you stop looking at him)</small></span>
+    </a>
+  </div>
+</section>
+
+<style define:vars={{ wallUrl: `url("${wall.src}")` }}>
+  /* The 404 lives in the same light, textured "wall" world as the Presentation, so the one
+     page that breaks the site's third-person voice still reads as the same place. Palette is
+     scoped here (not global), mirroring the Presentation. */
+  .notfound {
+    --p-ink: #26221f; /* warm charcoal, never pure black */
+    --p-ink-soft: #5f5a53;
+    --p-wall: #eef0f1; /* fallback under the texture */
+    --accent: #2b8fd6; /* "sky", shared with the Presentation */
+    --line: rgba(38, 34, 31, 0.12);
+
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: clamp(1.25rem, 5vw, 2.5rem);
+    overflow: hidden;
+    color: var(--p-ink);
+    font-family: var(--font-geist), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    background: var(--wallUrl) center / cover no-repeat, var(--p-wall);
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(1.1rem, 3.2vw, 2rem);
+    text-align: center;
+    max-width: 30rem;
+  }
+
+  /* ---------- polaroid ---------- */
+  .polaroid {
+    margin: 0;
+    padding: 0.7rem 0.7rem 0;
+    background: #fdfdfb;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    box-shadow: 0 18px 40px -18px rgba(38, 34, 31, 0.45), 0 2px 6px rgba(38, 34, 31, 0.08);
+    transform: rotate(-2.5deg);
+    will-change: transform;
+  }
+  /* Sized by viewport height (the photo is the tallest element) so the whole composition
+     fits one screen without scrolling, on mobile especially. Width follows the aspect ratio. */
+  .photo {
+    display: block;
+    height: clamp(240px, 44vh, 430px);
+    width: auto;
+    max-width: 100%;
+    border-radius: 2px;
+  }
+  .caption {
+    font-family: var(--font-yellowtail), cursive;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--p-ink-soft);
+    padding: 0.55rem 0 0.7rem;
+  }
+
+  /* ---------- copy ---------- */
+  .copy { display: grid; gap: 0.45rem; }
+  .code {
+    margin: 0 0 0.2rem;
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: clamp(3.5rem, 14vw, 5rem);
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+  .lead {
+    margin: 0;
+    font-size: clamp(1.05rem, 3.5vw, 1.2rem);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+  .line {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.45;
+    color: var(--p-ink-soft);
+  }
+  /* Keep the empathy line on a single line once the viewport is wide enough to hold it
+     (it overflows the 30rem column on purpose, staying centered); below that it wraps. */
+  @media (min-width: 48rem) {
+    .lead { white-space: nowrap; }
+    /* Desktop has the vertical room: let the photo read larger. Mobile keeps the
+       viewport-height sizing above so it still fits one screen. */
+    .photo { height: clamp(360px, 52vh, 520px); }
+  }
+
+  /* ---------- back control (icon circle + two-line label), mirrors ProjectArticle ---------- */
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    color: var(--p-ink-soft);
+    transition: color 0.22s ease;
+  }
+  .back-ic {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--p-ink);
+    transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease, transform 0.22s ease;
+  }
+  .back-ic svg { width: 15px; height: 15px; }
+  .back-txt {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    text-align: left;
+  }
+  .back-txt small { display: block; color: #6b665c; font-size: 0.66rem; letter-spacing: 0.02em; margin-top: 0.15rem; }
+  .back:hover { color: var(--p-ink); }
+  .back:hover .back-ic { background: var(--p-ink); border-color: var(--p-ink); color: #fff; transform: translateX(-2px); }
+  .back:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  /* ---------- entrance (additive; reduced-motion sees the composed final state) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .copy > * { animation: rise 0.6s ease both; }
+    .lead { animation-delay: 0.06s; }
+    .line { animation-delay: 0.12s; }
+    .polaroid { animation: settle 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
+    .back { animation: rise 0.6s ease 0.34s both; }
+  }
+  @keyframes settle {
+    from { opacity: 0; transform: translateY(-14px) rotate(2deg); }
+    to { opacity: 1; transform: translateY(0) rotate(-2.5deg); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
