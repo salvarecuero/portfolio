@@ -47,6 +47,26 @@ export function toggleZoom(state: ZoomState): ZoomState {
   return { zoomed: !state.zoomed, offsetX: 0, offsetY: 0 };
 }
 
+// Apply a drag delta to the pan offset, clamped per axis so the image edges stay
+// in view. No-op (returns the same state) when not zoomed. The shell passes the
+// base offset plus the total delta since drag start, so this stays a pure clamp.
+export function applyPan(
+  state: ZoomState,
+  dx: number,
+  dy: number,
+  scaledW: number,
+  scaledH: number,
+  viewW: number,
+  viewH: number,
+): ZoomState {
+  if (!state.zoomed) return state;
+  return {
+    zoomed: true,
+    offsetX: clampPan(state.offsetX + dx, scaledW, viewW),
+    offsetY: clampPan(state.offsetY + dy, scaledH, viewH),
+  };
+}
+
 export function initLightbox(root: Document = document): void {
   const overlay = root.querySelector<HTMLElement>("[data-lightbox]");
   if (!overlay) return;

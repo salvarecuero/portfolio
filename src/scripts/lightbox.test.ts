@@ -76,3 +76,19 @@ describe("toggleZoom", () => {
       .toEqual({ zoomed: false, offsetX: 0, offsetY: 0 });
   });
 });
+
+describe("applyPan", () => {
+  it("ignores panning when not zoomed", () => {
+    const state = { zoomed: false, offsetX: 0, offsetY: 0 };
+    expect(applyPan(state, 30, 40, 200, 200, 100, 100)).toBe(state);
+  });
+  it("adds a delta to the offset when zoomed, clamped per axis", () => {
+    // scaled 200, viewport 100 => limit 50 on each axis
+    expect(applyPan({ zoomed: true, offsetX: 0, offsetY: 0 }, 30, 40, 200, 200, 100, 100))
+      .toEqual({ zoomed: true, offsetX: 30, offsetY: 40 });
+  });
+  it("clamps the dragged offset at the edges", () => {
+    expect(applyPan({ zoomed: true, offsetX: 0, offsetY: 0 }, 999, -999, 200, 200, 100, 100))
+      .toEqual({ zoomed: true, offsetX: 50, offsetY: -50 });
+  });
+});
