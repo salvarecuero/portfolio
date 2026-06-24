@@ -82,6 +82,9 @@ export function initLightbox(root: Document = document): void {
   let zoom: ZoomState = { zoomed: false, offsetX: 0, offsetY: 0 };
   let dragging = false;
   let moved = false;
+  // The pointer currently captured for a drag, so capture can be released even when
+  // the drag does not end normally (e.g. the dialog is closed mid-drag).
+  let activePointerId: number | null = null;
 
   const applyTransform = () => {
     if (!img) return;
@@ -94,6 +97,10 @@ export function initLightbox(root: Document = document): void {
     zoom = { zoomed: false, offsetX: 0, offsetY: 0 };
     dragging = false;
     moved = false;
+    if (img && activePointerId !== null && img.hasPointerCapture(activePointerId)) {
+      img.releasePointerCapture(activePointerId);
+    }
+    activePointerId = null;
     img?.classList.remove("is-dragging");
     applyTransform();
   };
@@ -125,18 +132,23 @@ export function initLightbox(root: Document = document): void {
   // mouse and touch with one path; pointer capture keeps a drag tracking even
   // when it leaves the image.
   const MOVE_THRESHOLD = 6;
-  let startX = 0;
-  let startY = 0;
-  let base: ZoomState = zoom;
 
   if (img) {
+    let startX = 0;
+    let startY = 0;
+    let base: ZoomState = zoom;
+
     img.addEventListener("pointerdown", (e) => {
       const ev = e as PointerEvent;
+      // Ignore secondary pointers (multi-touch) and re-entrant presses so the
+      // captured pointer and drag origin are never overwritten mid-drag.
+      if (!ev.isPrimary || dragging) return;
       dragging = true;
       moved = false;
       startX = ev.clientX;
       startY = ev.clientY;
       base = zoom;
+      activePointerId = ev.pointerId;
       img.setPointerCapture(ev.pointerId);
       if (zoom.zoomed) img.classList.add("is-dragging");
     });
@@ -146,8 +158,10 @@ export function initLightbox(root: Document = document): void {
       const ev = e as PointerEvent;
       const dx = ev.clientX - startX;
       const dy = ev.clientY - startY;
-      if (Math.abs(dx) > MOVE_THRESHOLD || Math.abs(dy) > MOVE_THRESHOLD) moved = true;
+      // Only a pan (zoomed) gesture sets moved: an unzoomed tap that drifts a few
+      // pixels - common on touch - must still toggle zoom rather than be suppressed.
       if (!zoom.zoomed) return;
+      if (Math.abs(dx) > MOVE_THRESHOLD || Math.abs(dy) > MOVE_THRESHOLD) moved = true;
       const scaledW = img.clientWidth * ZOOM_SCALE;
       const scaledH = img.clientHeight * ZOOM_SCALE;
       zoom = applyPan(base, dx, dy, scaledW, scaledH, img.clientWidth, img.clientHeight);
@@ -158,6 +172,7 @@ export function initLightbox(root: Document = document): void {
       if (!dragging) return;
       const ev = e as PointerEvent;
       dragging = false;
+      activePointerId = null;
       img.classList.remove("is-dragging");
       if (img.hasPointerCapture(ev.pointerId)) img.releasePointerCapture(ev.pointerId);
       if (!moved) {
