@@ -9,7 +9,7 @@
  */
 import {
   PROTOCOL_VERSION, embedOrigin, isReadyMessage,
-  createEmbedTimers, lruEvict, shouldMount, type EmbedTimers,
+  createEmbedTimers, lruEvict, shouldMount, proactiveMountQueue, type EmbedTimers,
 } from './embedLifecycle';
 import {
   bounceShowcaseEscape,
@@ -180,6 +180,37 @@ function maybeMount(id: string) {
   touchLRU(id);
 }
 
+// Non-standard Network Information API; feature-detected. Used only to back off on
+// Save-Data / very slow links so proactive preloading never punishes constrained connections.
+function connectionInfo(): { saveData: boolean; effectiveType?: string } {
+  const c = (navigator as Navigator & {
+    connection?: { saveData?: boolean; effectiveType?: string };
+  }).connection;
+  return { saveData: !!c?.saveData, effectiveType: c?.effectiveType };
+}
+
+// Phase 2: once the Showcase is reached, mount the remaining embeds one per idle tick so every
+// subsequent Project switch is instant. The active Project is already handled by phase 1.
+function preloadRest() {
+  const active = document.querySelector<HTMLElement>('.stage[data-embed-url].is-active');
+  const { saveData, effectiveType } = connectionInfo();
+  const queue = proactiveMountQueue({
+    candidates: [...entries.values()].map((e) => ({ id: e.id, mounted: e.mounted, failed: e.failed })),
+    activeId: active?.dataset.project ?? null,
+    cap: LIVE_CAP,
+    liveCount: mountOrder.length,
+    saveData,
+    effectiveType,
+  });
+  let i = 0;
+  const step = () => {
+    if (i >= queue.length) return;
+    maybeMount(queue[i++]); // idempotent + cap-safe (queue is sliced to headroom)
+    onIdle(step);
+  };
+  onIdle(step);
+}
+
 const onIdle = 'requestIdleCallback' in window
   ? (cb: () => void) => (window as Window & typeof globalThis & { requestIdleCallback(cb: () => void, o?: { timeout: number }): number }).requestIdleCallback(cb, { timeout: 2000 })
   : (cb: () => void) => window.setTimeout(cb, 200);
@@ -255,4 +286,18 @@ if (showcase) {
   });
   if (document.readyState === 'complete') boot();
   else window.addEventListener('load', boot, { once: true });
+
+  // Phase 2 trigger: first time the Showcase scrolls into view, preload the rest. Own one-shot
+  // observer (not coupled to the intro's intro-play/intro-done classes), per the per-script
+  // observer pattern. Fires immediately if the Showcase is already in view at init.
+  const preloadIO = new IntersectionObserver((obsEntries) => {
+    for (const e of obsEntries) {
+      if (e.isIntersecting) {
+        preloadIO.disconnect();
+        preloadRest();
+        break;
+      }
+    }
+  }, { threshold: 0.4 });
+  preloadIO.observe(showcase);
 }
