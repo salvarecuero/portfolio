@@ -1,6 +1,6 @@
 # Design System — Foundation
 
-Record of the design system's foundation. It is the base to build on, not the final visual design (that is iterated later).
+Record of the design system's foundation: the base the shipped visual design rests on. The visual design itself has since been iterated across the build (see Status); this document records the foundation, not an exhaustive spec of the shipped result.
 
 ## Foundation decisions
 
@@ -9,18 +9,25 @@ Record of the design system's foundation. It is the base to build on, not the fi
 - **Per-Project theming**: each Project's visual identity (and the chrome accent on switch / its Custom view) is expressed as a token override, not as hardcoded styles.
 - The visual is hand-crafted; no component library is used, to avoid a generic aesthetic.
 
-## Pending (to iterate)
+## Status (2026-06-26)
 
-- Type scale, base palette and dark/light.
-- Set of primitives/components.
-- Concrete definition of the per-Project accent tokens.
+The visual design has been iterated and ships as the current baseline; the earlier deferral
+(the "Phase 5 deferred" status) is resolved. The iteration spans the Presentation, the Showcase
+shell and play-on-enter intro, the project/tool detail pages, the CTA pills, and the lightbox.
+The foundation above held through that work without structural change.
 
-## Status (2026-06-17)
+Notes on the items previously listed as pending:
 
-Phase 5 (design iteration) is **deferred by decision**: the current hand-crafted design ships as-is
-(performance-first), and the items above — type scale, base palette, dark/light, the primitives set,
-and the concrete per-Project accent token definitions — are revisited in a dedicated future session.
-The token-as-source-of-truth foundation already supports that iteration without structural change.
+- **Per-Project accent tokens** are defined and applied at runtime via the `--accent` override on
+  the Showcase root, set per Project from content.
+- **Type scale, palette and light/dark** are realized in the token layer plus deliberate
+  per-section palettes (the Presentation's scoped light surface, the Showcase's dark cosmos),
+  not a user-facing theme toggle.
+- **Primitives** remain intentionally hand-crafted per component (no component library), per the
+  foundation decision above; there is no separate primitives library.
+
+Because the shipped design is the source of truth, treat the implementation (`src/styles/` and the
+components) as authoritative over this record where they differ.
 
 ## Custom stack icons
 
