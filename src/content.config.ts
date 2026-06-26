@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
+import { accentColor, projectOrder } from "./lib/projectFields";
 
 // Showcase Project catalog. The schema reflects the Presentation modes (embed/media/custom)
 // and the embed contract (see docs/adr/0004). `media` is a navigable gallery; media[0] is
@@ -39,9 +40,9 @@ const projects = defineCollection({
       // falls back to `media` cover-cropped when absent.
       mediaMobile: z.array(mediaItem).optional(),
       // Order in the Selector (lower = first).
-      order: z.number().default(0),
+      order: projectOrder,
       // Project identity accent; overrides the --accent var.
-      accent: z.string().optional(),
+      accent: accentColor,
       // Selector tab glyph: a key into src/data/showcaseIcons.ts (falls back to a default).
       icon: z.string().optional(),
       links: z
