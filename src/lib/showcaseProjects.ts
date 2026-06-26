@@ -1,8 +1,10 @@
 import type { CollectionEntry } from "astro:content";
 import { iconPath } from "../data/showcaseIcons";
 
-// Clean public slug for a project's own page (/projects/<slug>). The content id carries an
-// order prefix (e.g. "01-rangetube") for sorting; the slug strips it for a tidy URL.
+// Canonical project key for every URL surface (the Showcase deep-link hash, the Stage/Selector
+// DOM ids, and the /projects/<slug> detail route). Content filenames are index-free, so this is
+// an identity for current ids; it stays as a guard that strips any legacy order prefix
+// (e.g. "01-rangetube"). Sorting is driven by the `order` frontmatter, not the filename. ADR 0008.
 export function projectSlug(id: string): string {
   return id.replace(/^\d+[-_]/, "");
 }
