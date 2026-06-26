@@ -9,8 +9,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "lint": "oxlint",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
+    "format": "oxfmt && prettier --write \"**/*.astro\"",
+    "format:check": "oxfmt --check && prettier --check \"**/*.astro\"",
     "astro": "astro",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -27,6 +27,8 @@
     "@types/node": "^25.9.3",
     "oxfmt": "^0.56.0",
     "oxlint": "^1.71.0",
+    "prettier": "^3.8.4",
+    "prettier-plugin-astro": "^0.14.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
   },

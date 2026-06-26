@@ -1,0 +1,6 @@
+# Prettier is scoped to .astro via the `format`/`format:check` scripts (the `**/*.astro` glob);
+# oxfmt owns TS/JS/CSS/MD/JSON, so the two tools never format the same file type.
+# These entries keep build output and dependencies out even if Prettier is run by hand.
+dist/
+node_modules/
+.astro/
