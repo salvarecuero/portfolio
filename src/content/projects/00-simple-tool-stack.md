@@ -41,5 +41,16 @@ accent: "#6366F1"
 icon: "layers"
 links:
   live: "https://simpletoolstack.com"
-stack: ["Next.js", "Docker", "Cloudflare", "WebAssembly", "Turborepo", "Traefik", "Hono", "Mantine", "Sablier"]
+stack:
+  [
+    "Next.js",
+    "Docker",
+    "Cloudflare",
+    "WebAssembly",
+    "Turborepo",
+    "Traefik",
+    "Hono",
+    "Mantine",
+    "Sablier",
+  ]
 ---

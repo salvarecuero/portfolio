@@ -20,16 +20,16 @@
    Distinct from the Presentation's scoped light palette. Per-Project accent is
    applied at runtime via the --accent override on the Showcase root. */
 :root {
-  --space: #020206;          /* deep near-black space */
-  --prompt: #7fb481;         /* terminal-green $ prompt + block caret */
-  --cmd-word: #ffffff;       /* typed command, pure white (not the accent) */
-  --app-surface: #ffffff;    /* the light app/Stage surface (light-merge tab) */
-  --showcase-pad: 36px;      /* cosmos frame thickness (sides/bottom) */
-  --intro-cycle: 2800ms;     /* locked intro total */
-  --intro-ease: cubic-bezier(0.22, 1, 0.36, 1);  /* out-quint */
-  --stage-inner-radius: 9px;  /* media corners inside the Stage frame */
-  --showcase-embed-min: 800px;/* breakpoint: >= desktop set & (Phase 2) live Embed; < = mobile set */
-  --stage-swap: 240ms;        /* single source for the Stage crossfade: stage-in/out keyframes + showcaseController */
+  --space: #020206; /* deep near-black space */
+  --prompt: #7fb481; /* terminal-green $ prompt + block caret */
+  --cmd-word: #ffffff; /* typed command, pure white (not the accent) */
+  --app-surface: #ffffff; /* the light app/Stage surface (light-merge tab) */
+  --showcase-pad: 36px; /* cosmos frame thickness (sides/bottom) */
+  --intro-cycle: 2800ms; /* locked intro total */
+  --intro-ease: cubic-bezier(0.22, 1, 0.36, 1); /* out-quint */
+  --stage-inner-radius: 9px; /* media corners inside the Stage frame */
+  --showcase-embed-min: 800px; /* breakpoint: >= desktop set & (Phase 2) live Embed; < = mobile set */
+  --stage-swap: 240ms; /* single source for the Stage crossfade: stage-in/out keyframes + showcaseController */
 }
 
 :root {

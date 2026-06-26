@@ -12,10 +12,7 @@ const entry = {
     links: { live: "https://demo.example.com" },
     media: [{ type: "image" as const, src: placeholder, alt: "demo overview" }],
     accent: "#e8634c",
-    description: [
-      "First paragraph of the description.",
-      "Second paragraph of the description.",
-    ],
+    description: ["First paragraph of the description.", "Second paragraph of the description."],
   },
 };
 
@@ -65,7 +62,12 @@ describe("ProjectArticle", () => {
   });
 
   it("renders the repository as a secondary ghost link when present", async () => {
-    const withRepo = { entry: { ...entry, data: { ...entry.data, links: { ...entry.data.links, repo: "https://github.com/x/y" } } } };
+    const withRepo = {
+      entry: {
+        ...entry,
+        data: { ...entry.data, links: { ...entry.data.links, repo: "https://github.com/x/y" } },
+      },
+    };
     const html = await render(withRepo);
     expect(html).toMatch(/class="[^"]*ghost[^"]*"[\s\S]*?Repository/);
     expect(html).toContain("https://github.com/x/y");

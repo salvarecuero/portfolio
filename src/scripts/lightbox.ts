@@ -1,7 +1,10 @@
 // Minimal image lightbox: the only client JS island on the Tool page. The pure
 // helpers are unit-tested; initLightbox() is the thin DOM-wiring shell.
 export function setLightboxOpen(
-  overlay: { classList: { add(c: string): void; remove(c: string): void }; setAttribute(k: string, v: string): void },
+  overlay: {
+    classList: { add(c: string): void; remove(c: string): void };
+    setAttribute(k: string, v: string): void;
+  },
   open: boolean,
 ): void {
   if (open) {
@@ -65,7 +68,11 @@ export function nextZoom(
   viewH: number,
 ): ZoomState {
   if (state.zoomed) return { zoomed: false, offsetX: 0, offsetY: 0 };
-  return { zoomed: true, offsetX: zoomPan(relX, scaledW, viewW), offsetY: zoomPan(relY, scaledH, viewH) };
+  return {
+    zoomed: true,
+    offsetX: zoomPan(relX, scaledW, viewW),
+    offsetY: zoomPan(relY, scaledH, viewH),
+  };
 }
 
 // Apply a drag delta to the pan offset, clamped per axis so the image edges stay
@@ -148,8 +155,14 @@ export function initLightbox(root: Document = document): void {
       const src = btn.getAttribute("data-full") ?? "";
       const alt = btn.getAttribute("data-alt") ?? "";
       const caption = btn.getAttribute("data-cap") ?? "";
-      if (img) { img.src = src; img.alt = alt; }
-      if (cap) { cap.textContent = caption; cap.hidden = !caption; }
+      if (img) {
+        img.src = src;
+        img.alt = alt;
+      }
+      if (cap) {
+        cap.textContent = caption;
+        cap.hidden = !caption;
+      }
       resetZoom();
       lastFocused = root.activeElement as HTMLElement | null;
       setLightboxOpen(overlay, true);
@@ -234,15 +247,27 @@ export function initLightbox(root: Document = document): void {
   }
 
   closeBtn?.addEventListener("click", close);
-  overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
   root.addEventListener("keydown", (e) => {
     const ev = e as KeyboardEvent;
     if (!isOpen()) return;
-    if (ev.key === "Escape") { close(); return; }
+    if (ev.key === "Escape") {
+      close();
+      return;
+    }
     if (ev.key === "Tab") {
       const focusables = Array.from(overlay.querySelectorAll<HTMLElement>(FOCUSABLE));
-      const target = trapFocusTarget(focusables, root.activeElement as HTMLElement | null, ev.shiftKey);
-      if (target) { ev.preventDefault(); target.focus(); }
+      const target = trapFocusTarget(
+        focusables,
+        root.activeElement as HTMLElement | null,
+        ev.shiftKey,
+      );
+      if (target) {
+        ev.preventDefault();
+        target.focus();
+      }
     }
   });
 }

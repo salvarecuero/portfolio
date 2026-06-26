@@ -23,10 +23,7 @@ test("carries the absolute url and image", () => {
 });
 
 test("sameAs lists both socials", () => {
-  expect(schema.sameAs).toEqual([
-    presentation.socials.github,
-    presentation.socials.linkedin,
-  ]);
+  expect(schema.sameAs).toEqual([presentation.socials.github, presentation.socials.linkedin]);
 });
 
 test("knowsAbout matches the data module", () => {

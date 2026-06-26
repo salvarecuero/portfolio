@@ -13,7 +13,7 @@ export function arrivedFromHome(referrer: string, origin: string): boolean {
   if (!referrer) return false;
   try {
     const url = new URL(referrer);
-    return url.origin === origin && url.pathname === '/';
+    return url.origin === origin && url.pathname === "/";
   } catch {
     return false;
   }

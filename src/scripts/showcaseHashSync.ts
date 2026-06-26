@@ -7,10 +7,7 @@
  * DOM-free so it unit-tests without a browser (mirrors projectSelection.ts). The
  * IntersectionObserver wiring that feeds it lives in showcaseController.ts.
  */
-export type HashSyncAction =
-  | { type: 'set'; id: string }
-  | { type: 'clear' }
-  | { type: 'none' };
+export type HashSyncAction = { type: "set"; id: string } | { type: "clear" } | { type: "none" };
 
 export function decideHashSync(state: {
   inShowcase: boolean;
@@ -19,9 +16,9 @@ export function decideHashSync(state: {
 }): HashSyncAction {
   if (state.inShowcase) {
     if (state.activeId && state.currentHash !== `#${state.activeId}`) {
-      return { type: 'set', id: state.activeId };
+      return { type: "set", id: state.activeId };
     }
-    return { type: 'none' };
+    return { type: "none" };
   }
-  return state.currentHash ? { type: 'clear' } : { type: 'none' };
+  return state.currentHash ? { type: "clear" } : { type: "none" };
 }

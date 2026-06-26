@@ -4,15 +4,15 @@
  * in cosmosReveal.ts.
  */
 export interface BackdropAria {
-  pressed: 'true' | 'false';
+  pressed: "true" | "false";
   label: string;
 }
 
 /** ARIA state for the toggle button at a given reveal state. */
 export function backdropAria(revealed: boolean): BackdropAria {
   return revealed
-    ? { pressed: 'true', label: 'Hide backdrop' }
-    : { pressed: 'false', label: 'View backdrop' };
+    ? { pressed: "true", label: "Hide backdrop" }
+    : { pressed: "false", label: "View backdrop" };
 }
 
 /**

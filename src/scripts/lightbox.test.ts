@@ -1,13 +1,26 @@
 import { describe, it, expect } from "vitest";
-import { setLightboxOpen, trapFocusTarget, clampPan, zoomPan, nextZoom, applyPan } from "./lightbox";
+import {
+  setLightboxOpen,
+  trapFocusTarget,
+  clampPan,
+  zoomPan,
+  nextZoom,
+  applyPan,
+} from "./lightbox";
 
 // Minimal fake element - node test env has no DOM.
 function fakeEl() {
   const classes = new Set<string>();
   const attrs: Record<string, string> = {};
   return {
-    classList: { add: (c: string) => classes.add(c), remove: (c: string) => classes.delete(c), has: (c: string) => classes.has(c) },
-    setAttribute: (k: string, v: string) => { attrs[k] = v; },
+    classList: {
+      add: (c: string) => classes.add(c),
+      remove: (c: string) => classes.delete(c),
+      has: (c: string) => classes.has(c),
+    },
+    setAttribute: (k: string, v: string) => {
+      attrs[k] = v;
+    },
     _classes: classes,
     _attrs: attrs,
   };
@@ -30,7 +43,9 @@ describe("setLightboxOpen", () => {
 });
 
 describe("trapFocusTarget", () => {
-  const a = {} as any, b = {} as any, c = {} as any;
+  const a = {} as any,
+    b = {} as any,
+    c = {} as any;
 
   it("wraps to the last element on shift+tab from the first", () => {
     expect(trapFocusTarget([a, b, c], a, true)).toBe(c);
@@ -86,14 +101,17 @@ describe("zoomPan", () => {
 
 describe("nextZoom", () => {
   it("zooms in centred on the clicked point, clamped to the edges", () => {
-    expect(nextZoom({ zoomed: false, offsetX: 0, offsetY: 0 }, 20, 10, 200, 200, 100, 100))
-      .toEqual({ zoomed: true, offsetX: -20, offsetY: -10 });
-    expect(nextZoom({ zoomed: false, offsetX: 0, offsetY: 0 }, 100, -100, 200, 200, 100, 100))
-      .toEqual({ zoomed: true, offsetX: -50, offsetY: 50 });
+    expect(nextZoom({ zoomed: false, offsetX: 0, offsetY: 0 }, 20, 10, 200, 200, 100, 100)).toEqual(
+      { zoomed: true, offsetX: -20, offsetY: -10 },
+    );
+    expect(
+      nextZoom({ zoomed: false, offsetX: 0, offsetY: 0 }, 100, -100, 200, 200, 100, 100),
+    ).toEqual({ zoomed: true, offsetX: -50, offsetY: 50 });
   });
   it("zooms out to the centred fit, ignoring the click point", () => {
-    expect(nextZoom({ zoomed: true, offsetX: 30, offsetY: -20 }, 40, 40, 200, 200, 100, 100))
-      .toEqual({ zoomed: false, offsetX: 0, offsetY: 0 });
+    expect(
+      nextZoom({ zoomed: true, offsetX: 30, offsetY: -20 }, 40, 40, 200, 200, 100, 100),
+    ).toEqual({ zoomed: false, offsetX: 0, offsetY: 0 });
   });
 });
 
@@ -104,11 +122,15 @@ describe("applyPan", () => {
   });
   it("adds a delta to the offset when zoomed, clamped per axis", () => {
     // scaled 200, viewport 100 => limit 50 on each axis
-    expect(applyPan({ zoomed: true, offsetX: 0, offsetY: 0 }, 30, 40, 200, 200, 100, 100))
-      .toEqual({ zoomed: true, offsetX: 30, offsetY: 40 });
+    expect(applyPan({ zoomed: true, offsetX: 0, offsetY: 0 }, 30, 40, 200, 200, 100, 100)).toEqual({
+      zoomed: true,
+      offsetX: 30,
+      offsetY: 40,
+    });
   });
   it("clamps the dragged offset at the edges", () => {
-    expect(applyPan({ zoomed: true, offsetX: 0, offsetY: 0 }, 999, -999, 200, 200, 100, 100))
-      .toEqual({ zoomed: true, offsetX: 50, offsetY: -50 });
+    expect(
+      applyPan({ zoomed: true, offsetX: 0, offsetY: 0 }, 999, -999, 200, 200, 100, 100),
+    ).toEqual({ zoomed: true, offsetX: 50, offsetY: -50 });
   });
 });

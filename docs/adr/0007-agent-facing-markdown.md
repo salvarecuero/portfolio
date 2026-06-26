@@ -12,12 +12,12 @@ and complete, complementing the JSON-LD already emitted for search engines.
 Serve a small set of hand-authored and generated markdown files from the deploy root,
 following the emerging `llms.txt` convention:
 
-| URL | Source | Authoring |
-| --- | --- | --- |
-| `/llms.txt` | `public/llms.txt` | hand-authored index; links to the pages below |
-| `/hire.md` | `public/hire.md` | hand-authored hiring profile |
-| `/contact.md` | `public/contact.md` | hand-authored contact and availability |
-| `/projects.md` | `src/pages/projects.md.ts` | generated from the `projects` collection |
+| URL            | Source                     | Authoring                                     |
+| -------------- | -------------------------- | --------------------------------------------- |
+| `/llms.txt`    | `public/llms.txt`          | hand-authored index; links to the pages below |
+| `/hire.md`     | `public/hire.md`           | hand-authored hiring profile                  |
+| `/contact.md`  | `public/contact.md`        | hand-authored contact and availability        |
+| `/projects.md` | `src/pages/projects.md.ts` | generated from the `projects` collection      |
 
 `/projects.md` is generated, not hand-written, because the projects already exist as typed
 content in `src/content/projects/`. The endpoint reads `getCollection("projects")`, sorts by

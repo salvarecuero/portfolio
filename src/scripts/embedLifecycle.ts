@@ -2,10 +2,10 @@
  * Pure (DOM-free) logic for the Showcase live-embed lifecycle. Unit-tested without a
  * browser, mirroring projectSelection.ts. The DOM wiring lives in embedController.ts.
  */
-import { SPINNER_DELAY_MS, EMBED_FALLBACK_MS } from './showcaseTiming';
+import { SPINNER_DELAY_MS, EMBED_FALLBACK_MS } from "./showcaseTiming";
 
 export const PROTOCOL_VERSION = 1;
-export type EmbedMode = 'embed' | 'media' | 'custom';
+export type EmbedMode = "embed" | "media" | "custom";
 
 export function embedOrigin(url: string): string {
   return new URL(url).origin;
@@ -13,9 +13,9 @@ export function embedOrigin(url: string): string {
 
 export function isReadyMessage(data: unknown, version = PROTOCOL_VERSION): boolean {
   return (
-    typeof data === 'object' &&
+    typeof data === "object" &&
     data !== null &&
-    (data as { type?: unknown }).type === 'portfolio:ready' &&
+    (data as { type?: unknown }).type === "portfolio:ready" &&
     (data as { v?: unknown }).v === version
   );
 }
@@ -23,7 +23,7 @@ export function isReadyMessage(data: unknown, version = PROTOCOL_VERSION): boole
 export interface EmbedTimers {
   onReady(): void; // valid handshake → reveal (once)
   onError(): void; // iframe error → fallback (once)
-  cancel(): void;  // drop all pending timers (e.g. on unmount)
+  cancel(): void; // drop all pending timers (e.g. on unmount)
 }
 
 /**
@@ -44,16 +44,31 @@ export function createEmbedTimers(opts: {
   const fallbackMs = opts.fallbackMs ?? EMBED_FALLBACK_MS;
   let settled = false;
   const timers: ReturnType<typeof setTimeout>[] = [];
-  const clearAll = () => { for (const t of timers) clearTimeout(t); timers.length = 0; };
-  const settle = (cb: () => void) => { if (settled) return; settled = true; clearAll(); cb(); };
+  const clearAll = () => {
+    for (const t of timers) clearTimeout(t);
+    timers.length = 0;
+  };
+  const settle = (cb: () => void) => {
+    if (settled) return;
+    settled = true;
+    clearAll();
+    cb();
+  };
   // Spinner-delay: fires once if still unsettled (clearAll on settle prevents a late fire).
-  timers.push(setTimeout(() => { if (!settled) opts.onSpinner(); }, spinnerMs));
+  timers.push(
+    setTimeout(() => {
+      if (!settled) opts.onSpinner();
+    }, spinnerMs),
+  );
   // Ceiling: give up on the embed and fall back to media.
   timers.push(setTimeout(() => settle(opts.onFallback), fallbackMs));
   return {
     onReady: () => settle(opts.onReveal),
     onError: () => settle(opts.onFallback),
-    cancel: () => { settled = true; clearAll(); },
+    cancel: () => {
+      settled = true;
+      clearAll();
+    },
   };
 }
 
@@ -69,7 +84,7 @@ export function shouldMount(opts: {
   embedMobile: boolean;
   requiresLaunch: boolean;
 }): boolean {
-  if (opts.mode !== 'embed') return false;
+  if (opts.mode !== "embed") return false;
   if (opts.requiresLaunch) return false;
   if (!opts.isDesktop && !opts.embedMobile) return false;
   return true;
@@ -91,7 +106,7 @@ export function proactiveMountQueue(opts: {
   effectiveType?: string;
 }): string[] {
   if (opts.saveData) return [];
-  if (opts.effectiveType === '2g' || opts.effectiveType === 'slow-2g') return [];
+  if (opts.effectiveType === "2g" || opts.effectiveType === "slow-2g") return [];
   const headroom = opts.cap - opts.liveCount;
   if (headroom <= 0) return [];
   return opts.candidates

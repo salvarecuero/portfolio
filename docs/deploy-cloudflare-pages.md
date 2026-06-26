@@ -6,12 +6,12 @@ OG image, Node pin) are committed.
 
 ## Project settings (Cloudflare dashboard → Pages → Create → Connect to Git)
 
-| Setting | Value |
-|---|---|
-| Framework preset | Astro |
-| Build command | `pnpm build` |
-| Build output directory | `dist` |
-| Adapter | none (static) |
+| Setting                | Value         |
+| ---------------------- | ------------- |
+| Framework preset       | Astro         |
+| Build command          | `pnpm build`  |
+| Build output directory | `dist`        |
+| Adapter                | none (static) |
 
 ## Environment variables (Settings → Environment variables)
 

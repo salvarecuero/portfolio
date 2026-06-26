@@ -18,10 +18,7 @@ export interface ProjectMarkdownEntry {
 // Renders the agent-facing /projects.md body from the project catalog. Pure and
 // deterministic: sorts by `order` (matching the Selector) and derives the project-page URL
 // from `origin` + the public slug, so the output never drifts from the content collection.
-export function renderProjectsMarkdown(
-  projects: ProjectMarkdownEntry[],
-  origin: string,
-): string {
+export function renderProjectsMarkdown(projects: ProjectMarkdownEntry[], origin: string): string {
   const sections = [...projects]
     .sort((a, b) => a.data.order - b.data.order)
     .map((entry) => {

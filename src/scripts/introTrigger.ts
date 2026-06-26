@@ -13,7 +13,7 @@
  * thresholds give hysteresis: a dip between settle and play thresholds after playing does not
  * settle, so a reading that grazes the play edge cannot kill the intro it just started.
  */
-export type IntroAction = 'play' | 'settle' | 'none';
+export type IntroAction = "play" | "settle" | "none";
 
 export function createIntroController(playThreshold = 0.6, settleThreshold = 0.5) {
   let played = false;
@@ -23,14 +23,14 @@ export function createIntroController(playThreshold = 0.6, settleThreshold = 0.5
     if (!played) {
       if (ratio >= playThreshold) {
         played = true;
-        return 'play';
+        return "play";
       }
-      return 'none';
+      return "none";
     }
     if (!settled && ratio < settleThreshold) {
       settled = true;
-      return 'settle';
+      return "settle";
     }
-    return 'none';
+    return "none";
   };
 }

@@ -39,15 +39,44 @@
    the x-phase; zoom breathes 90deg out of phase so its extremes never coincide with a
    translate extreme. 0% == 100% for a seamless loop; 8 steps keep the ellipse round. */
 @keyframes cosmos-drift {
-  0%    { transform: translate(var(--drift-x), 0)                                          rotate(var(--drift-rotate))               scale(var(--drift-zoom)); }
-  12.5% { transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * 0.707)) rotate(calc(var(--drift-rotate) * 0.707)) scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707)); }
-  25%   { transform: translate(0, var(--drift-y))                                          rotate(0deg)                              scale(calc(var(--drift-zoom) + var(--drift-breathe))); }
-  37.5% { transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * 0.707)) rotate(calc(var(--drift-rotate) * -0.707)) scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707)); }
-  50%   { transform: translate(calc(var(--drift-x) * -1), 0)                               rotate(calc(var(--drift-rotate) * -1))    scale(var(--drift-zoom)); }
-  62.5% { transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * -0.707)) rotate(calc(var(--drift-rotate) * -0.707)) scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707)); }
-  75%   { transform: translate(0, calc(var(--drift-y) * -1))                               rotate(0deg)                              scale(calc(var(--drift-zoom) - var(--drift-breathe))); }
-  87.5% { transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * -0.707)) rotate(calc(var(--drift-rotate) * 0.707)) scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707)); }
-  100%  { transform: translate(var(--drift-x), 0)                                          rotate(var(--drift-rotate))               scale(var(--drift-zoom)); }
+  0% {
+    transform: translate(var(--drift-x), 0) rotate(var(--drift-rotate)) scale(var(--drift-zoom));
+  }
+  12.5% {
+    transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * 0.707))
+      rotate(calc(var(--drift-rotate) * 0.707))
+      scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707));
+  }
+  25% {
+    transform: translate(0, var(--drift-y)) rotate(0deg)
+      scale(calc(var(--drift-zoom) + var(--drift-breathe)));
+  }
+  37.5% {
+    transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * 0.707))
+      rotate(calc(var(--drift-rotate) * -0.707))
+      scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707));
+  }
+  50% {
+    transform: translate(calc(var(--drift-x) * -1), 0) rotate(calc(var(--drift-rotate) * -1))
+      scale(var(--drift-zoom));
+  }
+  62.5% {
+    transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * -0.707))
+      rotate(calc(var(--drift-rotate) * -0.707))
+      scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707));
+  }
+  75% {
+    transform: translate(0, calc(var(--drift-y) * -1)) rotate(0deg)
+      scale(calc(var(--drift-zoom) - var(--drift-breathe)));
+  }
+  87.5% {
+    transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * -0.707))
+      rotate(calc(var(--drift-rotate) * 0.707))
+      scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707));
+  }
+  100% {
+    transform: translate(var(--drift-x), 0) rotate(var(--drift-rotate)) scale(var(--drift-zoom));
+  }
 }
 
 /* Intro pass - during the $ showcase reveal the slow 22s drift advances too little to
@@ -56,15 +85,44 @@
    is required so the intro-done handoff RESTARTS the loop - changing only the duration on the
    same name would not restart it and would jump to a mismatched phase. */
 @keyframes cosmos-drift-intro {
-  0%    { transform: translate(var(--drift-x), 0)                                          rotate(var(--drift-rotate))               scale(var(--drift-zoom)); }
-  12.5% { transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * 0.707)) rotate(calc(var(--drift-rotate) * 0.707)) scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707)); }
-  25%   { transform: translate(0, var(--drift-y))                                          rotate(0deg)                              scale(calc(var(--drift-zoom) + var(--drift-breathe))); }
-  37.5% { transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * 0.707)) rotate(calc(var(--drift-rotate) * -0.707)) scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707)); }
-  50%   { transform: translate(calc(var(--drift-x) * -1), 0)                               rotate(calc(var(--drift-rotate) * -1))    scale(var(--drift-zoom)); }
-  62.5% { transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * -0.707)) rotate(calc(var(--drift-rotate) * -0.707)) scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707)); }
-  75%   { transform: translate(0, calc(var(--drift-y) * -1))                               rotate(0deg)                              scale(calc(var(--drift-zoom) - var(--drift-breathe))); }
-  87.5% { transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * -0.707)) rotate(calc(var(--drift-rotate) * 0.707)) scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707)); }
-  100%  { transform: translate(var(--drift-x), 0)                                          rotate(var(--drift-rotate))               scale(var(--drift-zoom)); }
+  0% {
+    transform: translate(var(--drift-x), 0) rotate(var(--drift-rotate)) scale(var(--drift-zoom));
+  }
+  12.5% {
+    transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * 0.707))
+      rotate(calc(var(--drift-rotate) * 0.707))
+      scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707));
+  }
+  25% {
+    transform: translate(0, var(--drift-y)) rotate(0deg)
+      scale(calc(var(--drift-zoom) + var(--drift-breathe)));
+  }
+  37.5% {
+    transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * 0.707))
+      rotate(calc(var(--drift-rotate) * -0.707))
+      scale(calc(var(--drift-zoom) + var(--drift-breathe) * 0.707));
+  }
+  50% {
+    transform: translate(calc(var(--drift-x) * -1), 0) rotate(calc(var(--drift-rotate) * -1))
+      scale(var(--drift-zoom));
+  }
+  62.5% {
+    transform: translate(calc(var(--drift-x) * -0.707), calc(var(--drift-y) * -0.707))
+      rotate(calc(var(--drift-rotate) * -0.707))
+      scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707));
+  }
+  75% {
+    transform: translate(0, calc(var(--drift-y) * -1)) rotate(0deg)
+      scale(calc(var(--drift-zoom) - var(--drift-breathe)));
+  }
+  87.5% {
+    transform: translate(calc(var(--drift-x) * 0.707), calc(var(--drift-y) * -0.707))
+      rotate(calc(var(--drift-rotate) * 0.707))
+      scale(calc(var(--drift-zoom) - var(--drift-breathe) * 0.707));
+  }
+  100% {
+    transform: translate(var(--drift-x), 0) rotate(var(--drift-rotate)) scale(var(--drift-zoom));
+  }
 }
 
 /* Honor reduced-motion: hold the backdrop still at the zoom midpoint. */
@@ -146,7 +204,9 @@
   color: inherit;
   text-decoration: none;
   border-bottom: 1px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 .cosmos-credit a:hover,
 .cosmos-credit a:focus-visible {
@@ -165,7 +225,9 @@
   pointer-events: none;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .to { transition: opacity 0.5s var(--intro-ease); }
+  .to {
+    transition: opacity 0.5s var(--intro-ease);
+  }
 }
 
 /* Reveal toggle - an icon-only flex item left of the credit in the .cosmos-meta band, a
@@ -280,22 +342,34 @@ html.js.intro-done .backdrop-toggle {
   display: grid;
   min-height: 0;
 }
-.stage-viewport > .stage { grid-area: 1 / 1; }
+.stage-viewport > .stage {
+  grid-area: 1 / 1;
+}
 
 /* Visibility is class-driven: the active Stage paints, the rest are visibility:hidden
    (kept in layout for the crossfade, but out of the a11y tree and tab order). The
    [hidden] rule is the SSR / no-JS fallback - the controller clears it on init and
    drives .is-active instead, so the Stage can stay painted while it fades out. */
-.stage { visibility: hidden; }
-.stage.is-active { visibility: visible; }
-.stage[hidden] { display: none; }
+.stage {
+  visibility: hidden;
+}
+.stage.is-active {
+  visibility: visible;
+}
+.stage[hidden] {
+  display: none;
+}
 
 /* Resting opacity once the intro has played (root carries .intro-done). Kept as plain
    rules - NOT an animation fill - so the crossfade's stage-in/out can override during a
    swap and the Stage reverts cleanly afterwards. While the intro is still running, the
    beat-window reveal (gated :not(.intro-done)) governs opacity instead. */
-html.js.intro-done .stage { opacity: 0; }
-html.js.intro-done .stage.is-active { opacity: 1; }
+html.js.intro-done .stage {
+  opacity: 0;
+}
+html.js.intro-done .stage.is-active {
+  opacity: 1;
+}
 
 /* Crossfade the swap (motion only). The controller tags the incoming Stage .is-entering
    and the outgoing .is-leaving for the duration, then clears them. The selectors are made
@@ -303,14 +377,30 @@ html.js.intro-done .stage.is-active { opacity: 1; }
    win the cascade over the intro's held opacity - otherwise the filled opacity:1 would
    pin both Stages and block the fade. */
 @media (prefers-reduced-motion: no-preference) {
-  html.js .stage-viewport > .stage.is-entering { animation: stage-in var(--stage-swap) var(--intro-ease) both; }
+  html.js .stage-viewport > .stage.is-entering {
+    animation: stage-in var(--stage-swap) var(--intro-ease) both;
+  }
   html.js .stage-viewport > .stage.is-leaving {
     visibility: visible;
     animation: stage-out var(--stage-swap) var(--intro-ease) both;
   }
 }
-@keyframes stage-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes stage-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes stage-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes stage-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
 
 .stage {
   position: relative;
@@ -322,73 +412,161 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   box-shadow: 0 24px 70px -30px rgba(0, 0, 0, 0.85);
 }
 /* ---- Media gallery: a navigable set of captures inside the Stage frame ---- */
-.media-gallery { position: absolute; inset: 0; }
+.media-gallery {
+  position: absolute;
+  inset: 0;
+}
 /* set switch: show exactly one gallery by viewport. Keep in sync with --showcase-embed-min. */
-.media-gallery--mobile { display: none; }
+.media-gallery--mobile {
+  display: none;
+}
 @media (max-width: 799px) {
-  .media-gallery--desktop { display: none; }
-  .media-gallery--mobile { display: block; }
+  .media-gallery--desktop {
+    display: none;
+  }
+  .media-gallery--mobile {
+    display: block;
+  }
   /* when no mobile set exists, the desktop gallery stays shown (cover fallback) */
-  .stage:not(:has(.media-gallery--mobile)) .media-gallery--desktop { display: block; }
+  .stage:not(:has(.media-gallery--mobile)) .media-gallery--desktop {
+    display: block;
+  }
 }
 
 .gallery-track {
-  position: absolute; inset: 0; display: flex;
+  position: absolute;
+  inset: 0;
+  display: flex;
   transition: transform 0.4s var(--intro-ease);
 }
-.gallery-slide { position: relative; flex: 0 0 100%; height: 100%; }
+.gallery-slide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+}
 .gallery-media {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; border-radius: 0 0 var(--stage-inner-radius) var(--stage-inner-radius);
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0 0 var(--stage-inner-radius) var(--stage-inner-radius);
 }
 /* reduced motion: show the static poster, never reveal/load the video */
-.gallery-media--video { display: none; }
-.gallery-media--poster { display: block; }
+.gallery-media--video {
+  display: none;
+}
+.gallery-media--poster {
+  display: block;
+}
 @media (prefers-reduced-motion: no-preference) {
-  .gallery-media--video { display: block; }
-  .gallery-media--poster { display: none; }
+  .gallery-media--video {
+    display: block;
+  }
+  .gallery-media--poster {
+    display: none;
+  }
 }
 
 .gallery-arrow {
-  position: absolute; top: 42%; z-index: 5; width: 38px; height: 38px; border: none;
-  border-radius: 50%; background: rgba(2, 2, 6, 0.6); color: #fff; font-size: 18px;
-  display: grid; place-items: center; cursor: pointer;
+  position: absolute;
+  top: 42%;
+  z-index: 5;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(2, 2, 6, 0.6);
+  color: #fff;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
 }
-.gallery-arrow:hover { background: rgba(2, 2, 6, 0.85); }
-.gallery-arrow--prev { left: 12px; }
-.gallery-arrow--next { right: 12px; }
+.gallery-arrow:hover {
+  background: rgba(2, 2, 6, 0.85);
+}
+.gallery-arrow--prev {
+  left: 12px;
+}
+.gallery-arrow--next {
+  right: 12px;
+}
 .gallery-counter {
-  position: absolute; top: 12px; right: 12px; z-index: 5;
-  background: rgba(2, 2, 6, 0.62); color: #fff; font-size: 0.8rem;
-  padding: 4px 10px; border-radius: 999px; font-family: var(--font-geist-mono);
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  background: rgba(2, 2, 6, 0.62);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-geist-mono);
 }
 .gallery-thumbs {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
-  display: flex; gap: 8px; padding: 10px 12px; overflow-x: auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  overflow-x: auto;
   background: linear-gradient(to top, rgba(2, 2, 6, 0.92), rgba(2, 2, 6, 0));
   scrollbar-width: none;
 }
-.gallery-thumbs::-webkit-scrollbar { display: none; }
-.gallery-thumb {
-  flex: 0 0 auto; width: 50px; height: 32px; border-radius: 6px; padding: 0;
-  background: #cfd6e2; border: 2px solid transparent; cursor: pointer; position: relative;
+.gallery-thumbs::-webkit-scrollbar {
+  display: none;
 }
-.gallery-thumb.on { border-color: var(--accent); }
+.gallery-thumb {
+  flex: 0 0 auto;
+  width: 50px;
+  height: 32px;
+  border-radius: 6px;
+  padding: 0;
+  background: #cfd6e2;
+  border: 2px solid transparent;
+  cursor: pointer;
+  position: relative;
+}
+.gallery-thumb.on {
+  border-color: var(--accent);
+}
 .gallery-thumb.vid::after {
-  content: '▶'; position: absolute; inset: 0; display: grid; place-items: center;
-  color: #2a3140; font-size: 11px;
+  content: "▶";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #2a3140;
+  font-size: 11px;
 }
 
 /* mobile: bigger, well-separated tap targets; lift Project links clear of the strip */
 @media (max-width: 799px) {
-  .gallery-thumbs { gap: 14px; padding: 12px; justify-content: center; }
-  .gallery-thumb { width: 44px; height: 66px; border-radius: 7px; }
-  .stage .projlinks { bottom: 104px; font-size: 1rem; }
+  .gallery-thumbs {
+    gap: 14px;
+    padding: 12px;
+    justify-content: center;
+  }
+  .gallery-thumb {
+    width: 44px;
+    height: 66px;
+    border-radius: 7px;
+  }
+  .stage .projlinks {
+    bottom: 104px;
+    font-size: 1rem;
+  }
 }
 
 /* reduced motion: no carousel slide animation */
 @media (prefers-reduced-motion: reduce) {
-  .gallery-track { transition: none; }
+  .gallery-track {
+    transition: none;
+  }
 }
 
 .selector {
@@ -399,7 +577,9 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   overflow-x: auto;
   scrollbar-width: none;
 }
-.selector::-webkit-scrollbar { display: none; }
+.selector::-webkit-scrollbar {
+  display: none;
+}
 /* The tablist holds one tab per Project. min-width:0 lets it shrink so the row can scroll. */
 .selector-list {
   display: flex;
@@ -467,8 +647,12 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.tab.active { flex: 0 0 auto; }
-.tab:not(.active) { flex: 0 1 auto; }
+.tab.active {
+  flex: 0 0 auto;
+}
+.tab:not(.active) {
+  flex: 0 1 auto;
+}
 /* Brand logo lockups: each tab shows its Project's real site logo in place of a
    generic glyph + title. Brand colours are intrinsic to each mark; inactive tabs
    dim the whole lockup so the active tab keeps its emphasis. */
@@ -478,8 +662,12 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   gap: 0.4rem;
   min-width: 0;
 }
-.tab:not(.active) .tab-logo { opacity: 0.62; }
-.tab.active .tab-logo { opacity: 1; }
+.tab:not(.active) .tab-logo {
+  opacity: 0.62;
+}
+.tab.active .tab-logo {
+  opacity: 1;
+}
 .tab-logo-word {
   font-size: 1rem;
   font-weight: 700;
@@ -504,8 +692,12 @@ html.js.intro-done .stage.is-active { opacity: 1; }
 /* Active/inactive opacity comes from the shared `.tab-logo` rules above. */
 /* bye-bg: "bye" inherits the tab colour, "-bg" keeps the brand accent.
    No inter-glyph gap - the wordmark reads as a single token "bye-bg". */
-.tab-logo--byebg { gap: 0; }
-.tab-logo--byebg .tab-logo-accent { font-weight: 700; }
+.tab-logo--byebg {
+  gap: 0;
+}
+.tab-logo--byebg .tab-logo-accent {
+  font-weight: 700;
+}
 /* Project CTAs - accent-tinted glass pills (Variant A). Scoped under .projlinks so
    the Presentation's own .lnk social buttons are unaffected. Each pill owns its
    surface (hairline + inner top highlight + drop shadow) so it stays legible on a
@@ -535,14 +727,33 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.65) inset,
     0 6px 18px -10px rgba(10, 12, 20, 0.7);
-  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
-.projlinks .lnk .icn { width: 19px; height: 19px; color: var(--accent); }
-.projlinks .lnk .mark { width: 20px; height: 20px; }
-.projlinks .lnk.gh { padding-inline: 0.7em; }
-.projlinks .lnk .label { font-size: 0.95em; white-space: nowrap; }
-.projlinks .lnk:hover { transform: translateY(-1px); }
-.projlinks .lnk:active { transform: translateY(1px); }
+.projlinks .lnk .icn {
+  width: 19px;
+  height: 19px;
+  color: var(--accent);
+}
+.projlinks .lnk .mark {
+  width: 20px;
+  height: 20px;
+}
+.projlinks .lnk.gh {
+  padding-inline: 0.7em;
+}
+.projlinks .lnk .label {
+  font-size: 0.95em;
+  white-space: nowrap;
+}
+.projlinks .lnk:hover {
+  transform: translateY(-1px);
+}
+.projlinks .lnk:active {
+  transform: translateY(1px);
+}
 
 /* primary action: solid accent fill, white content */
 .projlinks .lnk.live {
@@ -551,11 +762,18 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   border-color: color-mix(in srgb, var(--accent) 60%, #000);
   box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--accent) 70%, transparent);
 }
-.projlinks .lnk.live .icn { color: #fff; }
+.projlinks .lnk.live .icn {
+  color: #fff;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .projlinks .lnk { transition: none; }
-  .projlinks .lnk:hover, .projlinks .lnk:active { transform: none; }
+  .projlinks .lnk {
+    transition: none;
+  }
+  .projlinks .lnk:hover,
+  .projlinks .lnk:active {
+    transform: none;
+  }
 }
 
 /* time-based intro keyframes (% of --intro-cycle), forward-only, hold the end */
@@ -725,7 +943,8 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   position: absolute;
   inset: 0;
   /* top-left stays square to merge with the active tab, matching the .stage frame. */
-  border-radius: 0 var(--stage-inner-radius, 0) var(--stage-inner-radius, 0) var(--stage-inner-radius, 0);
+  border-radius: 0 var(--stage-inner-radius, 0) var(--stage-inner-radius, 0)
+    var(--stage-inner-radius, 0);
   overflow: hidden;
 }
 .embed-frame {
@@ -751,12 +970,16 @@ html.js.intro-done .stage.is-active { opacity: 1; }
 }
 .stage--embed.embed-revealed .embed-cover {
   opacity: 0;
-  pointer-events: none;       /* clicks now pass to the live app */
+  pointer-events: none; /* clicks now pass to the live app */
 }
 /* Spinner - hidden until the controller adds .is-spinning at the spinner delay, so a fast
    load never flashes it (the instant-feel goal). Accent ring on the dark cover. */
-.embed-spinner { display: none; }
-.stage--embed.is-spinning .embed-spinner { display: block; }
+.embed-spinner {
+  display: none;
+}
+.stage--embed.is-spinning .embed-spinner {
+  display: block;
+}
 .embed-ring {
   display: block;
   width: 38px;
@@ -766,7 +989,11 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   border-top-color: var(--accent);
   animation: embed-spin 0.8s linear infinite;
 }
-@keyframes embed-spin { to { transform: rotate(360deg); } }
+@keyframes embed-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .embed-launch {
   position: absolute;
   inset: 0;
@@ -779,8 +1006,13 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   border-radius: 999px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .embed-cover { transition: none; }
-  .embed-ring { animation: none; opacity: 0.6; }
+  .embed-cover {
+    transition: none;
+  }
+  .embed-ring {
+    animation: none;
+    opacity: 0.6;
+  }
 }
 
 /* Visibility gate (keep in sync with --showcase-embed-min). The desktop media gallery is
@@ -788,12 +1020,26 @@ html.js.intro-done .stage.is-active { opacity: 1; }
    on a working (or still-loading) embed. Below the breakpoint the mobile gallery is the
    baseline and no iframe is mounted. A [data-embed-mobile] Project mounts the Embed on
    mobile too, so its mobile gallery becomes the no-JS / fallback baseline there. */
-.stage--embed .embed { display: none; }
-.stage--embed .media-gallery--mobile { display: block; }
-@media (min-width: 800px) {
-  html.js .stage--embed:not(.embed-failed) .embed { display: block; }
-  html.js .stage--embed:not(.embed-failed) .media-gallery--desktop { display: none; }
-  .stage--embed .media-gallery--mobile { display: none; }
+.stage--embed .embed {
+  display: none;
 }
-html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .embed { display: block; }
-html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .media-gallery--mobile { display: none; }
+.stage--embed .media-gallery--mobile {
+  display: block;
+}
+@media (min-width: 800px) {
+  html.js .stage--embed:not(.embed-failed) .embed {
+    display: block;
+  }
+  html.js .stage--embed:not(.embed-failed) .media-gallery--desktop {
+    display: none;
+  }
+  .stage--embed .media-gallery--mobile {
+    display: none;
+  }
+}
+html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .embed {
+  display: block;
+}
+html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .media-gallery--mobile {
+  display: none;
+}

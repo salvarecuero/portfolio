@@ -8,7 +8,13 @@ test("name and role", () => {
 
 test("exposes visible stack chips in order", () => {
   expect(presentation.stack).toEqual([
-    "TypeScript", "Node.js", "React", "Next.js", "Astro", "Docker", "AWS",
+    "TypeScript",
+    "Node.js",
+    "React",
+    "Next.js",
+    "Astro",
+    "Docker",
+    "AWS",
   ]);
 });
 

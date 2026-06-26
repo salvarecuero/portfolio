@@ -3,7 +3,7 @@
  * unit-tests without a browser (mirrors galleryNav.ts / introTrigger.ts).
  */
 export function projectFromHash(hash: string, ids: string[]): string | null {
-  const id = hash.replace(/^#/, '');
+  const id = hash.replace(/^#/, "");
   return id && ids.includes(id) ? id : null;
 }
 

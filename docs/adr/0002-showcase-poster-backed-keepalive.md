@@ -14,7 +14,7 @@ so returns are instant.
 
 This supersedes the original "Poster is the only loading state, never a spinner" model:
 `media[0]` is no longer the embed loading layer; the media gallery is now the embed
-*fallback*, not its base layer.
+_fallback_, not its base layer.
 
 The default Embed is prefetched during the Presentation's idle time (post-load / `requestIdleCallback`, so it does not affect the hero's Lighthouse metrics); the rest are prefetched on idle and on intent (hover/focus on the Selector).
 
@@ -25,8 +25,8 @@ The default Embed is prefetched during the Presentation's idle time (post-load /
 
 ## Consequences
 
-- **Exclusion criterion — *functionally requires* cross-origin isolation.** A Project is unfit to be a live co-mounted Embed only if it cannot work without `SharedArrayBuffer` (multi-threaded WASM). Granting `SharedArrayBuffer` inside the iframe requires the whole chain to be cross-origin isolated, which would force the portfolio itself to send `COEP` page-wide — contagious, and it would break the other (non-isolated) embeds. Such a Project goes in Media mode with an explicit launch (takeover/new tab) instead. Note the criterion is *requiring* isolation, **not** merely running WASM/AI, and **not** merely *setting* `COOP`/`COEP`: `COEP` does not block framing, so an app that sets it but degrades gracefully can still be embedded — it just runs un-isolated inside the iframe (no `SharedArrayBuffer`).
-  - **No current Project hits this.** bye-bg was initially placed in Media mode on the assumption that its isolation made it non-embeddable; that was wrong. Its production deploy *does* set `COOP`/`COEP` (to enable multi-threaded WASM via `SharedArrayBuffer`), but it does not *require* it: inference runs on WebGPU (primary) or single-threaded WASM (fallback). So it is a live Embed (mode `embed`); inside the Showcase iframe it runs un-isolated (WebGPU / single-threaded WASM), and standalone it keeps the multi-threaded path.
+- **Exclusion criterion — _functionally requires_ cross-origin isolation.** A Project is unfit to be a live co-mounted Embed only if it cannot work without `SharedArrayBuffer` (multi-threaded WASM). Granting `SharedArrayBuffer` inside the iframe requires the whole chain to be cross-origin isolated, which would force the portfolio itself to send `COEP` page-wide — contagious, and it would break the other (non-isolated) embeds. Such a Project goes in Media mode with an explicit launch (takeover/new tab) instead. Note the criterion is _requiring_ isolation, **not** merely running WASM/AI, and **not** merely _setting_ `COOP`/`COEP`: `COEP` does not block framing, so an app that sets it but degrades gracefully can still be embedded — it just runs un-isolated inside the iframe (no `SharedArrayBuffer`).
+  - **No current Project hits this.** bye-bg was initially placed in Media mode on the assumption that its isolation made it non-embeddable; that was wrong. Its production deploy _does_ set `COOP`/`COEP` (to enable multi-threaded WASM via `SharedArrayBuffer`), but it does not _require_ it: inference runs on WebGPU (primary) or single-threaded WASM (fallback). So it is a live Embed (mode `embed`); inside the Showcase iframe it runs un-isolated (WebGPU / single-threaded WASM), and standalone it keeps the multi-threaded path.
 - Embeds are only possible on owned Projects, enabling `frame-ancestors` toward the portfolio domain; third-party sites are out of Embed mode.
 - Memory grows with each visited Project (bounded to the handful of Projects in the Showcase).
 

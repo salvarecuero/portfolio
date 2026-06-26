@@ -19,9 +19,7 @@ const projects = defineCollection({
       z.object({
         type: z.literal("video"),
         poster: image(), // optimized still: base layer + reduced-motion fallback
-        sources: z
-          .array(z.object({ src: z.string(), type: z.string() }))
-          .min(1),
+        sources: z.array(z.object({ src: z.string(), type: z.string() })).min(1),
         alt: z.string(),
       }),
     ]);

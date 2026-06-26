@@ -31,7 +31,7 @@ export interface SeoMeta {
 function originBase(site: URL | undefined, fallbackOrigin: string): URL {
   if (site) return site;
   // Ensure a trailing slash so new URL(path, base) resolves predictably.
-  return new URL(fallbackOrigin.endsWith('/') ? fallbackOrigin : `${fallbackOrigin}/`);
+  return new URL(fallbackOrigin.endsWith("/") ? fallbackOrigin : `${fallbackOrigin}/`);
 }
 
 /**
@@ -44,7 +44,7 @@ export function siteOrigin(site: URL | undefined, fallbackOrigin: string): strin
 
 export function buildSeoMeta(input: SeoInput): SeoMeta {
   const base = originBase(input.site, input.fallbackOrigin);
-  const image = input.image ?? '/og.png';
+  const image = input.image ?? "/og.png";
   const pageHref = new URL(input.pathname, base).href;
   return {
     title: input.title,
@@ -52,6 +52,6 @@ export function buildSeoMeta(input: SeoInput): SeoMeta {
     canonical: pageHref,
     ogUrl: pageHref,
     ogImage: new URL(image, base).href,
-    ogType: input.type ?? 'website',
+    ogType: input.type ?? "website",
   };
 }

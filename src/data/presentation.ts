@@ -20,9 +20,19 @@ export const presentation = {
   stack: ["TypeScript", "Node.js", "React", "Next.js", "Astro", "Docker", "AWS"],
   // Schema-only: broader set for crawlers (Person.knowsAbout). Not rendered.
   knowsAbout: [
-    "TypeScript", "Node.js", "React", "Next.js", "Astro", "Docker", "AWS",
-    "Full-Stack Development", "JavaScript", "REST APIs", "PostgreSQL",
-    "CI/CD", "Web Performance",
+    "TypeScript",
+    "Node.js",
+    "React",
+    "Next.js",
+    "Astro",
+    "Docker",
+    "AWS",
+    "Full-Stack Development",
+    "JavaScript",
+    "REST APIs",
+    "PostgreSQL",
+    "CI/CD",
+    "Web Performance",
   ],
   description:
     "Salvador Recuero, Full-Stack Software Engineer. I build fast, " +

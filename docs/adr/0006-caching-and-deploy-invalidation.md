@@ -25,12 +25,12 @@ over-cache by hand.
 Override CF's defaults in exactly two places, and deliberately leave everything else on the
 default. The policy lives in `public/_headers` (copied verbatim to the dist root by Astro):
 
-| Asset class | Policy | Rationale |
-| --- | --- | --- |
-| `/_astro/*` (hashed JS, CSS, images, fonts) | `public, max-age=31536000, immutable` | Hashed filenames make a forever cache unambiguously safe; the browser never revalidates. |
-| HTML (`index.html`, `projects/*`), `robots.txt`, sitemaps | **No override** — inherit `max-age=0, must-revalidate` + `ETag` | Revalidation on every request is what makes a deployment show up instantly. |
-| favicons, `apple-touch-icon` | `public, max-age=604800, stale-while-revalidate=86400` | Non-hashed but change rarely; a week of cache lets repeat visits skip even the 304 request, and SWR refreshes in the background. |
-| `og.png` | `public, max-age=86400, stale-while-revalidate=604800` | Non-hashed; bounded to a day fresh so a redesign propagates next-day. Social crawlers refetch on their own cadence regardless. |
+| Asset class                                               | Policy                                                          | Rationale                                                                                                                        |
+| --------------------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `/_astro/*` (hashed JS, CSS, images, fonts)               | `public, max-age=31536000, immutable`                           | Hashed filenames make a forever cache unambiguously safe; the browser never revalidates.                                         |
+| HTML (`index.html`, `projects/*`), `robots.txt`, sitemaps | **No override** — inherit `max-age=0, must-revalidate` + `ETag` | Revalidation on every request is what makes a deployment show up instantly.                                                      |
+| favicons, `apple-touch-icon`                              | `public, max-age=604800, stale-while-revalidate=86400`          | Non-hashed but change rarely; a week of cache lets repeat visits skip even the 304 request, and SWR refreshes in the background. |
+| `og.png`                                                  | `public, max-age=86400, stale-while-revalidate=604800`          | Non-hashed; bounded to a day fresh so a redesign propagates next-day. Social crawlers refetch on their own cadence regardless.   |
 
 For a non-hashed asset that needs an instant swap, the escape hatch is to rename the file or run
 **Purge Everything** in the dashboard. Both are off the normal path.

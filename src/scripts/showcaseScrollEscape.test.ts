@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
-import {
-  createEscapeState,
-  decideShowcaseEscape,
-  type EscapeState,
-} from "./showcaseScrollEscape";
+import { createEscapeState, decideShowcaseEscape, type EscapeState } from "./showcaseScrollEscape";
 
-const base = (state: EscapeState, over: Partial<Parameters<typeof decideShowcaseEscape>[0]> = {}) => ({
+const base = (
+  state: EscapeState,
+  over: Partial<Parameters<typeof decideShowcaseEscape>[0]> = {},
+) => ({
   deltaY: -40,
   scrollTop: 1000,
   showcaseTop: 1000,

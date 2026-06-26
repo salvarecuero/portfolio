@@ -2,7 +2,10 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-const md = readFileSync(fileURLToPath(new URL("./00-simple-tool-stack.md", import.meta.url)), "utf8");
+const md = readFileSync(
+  fileURLToPath(new URL("./00-simple-tool-stack.md", import.meta.url)),
+  "utf8",
+);
 
 describe("Simple Tool Stack content", () => {
   it("uses accurate summary copy (no false 'no sign-up' / 'no uploads' claims)", () => {

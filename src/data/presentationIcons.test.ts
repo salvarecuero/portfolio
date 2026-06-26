@@ -14,8 +14,15 @@ describe("stackIcons registry", () => {
 
   it("registers every Simple Tool Stack technology that has a glyph", () => {
     for (const name of [
-      "Next.js", "Docker", "Cloudflare", "WebAssembly",
-      "Turborepo", "Traefik", "Hono", "Mantine", "Sablier",
+      "Next.js",
+      "Docker",
+      "Cloudflare",
+      "WebAssembly",
+      "Turborepo",
+      "Traefik",
+      "Hono",
+      "Mantine",
+      "Sablier",
     ]) {
       expect(stackIcons[name], name).toBeDefined();
       expect(stackIcons[name]!.brand).toMatch(/^#[0-9A-Fa-f]{6}$/);

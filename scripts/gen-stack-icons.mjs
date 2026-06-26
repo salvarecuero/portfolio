@@ -5,17 +5,19 @@
 import sharp from "sharp";
 
 const SIMPLE = {
-  Cloudflare:  ["cloudflare",   "#F38020"],
-  WebAssembly: ["webassembly",  "#654FF0"],
-  Turborepo:   ["turborepo",    "#EF4444"],
-  Traefik:     ["traefikproxy", "#24A1C1"],
-  Hono:        ["hono",         "#E36002"],
-  Mantine:     ["mantine",      "#339AF0"],
+  Cloudflare: ["cloudflare", "#F38020"],
+  WebAssembly: ["webassembly", "#654FF0"],
+  Turborepo: ["turborepo", "#EF4444"],
+  Traefik: ["traefikproxy", "#24A1C1"],
+  Hono: ["hono", "#E36002"],
+  Mantine: ["mantine", "#339AF0"],
 };
 
 let out = "";
 for (const [name, [slug, brand]] of Object.entries(SIMPLE)) {
-  const svg = await (await fetch(`https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`)).text();
+  const svg = await (
+    await fetch(`https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`)
+  ).text();
   const m = svg.match(/ d="([^"]+)"/);
   if (!m) throw new Error(`no path found for ${slug}`);
   const d = m[1];
