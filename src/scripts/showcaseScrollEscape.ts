@@ -1,4 +1,11 @@
 import { prefersReducedMotion } from "./reduceMotion";
+import {
+  ESCAPE_CONFIRM_DELAY_MS,
+  ESCAPE_ARMED_MS,
+  ESCAPE_BOUNCE_OUT_MS,
+  ESCAPE_BOUNCE_HOLD_MS,
+  ESCAPE_BOUNCE_BACK_MS,
+} from "./showcaseTiming";
 
 export interface EscapeState {
   confirmAfter: number;
@@ -6,12 +13,6 @@ export interface EscapeState {
 }
 
 export type EscapeAction = "ignore" | "bounce" | "block" | "allow";
-
-const DEFAULT_CONFIRM_DELAY_MS = 150;
-const DEFAULT_ARMED_MS = 2200;
-const BOUNCE_OUT_MS = 160;
-const BOUNCE_HOLD_MS = 25;
-const BOUNCE_BACK_MS = 210;
 
 let bounceFrame = 0;
 let bounceTimer = 0;
@@ -112,8 +113,8 @@ export function decideShowcaseEscape(opts: {
     return "allow";
   }
 
-  const confirmDelayMs = opts.confirmDelayMs ?? DEFAULT_CONFIRM_DELAY_MS;
-  const armedMs = opts.armedMs ?? DEFAULT_ARMED_MS;
+  const confirmDelayMs = opts.confirmDelayMs ?? ESCAPE_CONFIRM_DELAY_MS;
+  const armedMs = opts.armedMs ?? ESCAPE_ARMED_MS;
   opts.state.confirmAfter = opts.now + confirmDelayMs;
   opts.state.armedUntil = opts.now + armedMs;
   return "bounce";
@@ -137,7 +138,7 @@ export function bounceShowcaseEscape(main: HTMLElement, showcase: HTMLElement) {
     element: main,
     from: main.scrollTop,
     to: peekTop,
-    duration: BOUNCE_OUT_MS,
+    duration: ESCAPE_BOUNCE_OUT_MS,
     ease: easeOutCubic,
     done: () => {
       bounceTimer = window.setTimeout(() => {
@@ -146,7 +147,7 @@ export function bounceShowcaseEscape(main: HTMLElement, showcase: HTMLElement) {
           element: main,
           from: main.scrollTop,
           to: top,
-          duration: BOUNCE_BACK_MS,
+          duration: ESCAPE_BOUNCE_BACK_MS,
           ease: easeInOutCubic,
           done: () => {
             restoreSnap?.();
@@ -155,7 +156,7 @@ export function bounceShowcaseEscape(main: HTMLElement, showcase: HTMLElement) {
             restoreCue = undefined;
           },
         });
-      }, BOUNCE_HOLD_MS);
+      }, ESCAPE_BOUNCE_HOLD_MS);
     },
   });
 }

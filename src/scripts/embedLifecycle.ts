@@ -2,6 +2,8 @@
  * Pure (DOM-free) logic for the Showcase live-embed lifecycle. Unit-tested without a
  * browser, mirroring projectSelection.ts. The DOM wiring lives in embedController.ts.
  */
+import { SPINNER_DELAY_MS, EMBED_FALLBACK_MS } from './showcaseTiming';
+
 export const PROTOCOL_VERSION = 1;
 export type EmbedMode = 'embed' | 'media' | 'custom';
 
@@ -38,8 +40,8 @@ export function createEmbedTimers(opts: {
   spinnerMs?: number;
   fallbackMs?: number;
 }): EmbedTimers {
-  const spinnerMs = opts.spinnerMs ?? 600;
-  const fallbackMs = opts.fallbackMs ?? 4000;
+  const spinnerMs = opts.spinnerMs ?? SPINNER_DELAY_MS;
+  const fallbackMs = opts.fallbackMs ?? EMBED_FALLBACK_MS;
   let settled = false;
   const timers: ReturnType<typeof setTimeout>[] = [];
   const clearAll = () => { for (const t of timers) clearTimeout(t); timers.length = 0; };

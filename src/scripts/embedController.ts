@@ -18,8 +18,7 @@ import {
   decideShowcaseEscape,
 } from './showcaseScrollEscape';
 import { prefersReducedMotion as reduceMotion } from './reduceMotion';
-
-const LIVE_CAP = 3;
+import { LIVE_CAP, HELLO_INTERVAL_MS, HELLO_MAX_TRIES } from './showcaseTiming';
 
 const showcase = document.getElementById('showcase');
 
@@ -154,11 +153,11 @@ function mount(entry: EmbedEntry) {
     let tries = 0;
     entry.helloTimer = window.setInterval(() => {
       entry.iframe.contentWindow?.postMessage({ type: 'portfolio:hello', v: PROTOCOL_VERSION }, entry.origin);
-      if (++tries >= 10 || entry.revealed || entry.failed) {
+      if (++tries >= HELLO_MAX_TRIES || entry.revealed || entry.failed) {
         window.clearInterval(entry.helloTimer);
         entry.helloTimer = undefined;
       }
-    }, 250);
+    }, HELLO_INTERVAL_MS);
   }, { once: true, signal: ac.signal });
   entry.iframe.addEventListener('error', () => entry.timers?.onError(), { once: true, signal: ac.signal });
   entry.iframe.src = entry.url; // the actual lazy load
