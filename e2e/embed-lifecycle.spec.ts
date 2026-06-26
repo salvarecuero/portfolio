@@ -65,6 +65,8 @@ test.describe("Embed lifecycle", () => {
     // Give the (rejected) message time to be processed; the embed must NOT reveal from it.
     await page.waitForTimeout(800);
     await expect(page.locator(ACTIVE)).not.toHaveClass(/embed-revealed/);
+    // Positively confirm it stayed in the pre-handshake state: the cover is still shown.
+    await expect(page.locator(`${ACTIVE} [data-embed-cover]`)).not.toHaveCSS("display", "none");
   });
 
   test("shows the loading spinner only after the delay, then reveals", async ({ page }) => {

@@ -48,6 +48,8 @@ test.describe("Lightbox", () => {
     await page.locator(overlay).click({ position: { x: 5, y: 5 } });
 
     await expect(page.locator(overlay)).not.toHaveClass(/open/);
+    // The close path also restores background scroll.
+    expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe("");
   });
 
   test("click-to-zoom then drag-to-pan stays within bounds", async ({ page }) => {
@@ -76,7 +78,9 @@ test.describe("Lightbox", () => {
       const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
       return { translateX: m.m41, halfWidth: (el as HTMLElement).clientWidth / 2 };
     });
-    // clampPan limit for a 2x zoom is (2w - w)/2 = w/2.
-    expect(Math.abs(translateX)).toBeLessThanOrEqual(halfWidth + 1);
+    // Dragging 1000px right far exceeds the clamp limit (w/2 for a 2x zoom), so the pan must
+    // land exactly at that limit: it moved (not stuck at 0) AND the edge stayed in view.
+    expect(translateX).toBeGreaterThanOrEqual(halfWidth - 1);
+    expect(translateX).toBeLessThanOrEqual(halfWidth + 1);
   });
 });
