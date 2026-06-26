@@ -30,7 +30,7 @@ Personal portfolio, v2. v1 is frozen at tag `v1.0`; v2 starts from scratch on th
 - `pnpm preview` — serve the build
 - `pnpm check` — `astro check` (typecheck of `.astro` files)
 - `pnpm lint` — `oxlint` (lint of JS/TS)
-- `pnpm format` — `oxfmt` (format in place); `pnpm format:check` verifies without writing
+- `pnpm format` — `oxfmt` (TS/JS/CSS/MD/JSON) + Prettier (`.astro`), format in place; `pnpm format:check` verifies without writing
 
 ## Project layout
 
@@ -44,4 +44,4 @@ Personal portfolio, v2. v1 is frozen at tag `v1.0`; v2 starts from scratch on th
 
 - **English only.** All text committed to the repo — code, comments, commit messages, docs, ADRs — is in English. (i18n with an EN/ES switch is a possible future consideration, not in scope now.)
 - **Technical objectivity in the record.** Every commit message, code comment and doc (including ADRs) describes _what_ changes and, when relevant, _why_ — but the "why" **only when it has technical grounding** (an architecture trade-off, a fix for a measurable bug, a performance constraint). It never references session conversations, personal or situational explanations, or the private motivation behind a decision. If a justification has no technical grounding, it is omitted.
-- **Formatting and linting.** `oxfmt` formats the repo (TS/JS, CSS, Markdown, JSON) and `oxlint` lints JS/TS; run `pnpm format` and `pnpm lint` before committing. Oxc does not parse `.astro`, so `.astro` files are _not_ formatted or linted by these tools — keep them hand-consistent; `pnpm check` still typechecks them.
+- **Formatting and linting.** Two formatters split by file type so they never fight: `oxfmt` formats TS/JS, CSS, Markdown and JSON; Prettier (`prettier-plugin-astro`) formats `.astro`. `oxlint` lints JS/TS. Run `pnpm format` and `pnpm lint` before committing. Oxc still does not parse `.astro` (no `.astro` linting by oxlint), but `.astro` is now formatted by Prettier and typechecked by `pnpm check`.
