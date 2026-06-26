@@ -103,6 +103,20 @@ export function initLightbox(root: Document = document): void {
   let lastFocused: HTMLElement | null = null;
   const isOpen = () => overlay.classList.contains("open");
 
+  // Lock background scroll while the overlay is open so wheel/touch does not scroll the
+  // article behind the fixed dialog (which would also lose the reader's position on close).
+  let prevOverflow = "";
+  const lockScroll = (lock: boolean) => {
+    const el = root.documentElement;
+    if (!el) return;
+    if (lock) {
+      prevOverflow = el.style.overflow;
+      el.style.overflow = "hidden";
+    } else {
+      el.style.overflow = prevOverflow;
+    }
+  };
+
   let zoom: ZoomState = { zoomed: false, offsetX: 0, offsetY: 0 };
   let dragging = false;
   let moved = false;
@@ -139,6 +153,7 @@ export function initLightbox(root: Document = document): void {
       resetZoom();
       lastFocused = root.activeElement as HTMLElement | null;
       setLightboxOpen(overlay, true);
+      lockScroll(true);
       closeBtn?.focus();
     });
   });
@@ -146,6 +161,7 @@ export function initLightbox(root: Document = document): void {
   const close = () => {
     if (!isOpen()) return;
     setLightboxOpen(overlay, false);
+    lockScroll(false);
     resetZoom();
     lastFocused?.focus();
     lastFocused = null;
