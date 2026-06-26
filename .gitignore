@@ -47,6 +47,11 @@ tmp/
 # Playwright MCP scratch output (console logs + page snapshots from browser automation).
 .playwright-mcp/
 
+# Playwright E2E output (reports, traces, browser cache).
+/playwright-report/
+/test-results/
+/.playwright/
+
 # Skill lockfile: local install state, not a portfolio artifact.
 /skills-lock.json
 

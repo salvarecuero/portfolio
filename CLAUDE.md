@@ -31,6 +31,8 @@ Personal portfolio, v2. v1 is frozen at tag `v1.0`; v2 starts from scratch on th
 - `pnpm check` — `astro check` (typecheck of `.astro` files)
 - `pnpm lint` — `oxlint` (lint of JS/TS)
 - `pnpm format` — `oxfmt` (TS/JS/CSS/MD/JSON) + Prettier (`.astro`), format in place; `pnpm format:check` verifies without writing
+- `pnpm test` — unit tests (Vitest, the fast loop: pure decision logic and content guards)
+- `pnpm test:e2e` — DOM-integration tests (Playwright against the production build, with a cross-origin embed stub); see `e2e/`
 
 ## Project layout
 
