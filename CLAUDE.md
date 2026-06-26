@@ -29,6 +29,8 @@ Personal portfolio, v2. v1 is frozen at tag `v1.0`; v2 starts from scratch on th
 - `pnpm build` — static build to `dist/`
 - `pnpm preview` — serve the build
 - `pnpm check` — `astro check` (typecheck of `.astro` files)
+- `pnpm lint` — `oxlint` (lint of JS/TS)
+- `pnpm format` — `oxfmt` (format in place); `pnpm format:check` verifies without writing
 
 ## Project layout
 
@@ -42,3 +44,4 @@ Personal portfolio, v2. v1 is frozen at tag `v1.0`; v2 starts from scratch on th
 
 - **English only.** All text committed to the repo — code, comments, commit messages, docs, ADRs — is in English. (i18n with an EN/ES switch is a possible future consideration, not in scope now.)
 - **Technical objectivity in the record.** Every commit message, code comment and doc (including ADRs) describes *what* changes and, when relevant, *why* — but the "why" **only when it has technical grounding** (an architecture trade-off, a fix for a measurable bug, a performance constraint). It never references session conversations, personal or situational explanations, or the private motivation behind a decision. If a justification has no technical grounding, it is omitted.
+- **Formatting and linting.** `oxfmt` formats the repo (TS/JS, CSS, Markdown, JSON) and `oxlint` lints JS/TS; run `pnpm format` and `pnpm lint` before committing. Oxc does not parse `.astro`, so `.astro` files are *not* formatted or linted by these tools — keep them hand-consistent; `pnpm check` still typechecks them.
