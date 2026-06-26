@@ -1,5 +1,4 @@
 import type { CollectionEntry } from 'astro:content';
-import type { ImageMetadata } from 'astro';
 import { iconPath } from '../data/showcaseIcons';
 
 // Clean public slug for a project's own page (/projects/<slug>). The content id carries an
@@ -8,13 +7,15 @@ export function projectSlug(id: string): string {
   return id.replace(/^\d+[-_]/, '');
 }
 
-export type EmbedMode = 'embed' | 'media' | 'custom';
+// Derived from the `projects` collection schema (content.config.ts) so these never drift
+// from the source of truth - add a mode or a media field there and these follow.
+type ProjectData = CollectionEntry<'projects'>['data'];
 
-export type VideoSource = { src: string; type: string };
+export type EmbedMode = ProjectData['mode'];
 
-export type MediaItem =
-  | { type: 'image'; src: ImageMetadata; alt: string }
-  | { type: 'video'; poster: ImageMetadata; sources: VideoSource[]; alt: string };
+export type MediaItem = ProjectData['media'][number];
+
+export type VideoSource = Extract<MediaItem, { type: 'video' }>['sources'][number];
 
 export interface ShowcaseProject {
   id: string;
