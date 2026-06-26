@@ -1,32 +1,35 @@
 ---
-import MediaGallery from './MediaGallery.astro';
-import Embed from './Embed.astro';
-import type { ShowcaseProject } from '../../lib/showcaseProjects';
+import MediaGallery from "./MediaGallery.astro";
+import Embed from "./Embed.astro";
+import type { ShowcaseProject } from "../../lib/showcaseProjects";
 const { project, active } = Astro.props as { project: ShowcaseProject; active: boolean };
-const embed = project.mode === 'embed' ? project.embed : undefined;
+const embed = project.mode === "embed" ? project.embed : undefined;
 ---
+
 <section
   class:list={["stage", { "stage--embed": !!embed, "is-active": active }]}
   role="tabpanel"
   id={`panel-${project.id}`}
   data-project={project.id}
   data-embed-url={embed?.url}
-  data-embed-requires-launch={embed?.requiresLaunch ? '' : undefined}
-  data-embed-mobile={embed?.mobile ? '' : undefined}
+  data-embed-requires-launch={embed?.requiresLaunch ? "" : undefined}
+  data-embed-mobile={embed?.mobile ? "" : undefined}
   aria-labelledby={`tab-${project.id}`}
   hidden={!active}
 >
-  {embed ? (
-    <>
-      <Embed project={project} />
-      <MediaGallery items={project.media} variant="desktop" />
-      <MediaGallery items={project.mediaMobile ?? project.media} variant="mobile" />
-    </>
-  ) : (
-    <>
-      <MediaGallery items={project.media} variant="desktop" />
-      {project.mediaMobile && <MediaGallery items={project.mediaMobile} variant="mobile" />}
-    </>
-  )}
+  {
+    embed ? (
+      <>
+        <Embed project={project} />
+        <MediaGallery items={project.media} variant="desktop" />
+        <MediaGallery items={project.mediaMobile ?? project.media} variant="mobile" />
+      </>
+    ) : (
+      <>
+        <MediaGallery items={project.media} variant="desktop" />
+        {project.mediaMobile && <MediaGallery items={project.mediaMobile} variant="mobile" />}
+      </>
+    )
+  }
   <slot />
 </section>

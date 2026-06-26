@@ -20,7 +20,9 @@ const { title, description, image, imageWidth, imageHeight, imageAlt, type, json
 <!doctype html>
 <html lang="en">
   <head>
-    <script is:inline>document.documentElement.classList.add('js')</script>
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
@@ -29,8 +31,10 @@ const { title, description, image, imageWidth, imageHeight, imageAlt, type, json
     <Font cssVariable="--font-yellowtail" />
     <Font cssVariable="--font-oswald" />
     <Font cssVariable="--font-zilla" />
-    {/* Outfit is a Showcase-only face (below the fold); not preloaded so it does not
-        compete with the Presentation's LCP image for priority and bandwidth. */}
+    {
+      /* Outfit is a Showcase-only face (below the fold); not preloaded so it does not
+        compete with the Presentation's LCP image for priority and bandwidth. */
+    }
     <Font cssVariable="--font-outfit" />
     <SEO
       title={title}

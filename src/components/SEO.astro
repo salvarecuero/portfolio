@@ -1,7 +1,7 @@
 ---
-import { buildSeoMeta, siteOrigin } from '../lib/seo';
-import { buildWebsiteSchema } from '../data/websiteSchema';
-import { presentation } from '../data/presentation';
+import { buildSeoMeta, siteOrigin } from "../lib/seo";
+import { buildWebsiteSchema } from "../data/websiteSchema";
+import { presentation } from "../data/presentation";
 
 interface Props {
   title: string;
@@ -44,6 +44,7 @@ const extraJsonLd = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
 const origin = siteOrigin(Astro.site, presentation.domain);
 const website = buildWebsiteSchema({ siteUrl: origin });
 ---
+
 <title>{meta.title}</title>
 <meta name="description" content={meta.description} />
 <link rel="canonical" href={meta.canonical} />
@@ -79,6 +80,8 @@ const website = buildWebsiteSchema({ siteUrl: origin });
 
 <!-- WebSite JSON-LD (Person lives in the Presentation) -->
 <script type="application/ld+json" is:inline set:html={JSON.stringify(website)} />
-{extraJsonLd.map((node) => (
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(node)} />
-))}
+{
+  extraJsonLd.map((node) => (
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(node)} />
+  ))
+}

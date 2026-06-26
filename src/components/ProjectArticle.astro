@@ -14,10 +14,9 @@ const { title, summary, stack, links, media, accent, description } = entry.data;
 // Showcase chrome). The wall texture is carried as a CSS var on the same inline style
 // (avoids combining define:vars with an explicit style attr on the root). Accent falls
 // back to the global --accent when a Project sets none.
-const rootStyle = [
-  `--wall-img:url("${wall.src}")`,
-  accent ? `--accent:${accent}` : null,
-].filter(Boolean).join(";");
+const rootStyle = [`--wall-img:url("${wall.src}")`, accent ? `--accent:${accent}` : null]
+  .filter(Boolean)
+  .join(";");
 // Optional media caption: the live host (e.g. "rangetube.netlify.app").
 const liveHost = links?.live ? new URL(links.live).host : null;
 ---
@@ -27,7 +26,14 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     <div class="hero-in">
       <a class="back back--top" href="/">
         <span class="back-ic" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg
+          >
         </span>
         <span class="back-txt">Back<small>{presentation.name}</small></span>
       </a>
@@ -36,75 +42,127 @@ const liveHost = links?.live ? new URL(links.live).host : null;
       <h1>{title}</h1>
       <p class="summary">{summary}</p>
 
-      {(links?.live || links?.repo) && (
-        <nav class="links" aria-label="Project links">
-          {links?.live && (
-            <a class="cta" href={links.live} target="_blank" rel="noopener">
-              Visit live site
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
-            </a>
-          )}
-          {links?.repo && (
-            <a class="ghost" href={links.repo} target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
-              Repository
-            </a>
-          )}
-        </nav>
-      )}
+      {
+        (links?.live || links?.repo) && (
+          <nav class="links" aria-label="Project links">
+            {links?.live && (
+              <a class="cta" href={links.live} target="_blank" rel="noopener">
+                Visit live site
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M7 17L17 7M9 7h8v8" />
+                </svg>
+              </a>
+            )}
+            {links?.repo && (
+              <a class="ghost" href={links.repo} target="_blank" rel="noopener">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
+                </svg>
+                Repository
+              </a>
+            )}
+          </nav>
+        )
+      }
 
-      {stack.length > 0 && (
-        <ul class="stack" aria-label="Stack">
-          {stack.map((t) => {
-            const icon = stackIcons[t];
-            return (
-              <li style={icon ? `--brand:${icon.brand}` : undefined}>
-                {icon && "path" in icon && (
-                  <svg class="stack-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d={icon.path} />
-                  </svg>
-                )}
-                {icon && "mask" in icon && (
-                  <span class="stack-ic mask-ic" style={`--m:url('${icon.mask}')`} aria-hidden="true"></span>
-                )}
-                <span class="stack-lb">{t}</span>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      {
+        stack.length > 0 && (
+          <ul class="stack" aria-label="Stack">
+            {stack.map((t) => {
+              const icon = stackIcons[t];
+              return (
+                <li style={icon ? `--brand:${icon.brand}` : undefined}>
+                  {icon && "path" in icon && (
+                    <svg
+                      class="stack-ic"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d={icon.path} />
+                    </svg>
+                  )}
+                  {icon && "mask" in icon && (
+                    <span
+                      class="stack-ic mask-ic"
+                      style={`--m:url('${icon.mask}')`}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span class="stack-lb">{t}</span>
+                </li>
+              );
+            })}
+          </ul>
+        )
+      }
     </div>
   </header>
 
   <div class="shell">
     <div class="col">
       <div class="media">
-        {media.map((m, i) => (
-          <figure class="mat">
-            {m.type === "image" ? (
-              <button
-                class="frame-trigger"
-                type="button"
-                aria-label={`Click to enlarge: ${m.alt}`}
-                data-lightbox-trigger
-                data-full={m.src.src}
-                data-alt={m.alt}
-                data-cap={i === 0 && liveHost ? liveHost : ""}
-              >
-                <Image class="frame" src={m.src} alt={m.alt} widths={[480, 960, 1440]} sizes="(max-width: 860px) 100vw, 820px" />
-                <span class="frame-hint" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                  Click to enlarge
-                </span>
-              </button>
-            ) : (
-              <video class="frame" controls playsinline poster={m.poster.src} aria-label={m.alt}>
-                {m.sources.map((s) => <source src={s.src} type={s.type} />)}
-              </video>
-            )}
-            {i === 0 && liveHost && <figcaption class="cap">{liveHost}</figcaption>}
-          </figure>
-        ))}
+        {
+          media.map((m, i) => (
+            <figure class="mat">
+              {m.type === "image" ? (
+                <button
+                  class="frame-trigger"
+                  type="button"
+                  aria-label={`Click to enlarge: ${m.alt}`}
+                  data-lightbox-trigger
+                  data-full={m.src.src}
+                  data-alt={m.alt}
+                  data-cap={i === 0 && liveHost ? liveHost : ""}
+                >
+                  <Image
+                    class="frame"
+                    src={m.src}
+                    alt={m.alt}
+                    widths={[480, 960, 1440]}
+                    sizes="(max-width: 860px) 100vw, 820px"
+                  />
+                  <span class="frame-hint" aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                    </svg>
+                    Click to enlarge
+                  </span>
+                </button>
+              ) : (
+                <video class="frame" controls playsinline poster={m.poster.src} aria-label={m.alt}>
+                  {m.sources.map((s) => (
+                    <source src={s.src} type={s.type} />
+                  ))}
+                </video>
+              )}
+              {i === 0 && liveHost && <figcaption class="cap">{liveHost}</figcaption>}
+            </figure>
+          ))
+        }
       </div>
 
       <div class="body">
@@ -114,7 +172,14 @@ const liveHost = links?.live ? new URL(links.live).host : null;
       <footer class="foot">
         <a class="back" href="/">
           <span class="back-ic" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg
+            >
           </span>
           <span class="back-txt">Back<small>{presentation.name}</small></span>
         </a>
@@ -123,7 +188,14 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   </div>
 </main>
 
-<div class="lightbox" data-lightbox role="dialog" aria-modal="true" aria-label="Enlarged image" aria-hidden="true">
+<div
+  class="lightbox"
+  data-lightbox
+  role="dialog"
+  aria-modal="true"
+  aria-label="Enlarged image"
+  aria-hidden="true"
+>
   <figure class="lightbox-fig">
     <button class="lightbox-close" type="button" aria-label="Close" data-lightbox-close>✕</button>
     <div class="lightbox-view" data-lightbox-view>
@@ -159,8 +231,8 @@ const liveHost = links?.live ? new URL(links.live).host : null;
      mat as the nod to the Showcase cosmos. */
   .project {
     /* warm light palette, scoped here (not in the global tokens) */
-    --ink: #26221f;          /* warm charcoal, never pure black */
-    --ink-body: #36312c;     /* long-form body copy, softened a touch off --ink */
+    --ink: #26221f; /* warm charcoal, never pure black */
+    --ink-body: #36312c; /* long-form body copy, softened a touch off --ink */
     --ink-soft: #5f5a53;
     --wall-fallback: #eef0f1;
     --line: rgba(38, 34, 31, 0.12);
@@ -179,7 +251,11 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   .hero {
     position: relative;
     background:
-      radial-gradient(120% 140% at 100% 0%, color-mix(in oklch, var(--ac) 22%, transparent), transparent 55%),
+      radial-gradient(
+        120% 140% at 100% 0%,
+        color-mix(in oklch, var(--ac) 22%, transparent),
+        transparent 55%
+      ),
       var(--wall-img) center / cover no-repeat,
       var(--wall-fallback);
     border-bottom: 1px solid var(--line);
@@ -217,9 +293,15 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     border: 1px solid var(--line);
     background: rgba(255, 255, 255, 0.7);
     color: var(--ink);
-    transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+    transition:
+      background 0.22s ease,
+      border-color 0.22s ease,
+      color 0.22s ease;
   }
-  .back-ic svg { width: 15px; height: 15px; }
+  .back-ic svg {
+    width: 15px;
+    height: 15px;
+  }
   .back-txt {
     font-family: var(--font-geist-mono), ui-monospace, monospace;
     font-size: 0.8rem;
@@ -227,10 +309,23 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   }
   /* #6b665c clears WCAG AA (4.99:1 on the --wall-fallback #eef0f1) while staying more
      muted than the primary back label; #8a857c only reached 3.2:1. */
-  .back-txt small { display: block; color: #6b665c; font-size: 0.66rem; letter-spacing: 0.04em; }
-  .back:hover { color: var(--ink); }
-  .back:hover .back-ic { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .back--top { margin-bottom: clamp(1.5rem, 4vw, 2.25rem); }
+  .back-txt small {
+    display: block;
+    color: #6b665c;
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+  }
+  .back:hover {
+    color: var(--ink);
+  }
+  .back:hover .back-ic {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+  .back--top {
+    margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
+  }
   .back:focus-visible {
     outline: 2px solid var(--ac);
     outline-offset: 4px;
@@ -286,9 +381,18 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     padding: 0.6em 1.05em;
     transition: background 0.18s ease;
   }
-  .cta svg { width: 16px; height: 16px; color: color-mix(in oklch, var(--ac) 82%, white); }
-  .cta:hover { background: #181512; } /* color only - no transform/lift */
-  .cta:focus-visible { outline: 2px solid var(--ac); outline-offset: 3px; }
+  .cta svg {
+    width: 16px;
+    height: 16px;
+    color: color-mix(in oklch, var(--ac) 82%, white);
+  }
+  .cta:hover {
+    background: #181512;
+  } /* color only - no transform/lift */
+  .cta:focus-visible {
+    outline: 2px solid var(--ac);
+    outline-offset: 3px;
+  }
   .ghost {
     display: inline-flex;
     align-items: center;
@@ -302,14 +406,32 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     border: 1px solid var(--line);
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.55);
-    transition: border-color 0.18s ease, background 0.18s ease;
+    transition:
+      border-color 0.18s ease,
+      background 0.18s ease;
   }
-  .ghost svg { width: 15px; height: 15px; }
-  .ghost:hover { border-color: color-mix(in oklch, var(--ink) 30%, var(--line)); background: #fff; }
-  .ghost:focus-visible { outline: 2px solid var(--ac); outline-offset: 3px; }
+  .ghost svg {
+    width: 15px;
+    height: 15px;
+  }
+  .ghost:hover {
+    border-color: color-mix(in oklch, var(--ink) 30%, var(--line));
+    background: #fff;
+  }
+  .ghost:focus-visible {
+    outline: 2px solid var(--ac);
+    outline-offset: 3px;
+  }
 
   /* ---------- stack chips (icon pills), sits below the CTA row ---------- */
-  .stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.3rem 0 0; padding: 0; list-style: none; }
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.3rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
   .stack li {
     display: inline-flex;
     align-items: center;
@@ -326,13 +448,17 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     cursor: default;
   }
   /* Icons carry their brand colour at rest - the tags are informational, not hover targets. */
-  .stack-ic { width: 15px; height: 15px; color: var(--brand, var(--ac)); }
+  .stack-ic {
+    width: 15px;
+    height: 15px;
+    color: var(--brand, var(--ac));
+  }
   /* mask glyph: raster logo tinted by its brand colour - same as the SVGs */
   .mask-ic {
     display: inline-block;
     background: var(--brand, var(--ac));
     -webkit-mask: var(--m) center / contain no-repeat;
-            mask: var(--m) center / contain no-repeat;
+    mask: var(--m) center / contain no-repeat;
   }
 
   /* ---------- body region ---------- */
@@ -374,50 +500,126 @@ const liveHost = links?.live ? new URL(links.live).host : null;
   }
 
   /* image lightbox trigger + hint, and the single overlay it opens */
-  .frame-trigger { display: block; width: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; position: relative; }
+  .frame-trigger {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: zoom-in;
+    position: relative;
+  }
   .frame-hint {
-    position: absolute; right: 1rem; bottom: 0.9rem;
-    display: inline-flex; align-items: center; gap: 0.45ch;
-    font-family: var(--font-geist), system-ui, sans-serif; font-size: 0.78rem; font-weight: 500;
-    color: #fff; background: rgba(0, 0, 0, 0.6); padding: 0.4em 0.8em; border-radius: 999px;
-    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); pointer-events: none;
+    position: absolute;
+    right: 1rem;
+    bottom: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45ch;
+    font-family: var(--font-geist), system-ui, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.4em 0.8em;
+    border-radius: 999px;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
   }
-  .frame-hint svg { width: 14px; height: 14px; }
+  .frame-hint svg {
+    width: 14px;
+    height: 14px;
+  }
   .lightbox {
-    position: fixed; inset: 0; z-index: 100; display: none; place-items: center;
-    padding: clamp(1rem, 4vw, 3rem); background: rgba(12, 10, 9, 0.82);
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    place-items: center;
+    padding: clamp(1rem, 4vw, 3rem);
+    background: rgba(12, 10, 9, 0.82);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
-  .lightbox.open { display: grid; }
-  .lightbox-fig { position: relative; margin: 0; max-width: min(1100px, 94vw); max-height: 90vh; display: flex; flex-direction: column; gap: 0.7rem; }
-  .lightbox-view { overflow: hidden; border-radius: 10px; box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8); line-height: 0; }
+  .lightbox.open {
+    display: grid;
+  }
+  .lightbox-fig {
+    position: relative;
+    margin: 0;
+    max-width: min(1100px, 94vw);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .lightbox-view {
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+    line-height: 0;
+  }
   .lightbox-view img {
-    display: block; max-width: 100%; max-height: 80vh; object-fit: contain;
-    cursor: zoom-in; touch-action: none; will-change: transform;
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    cursor: zoom-in;
+    touch-action: none;
+    will-change: transform;
     transform-origin: center center;
     /* Ease the fit <-> zoom toggle; pan stays 1:1 with the pointer (see .is-dragging). */
     transition: transform 0.22s ease;
     /* Suppress the browser's native image drag (and selection): it starts on
        mousedown+move and fires pointercancel, which would abort the pan drag. */
-    -webkit-user-drag: none; user-select: none;
+    -webkit-user-drag: none;
+    user-select: none;
   }
-  .lightbox-view img.is-zoomed { cursor: grab; }
-  .lightbox-view img.is-zoomed.is-dragging { cursor: grabbing; }
+  .lightbox-view img.is-zoomed {
+    cursor: grab;
+  }
+  .lightbox-view img.is-zoomed.is-dragging {
+    cursor: grabbing;
+  }
   /* During a pan drag the transform must track the pointer with no easing lag. */
-  .lightbox-view img.is-dragging { transition: none; }
-  @media (prefers-reduced-motion: reduce) {
-    .lightbox-view img { transition: none; }
+  .lightbox-view img.is-dragging {
+    transition: none;
   }
-  .lightbox-cap { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.76rem; color: #d8d4cd; text-align: center; }
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox-view img {
+      transition: none;
+    }
+  }
+  .lightbox-cap {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.76rem;
+    color: #d8d4cd;
+    text-align: center;
+  }
   .lightbox-close {
     /* z-index lifts the button above the image: the image's will-change/transform
        forms a stacking context that, being later in the DOM, would otherwise paint
        over the (earlier, z-index:auto) close button where they overlap at the corner. */
-    position: absolute; z-index: 1; top: -0.6rem; right: -0.6rem; width: 40px; height: 40px; border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.25); background: rgba(20, 17, 15, 0.9); color: #fff;
-    font-size: 1.1rem; cursor: pointer; display: grid; place-items: center;
+    position: absolute;
+    z-index: 1;
+    top: -0.6rem;
+    right: -0.6rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(20, 17, 15, 0.9);
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
   }
-  .lightbox-close:hover { background: #fff; color: #14110f; }
+  .lightbox-close:hover {
+    background: #fff;
+    color: #14110f;
+  }
 
   /* prose: shares the .col width; the lead paragraph carries the read in */
   .body {
@@ -426,9 +628,18 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     color: var(--ink-body);
     max-width: 100%;
   }
-  .body-p { margin: 0 0 1.15rem; }
-  .body-p:last-child { margin-bottom: 0; }
-  .body-p.lead { font-size: 1.3rem; line-height: 1.5; color: var(--ink); margin-bottom: 1.2rem; }
+  .body-p {
+    margin: 0 0 1.15rem;
+  }
+  .body-p:last-child {
+    margin-bottom: 0;
+  }
+  .body-p.lead {
+    font-size: 1.3rem;
+    line-height: 1.5;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+  }
 
   /* ---------- footer ---------- */
   .foot {

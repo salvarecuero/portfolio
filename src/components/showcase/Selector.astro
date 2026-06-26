@@ -1,27 +1,32 @@
 ---
-import type { ShowcaseProject } from '../../lib/showcaseProjects';
-import ProjectLogo from './ProjectLogo.astro';
+import type { ShowcaseProject } from "../../lib/showcaseProjects";
+import ProjectLogo from "./ProjectLogo.astro";
 const { projects } = Astro.props as { projects: ShowcaseProject[] };
 ---
-{/* `.selector` is the visual chrome row; the tablist owns every role="tab" child -
+
+{
+  /* `.selector` is the visual chrome row; the tablist owns every role="tab" child -
     one tab per Project. Each tab controls its matching Stage tabpanel (#panel-<id>),
-    participating in switching, deep-links, and keyboard nav. */}
+    participating in switching, deep-links, and keyboard nav. */
+}
 <div class="selector">
   <div class="selector-list" role="tablist" aria-label="Projects">
-    {projects.map((p) => (
-      <button
-        class:list={["tab", { active: p.active }]}
-        role="tab"
-        id={`tab-${p.id}`}
-        data-project={p.id}
-        data-accent={p.accent}
-        aria-selected={p.active ? 'true' : 'false'}
-        aria-controls={`panel-${p.id}`}
-        tabindex={p.active ? 0 : -1}
-        type="button"
-      >
-        <ProjectLogo slug={p.slug} title={p.title} iconPath={p.iconPath} accent={p.accent} />
-      </button>
-    ))}
+    {
+      projects.map((p) => (
+        <button
+          class:list={["tab", { active: p.active }]}
+          role="tab"
+          id={`tab-${p.id}`}
+          data-project={p.id}
+          data-accent={p.accent}
+          aria-selected={p.active ? "true" : "false"}
+          aria-controls={`panel-${p.id}`}
+          tabindex={p.active ? 0 : -1}
+          type="button"
+        >
+          <ProjectLogo slug={p.slug} title={p.title} iconPath={p.iconPath} accent={p.accent} />
+        </button>
+      ))
+    }
   </div>
 </div>
