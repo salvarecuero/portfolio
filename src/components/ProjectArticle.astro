@@ -620,6 +620,10 @@ const liveHost = links?.live ? new URL(links.live).host : null;
     background: #fff;
     color: #14110f;
   }
+  .lightbox-close:focus-visible {
+    outline: 2px solid var(--ac);
+    outline-offset: 2px;
+  }
 
   /* prose: shares the .col width; the lead paragraph carries the read in */
   .body {
