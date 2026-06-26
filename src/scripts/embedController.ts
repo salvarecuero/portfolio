@@ -17,16 +17,29 @@ import {
   createEscapeState,
   decideShowcaseEscape,
 } from './showcaseScrollEscape';
+import { prefersReducedMotion as reduceMotion } from './reduceMotion';
 
 const LIVE_CAP = 3;
-const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const showcase = document.getElementById('showcase');
 
 // JS gate must stay in sync with the CSS breakpoint (--showcase-embed-min in global.css).
-const bp = getComputedStyle(document.documentElement)
-  .getPropertyValue('--showcase-embed-min').trim() || '800px';
-const isDesktop = () => window.matchMedia(`(min-width: ${bp})`).matches;
+// Read lazily + memoized so the getComputedStyle call stays off the startup critical path
+// (isDesktop only runs at idle, behind boot/maybeMount).
+let bp: string | undefined;
+const isDesktop = () => {
+  bp ??= getComputedStyle(document.documentElement)
+    .getPropertyValue('--showcase-embed-min').trim() || '800px';
+  return window.matchMedia(`(min-width: ${bp})`).matches;
+};
+
+// Park an iframe so it stops holding its connection and leaves the tab order: drop the
+// src and make it inert + unfocusable.
+function parkIframe(iframe: HTMLIFrameElement) {
+  iframe.removeAttribute('src');
+  iframe.setAttribute('inert', '');
+  iframe.setAttribute('tabindex', '-1');
+}
 
 interface EmbedEntry {
   id: string;
@@ -43,6 +56,7 @@ interface EmbedEntry {
   timers?: EmbedTimers;
   helloTimer?: number;
   coverEndHandler?: () => void;
+  ac?: AbortController;
 }
 
 const entries = new Map<string, EmbedEntry>();
@@ -84,7 +98,7 @@ function warm(origin: string) {
 function reveal(entry: EmbedEntry) {
   if (entry.revealed || entry.failed) return;
   entry.revealed = true;
-  if (entry.helloTimer) window.clearInterval(entry.helloTimer);
+  if (entry.helloTimer) { window.clearInterval(entry.helloTimer); entry.helloTimer = undefined; }
   entry.iframe.removeAttribute('inert');
   entry.iframe.removeAttribute('tabindex');
   entry.stage.classList.remove('is-spinning');
@@ -110,13 +124,13 @@ function fallback(entry: EmbedEntry) {
   entry.failed = true;
   failed.add(entry.id);
   entry.timers?.cancel();
-  if (entry.helloTimer) window.clearInterval(entry.helloTimer);
+  entry.ac?.abort();
+  entry.ac = undefined;
+  if (entry.helloTimer) { window.clearInterval(entry.helloTimer); entry.helloTimer = undefined; }
   entry.stage.classList.remove('is-spinning');
   entry.stage.classList.add('embed-failed'); // CSS hides .embed, shows the media gallery
   // Stop the broken/blocked iframe from holding the connection, and drop it from the live set.
-  entry.iframe.removeAttribute('src');
-  entry.iframe.setAttribute('inert', '');
-  entry.iframe.setAttribute('tabindex', '-1');
+  parkIframe(entry.iframe);
   const i = mountOrder.indexOf(entry.id);
   if (i !== -1) mountOrder.splice(i, 1);
   entry.mounted = false;
@@ -131,15 +145,22 @@ function mount(entry: EmbedEntry) {
     onFallback: () => fallback(entry),
   });
   // load → parent "hello" retries (covers child-ready-before-parent-listener). The grace
-  // reveal is gone: reveal is handshake-only now.
+  // reveal is gone: reveal is handshake-only now. Listeners are scoped to an AbortController
+  // so an LRU eviction (unmount) before the iframe loads removes the still-pending {once:true}
+  // load listener, preventing a later remount from running a duplicate hello loop.
+  const ac = new AbortController();
+  entry.ac = ac;
   entry.iframe.addEventListener('load', () => {
     let tries = 0;
     entry.helloTimer = window.setInterval(() => {
       entry.iframe.contentWindow?.postMessage({ type: 'portfolio:hello', v: PROTOCOL_VERSION }, entry.origin);
-      if (++tries >= 10 || entry.revealed || entry.failed) window.clearInterval(entry.helloTimer);
+      if (++tries >= 10 || entry.revealed || entry.failed) {
+        window.clearInterval(entry.helloTimer);
+        entry.helloTimer = undefined;
+      }
     }, 250);
-  }, { once: true });
-  entry.iframe.addEventListener('error', () => entry.timers?.onError(), { once: true });
+  }, { once: true, signal: ac.signal });
+  entry.iframe.addEventListener('error', () => entry.timers?.onError(), { once: true, signal: ac.signal });
   entry.iframe.src = entry.url; // the actual lazy load
 }
 
@@ -155,14 +176,14 @@ function unmount(id: string) {
   const entry = entries.get(id);
   if (!entry || !entry.mounted) return;
   entry.timers?.cancel();
-  if (entry.helloTimer) window.clearInterval(entry.helloTimer);
+  entry.ac?.abort();
+  entry.ac = undefined;
+  if (entry.helloTimer) { window.clearInterval(entry.helloTimer); entry.helloTimer = undefined; }
   if (entry.coverEndHandler) {
     entry.cover.removeEventListener('transitionend', entry.coverEndHandler);
     entry.coverEndHandler = undefined;
   }
-  entry.iframe.removeAttribute('src');
-  entry.iframe.setAttribute('inert', '');
-  entry.iframe.setAttribute('tabindex', '-1');
+  parkIframe(entry.iframe);
   entry.stage.classList.remove('embed-revealed', 'is-spinning');
   entry.cover.style.display = '';
   entry.mounted = false;
