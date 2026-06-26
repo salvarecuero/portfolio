@@ -26,7 +26,9 @@ export function renderProjectsMarkdown(
     .sort((a, b) => a.data.order - b.data.order)
     .map((entry) => {
       const d = entry.data;
-      const pageUrl = new URL(`projects/${projectSlug(entry.id)}`, origin).href;
+      // Trailing slash to match the page's own canonical / og:url / CreativeWork @id
+      // (Astro's default directory build format serves project pages at /projects/<slug>/).
+      const pageUrl = new URL(`projects/${projectSlug(entry.id)}/`, origin).href;
       const lines = [`## ${d.title}`, "", d.summary, ""];
       for (const paragraph of d.description) lines.push(paragraph, "");
       if (d.stack.length) lines.push(`Stack: ${d.stack.join(", ")}`, "");
