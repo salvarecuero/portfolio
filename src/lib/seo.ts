@@ -45,11 +45,12 @@ export function siteOrigin(site: URL | undefined, fallbackOrigin: string): strin
 export function buildSeoMeta(input: SeoInput): SeoMeta {
   const base = originBase(input.site, input.fallbackOrigin);
   const image = input.image ?? '/og.png';
+  const pageHref = new URL(input.pathname, base).href;
   return {
     title: input.title,
     description: input.description,
-    canonical: new URL(input.pathname, base).href,
-    ogUrl: new URL(input.pathname, base).href,
+    canonical: pageHref,
+    ogUrl: pageHref,
     ogImage: new URL(image, base).href,
     ogType: input.type ?? 'website',
   };

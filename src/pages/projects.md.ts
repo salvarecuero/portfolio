@@ -9,7 +9,7 @@ import { renderProjectsMarkdown } from "../lib/projectsMarkdown";
 // file /projects.md; its text/markdown Content-Type at serve time comes from public/_headers
 // (a static build keeps the body but not this Response's headers). See ADR 0007.
 export const GET: APIRoute = async ({ site }) => {
-  const origin = siteOrigin(site, `${presentation.domain}/`);
+  const origin = siteOrigin(site, presentation.domain);
   const projects = await getCollection("projects");
   return new Response(renderProjectsMarkdown(projects, origin), {
     headers: { "Content-Type": "text/markdown; charset=utf-8" },

@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const data = entry.data;
 
-const origin = siteOrigin(Astro.site, `${presentation.domain}/`);
+const origin = siteOrigin(Astro.site, presentation.domain);
 const pageUrl = new URL(Astro.url.pathname, origin).href;
 
 // Poster (media[0]) drives the OG image; it is either an image src or a video's poster still.

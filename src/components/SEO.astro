@@ -41,7 +41,7 @@ const ogImageAlt = imageAlt ?? `${presentation.name} - ${presentation.role}`;
 const ogWidth = image ? imageWidth : 1200;
 const ogHeight = image ? imageHeight : 630;
 const extraJsonLd = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
-const origin = siteOrigin(Astro.site, `${presentation.domain}/`);
+const origin = siteOrigin(Astro.site, presentation.domain);
 const website = buildWebsiteSchema({ siteUrl: origin });
 ---
 <title>{meta.title}</title>

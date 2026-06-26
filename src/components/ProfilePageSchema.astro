@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { imageUrl } = Astro.props;
-const siteUrl = siteOrigin(Astro.site, `${presentation.domain}/`);
+const siteUrl = siteOrigin(Astro.site, presentation.domain);
 const schema = buildProfilePageSchema({ siteUrl, imageUrl });
 ---
 

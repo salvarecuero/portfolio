@@ -13,7 +13,7 @@ const { name, role, stack, socials, email } = presentation;
 const [givenName, ...familyParts] = name.split(" ");
 const familyName = familyParts.join(" ");
 // schema.org/Person image: the original photo (solid, no transparency), absolute URL.
-const imageUrl = new URL(photo.src, siteOrigin(Astro.site, `${presentation.domain}/`)).href;
+const imageUrl = new URL(photo.src, siteOrigin(Astro.site, presentation.domain)).href;
 ---
 
 <section class="presentation">
