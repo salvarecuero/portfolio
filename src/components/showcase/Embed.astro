@@ -1,7 +1,7 @@
 ---
 import type { ShowcaseProject } from '../../lib/showcaseProjects';
 const { project } = Astro.props as { project: ShowcaseProject };
-const embed = project.embed!;
+const embed = project.mode === 'embed' ? project.embed : undefined;
 ---
 <div class="embed" data-embed>
   <iframe
@@ -21,7 +21,7 @@ const embed = project.embed!;
       <span class="embed-ring"></span>
     </div>
   </div>
-  {embed.requiresLaunch && (
+  {embed?.requiresLaunch && (
     <button class="embed-launch" type="button" data-embed-launch>Launch {project.title}</button>
   )}
 </div>

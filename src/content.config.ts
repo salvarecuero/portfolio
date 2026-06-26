@@ -26,15 +26,14 @@ const projects = defineCollection({
       }),
     ]);
 
-    return z.object({
+    // Fields shared by every Presentation mode.
+    const base = z.object({
       title: z.string(),
       summary: z.string(),
       // Long-form description as ordered paragraphs. Source of truth for the detail
       // page body (replaces the former markdown body). Defaulted so media/custom
       // Projects without prose still validate.
       description: z.array(z.string()).default([]),
-      // Presentation mode in the Showcase.
-      mode: z.enum(["embed", "media", "custom"]),
       // Media set (desktop / landscape). media[0] is the Poster (Media mode); the gallery
       // is also the Embed failure fallback / no-JS baseline.
       media: z.array(mediaItem).min(1),
@@ -47,15 +46,6 @@ const projects = defineCollection({
       accent: z.string().optional(),
       // Selector tab glyph: a key into src/data/showcaseIcons.ts (falls back to a default).
       icon: z.string().optional(),
-      // Embed contract - only for mode: "embed". See ADR 0004.
-      embed: z
-        .object({
-          url: z.url(),
-          requiresLaunch: z.boolean().default(false),
-          // Opt a single mobile-oriented Project into mounting its Embed on mobile.
-          mobile: z.boolean().default(false),
-        })
-        .optional(),
       links: z
         .object({
           live: z.url().optional(),
@@ -64,6 +54,23 @@ const projects = defineCollection({
         .optional(),
       stack: z.array(z.string()).default([]),
     });
+
+    // Discriminated on `mode`: only Embed Projects carry the embed contract (ADR 0004), and
+    // media/custom Projects must not. The union makes impossible states (an embed Project with
+    // no embed config, or a media Project that carries one) unrepresentable in the derived types.
+    return z.discriminatedUnion("mode", [
+      base.extend({
+        mode: z.literal("embed"),
+        embed: z.object({
+          url: z.url(),
+          requiresLaunch: z.boolean().default(false),
+          // Opt a single mobile-oriented Project into mounting its Embed on mobile.
+          mobile: z.boolean().default(false),
+        }),
+      }),
+      base.extend({ mode: z.literal("media") }),
+      base.extend({ mode: z.literal("custom") }),
+    ]);
   },
 });
 
