@@ -34,6 +34,8 @@ Personal portfolio, v2. v1 is frozen at tag `v1.0`; v2 starts from scratch on th
 - `pnpm test` — unit tests (Vitest, the fast loop: pure decision logic and content guards)
 - `pnpm test:e2e` — DOM-integration tests (Playwright against the production build, with a cross-origin embed stub); see `e2e/`
 
+CI (`.github/workflows/ci.yml`) runs on push and PRs to `v2`/`main`: a fast `checks` job (lint, format:check, check, test, build) and a separate `e2e` job (Playwright). Every command above must pass before merge.
+
 ## Project layout
 
 - `src/pages/` — routes (single page: `index.astro`)
