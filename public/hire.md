@@ -114,7 +114,7 @@ He is particularly valuable for teams that need someone who can:
 
 Salvador is available for remote software engineering opportunities, including contract, freelance, part-time, and full-time roles.
 
-Typical rate: USD 25–40/hour, depending on the role, scope, complexity, responsibilities, and engagement type.
+Typical rate: USD 25-40/hour, depending on the role, scope, complexity, responsibilities, and engagement type.
 
 For longer-term roles, product ownership, senior-level responsibilities, or work requiring broader full-stack ownership, the rate may vary based on the expected commitment and impact.
 

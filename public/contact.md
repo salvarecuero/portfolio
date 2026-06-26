@@ -11,7 +11,7 @@ Salvador Recuero is a Senior Full-Stack Engineer based in Uruguay / Argentina, a
 
 - Available for remote software engineering opportunities.
 - Open to contract, freelance, part-time, and full-time roles.
-- Typical rate: USD 25–40/hour, depending on role, scope, complexity, and engagement type.
+- Typical rate: USD 25-40/hour, depending on role, scope, complexity, and engagement type.
 
 ## Location and languages
 
