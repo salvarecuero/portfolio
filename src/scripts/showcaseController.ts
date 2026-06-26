@@ -11,11 +11,9 @@
  */
 import { projectFromHash, nextTab, prevTab } from './projectSelection';
 import { decideHashSync } from './showcaseHashSync';
+import { prefersReducedMotion as reduceMotion } from './reduceMotion';
 
 const SWAP_MS = 240; // keep in sync with the stage-in/stage-out duration in showcase.css
-
-const reduceMotion = () =>
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const tablist = document.querySelector<HTMLElement>('.selector-list[role="tablist"]');
 const showcase = document.getElementById('showcase');

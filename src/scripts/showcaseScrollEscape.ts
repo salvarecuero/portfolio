@@ -1,3 +1,5 @@
+import { prefersReducedMotion } from "./reduceMotion";
+
 export interface EscapeState {
   confirmAfter: number;
   armedUntil: number;
@@ -118,7 +120,7 @@ export function decideShowcaseEscape(opts: {
 }
 
 export function bounceShowcaseEscape(main: HTMLElement, showcase: HTMLElement) {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (prefersReducedMotion()) return;
   cancelShowcaseEscapeBounce();
 
   const top = showcase.offsetTop;

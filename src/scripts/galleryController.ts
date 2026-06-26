@@ -6,9 +6,7 @@
  */
 import { nextIndex, prevIndex, wrapIndex } from './galleryNav';
 import { resolveSwipe } from './gallerySwipe';
-
-const reduceMotion = () =>
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+import { prefersReducedMotion as reduceMotion } from './reduceMotion';
 
 function setupGallery(root: HTMLElement) {
   const track = root.querySelector<HTMLElement>('[data-track]');
