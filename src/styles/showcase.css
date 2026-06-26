@@ -500,10 +500,8 @@ html.js.intro-done .stage.is-active { opacity: 1; }
   width: auto;
   height: 14px;
   flex: none;
-  opacity: 1;
 }
-.tab:not(.active) .tab-logo--rangetube { opacity: 0.62; }
-.tab.active .tab-logo--rangetube { opacity: 1; }
+/* Active/inactive opacity comes from the shared `.tab-logo` rules above. */
 /* bye-bg: "bye" inherits the tab colour, "-bg" keeps the brand accent.
    No inter-glyph gap - the wordmark reads as a single token "bye-bg". */
 .tab-logo--byebg { gap: 0; }
