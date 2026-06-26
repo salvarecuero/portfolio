@@ -23,6 +23,8 @@ const PAGE = /* html */ `<!doctype html>
     <main id="stub-child">stub child</main>
     <script>
       (function () {
+        // Mirrors PROTOCOL_VERSION in src/scripts/embedLifecycle.ts and the embed contract
+        // (ADR 0004). Bump in lockstep, or the parent silently rejects every handshake.
         var V = 1;
         var q = new URLSearchParams(location.search);
         var sendsReady = q.get("ready") !== "0";

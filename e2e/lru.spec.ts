@@ -1,13 +1,13 @@
 import { test, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import { gotoShowcase, revealShowcaseInView } from "./helpers/harness";
+import { LIVE_CAP } from "../src/scripts/showcaseTiming";
 
-// LRU eviction wiring (embedController + lruEvict, LIVE_CAP = 3). With a 4th embed injected,
-// mounting beyond the cap evicts the oldest, and re-activating an evicted Project re-mounts it
-// cleanly (the AbortController fix: no orphaned load listener, no duplicate hello loop). The
-// invariant asserted throughout is that the live set never exceeds the cap.
+// LRU eviction wiring (embedController + lruEvict). With a 4th embed injected, mounting beyond
+// LIVE_CAP evicts the oldest, and re-activating an evicted Project re-mounts it cleanly (the
+// AbortController fix: no orphaned load listener, no duplicate hello loop). The invariant asserted
+// throughout is that the live set never exceeds the cap; LIVE_CAP is imported so it stays in step.
 const EMBED_IDS = ["simple-tool-stack", "bye-bg", "rangetube", "stub-4"];
-const LIVE_CAP = 3;
 
 // Ids whose iframe currently has a src, i.e. the live (mounted) embeds.
 function mountedIds(page: Page): Promise<string[]> {
@@ -30,6 +30,17 @@ function activate(page: Page, id: string): Promise<void> {
 test("a 4th live embed evicts the oldest; re-activating it re-mounts cleanly within the cap", async ({
   page,
 }) => {
+  // Suppress proactive preload so only the explicit showcase:activate calls below mount embeds:
+  // proactiveMountQueue() short-circuits on Save-Data, which isolates the re-mount assertion from
+  // the idle preload pass (otherwise an evicted embed could be re-mounted by preload, not by the
+  // activation path under test).
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "connection", {
+      configurable: true,
+      value: { saveData: true },
+    });
+  });
+
   await gotoShowcase(page, {
     embeds: {
       "simple-tool-stack": { ready: true },

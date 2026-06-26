@@ -56,7 +56,7 @@ test("a scroll-escape over a revealed embed bounces and shows the cue; a second 
   const showcaseTop = await page.evaluate(() => document.getElementById("showcase")!.offsetTop);
   expect(showcaseTop).toBeGreaterThan(0);
 
-  // First gesture: bounce + cue.
+  // First gesture: bounce + cue. The cue probe latches __escapeCueShown for a later assertion.
   await emitEscape(page, ACTIVE_IFRAME);
   await expect
     .poll(() =>
@@ -64,8 +64,15 @@ test("a scroll-escape over a revealed embed bounces and shows the cue; a second 
     )
     .toBe(true);
 
-  // Let the bounce settle back to the Showcase top, still inside the armed window.
-  await page.waitForTimeout(500);
+  // Wait for the bounce to FINISH before the second gesture, condition-based rather than a fixed
+  // sleep: the armed window (ESCAPE_ARMED_MS = 2200) is a wall-clock budget from the first bounce,
+  // so a fixed wait plus polling latency can overrun it under load and the second gesture would
+  // bounce again instead of being allowed. The bounce sets main's inline scroll-snap to "none" for
+  // its whole duration and restores it exactly when scroll returns to the Showcase top, so its
+  // restore is the precise, race-free "settled and atShowcaseTop again" signal.
+  await expect
+    .poll(() => page.evaluate(() => document.querySelector("main")!.style.scrollSnapType))
+    .not.toBe("none");
 
   // Second gesture inside the armed window: let through, escaping to the Presentation (top 0).
   await emitEscape(page, ACTIVE_IFRAME);

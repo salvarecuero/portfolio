@@ -25,7 +25,14 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        // Disable Chromium's Local Network Access checks: they block the embed iframe's
+        // localhost:PREVIEW -> localhost:STUB request (ERR_BLOCKED_BY_LOCAL_NETWORK_ACCESS_CHECKS).
+        // The handshake under test is public-origin to public-origin in production, where LNA does
+        // not apply; the block is an artifact of both servers being on localhost in the test.
+        launchOptions: { args: ["--disable-features=LocalNetworkAccessChecks"] },
+      },
     },
   ],
   webServer: [

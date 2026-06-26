@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [v2, main]
 
+# Cancel superseded runs on the same ref so a rapid push sequence does not pile up builds.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # Fast feedback: lint, format, typecheck, unit tests, build. Kept separate from E2E so a
   # lint/type failure surfaces in seconds without waiting on the browser job.

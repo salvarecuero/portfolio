@@ -3,7 +3,7 @@ import { gotoShowcase, revealShowcaseInView } from "./helpers/harness";
 
 // Showcase selection wiring: tab activation swaps the active Stage and keeps the clean-slug hash
 // in sync, and a deep-link hash on load opens the right Project. The keys are the index-free
-// slugs (WS1): the hash is #rangetube, never #02-rangetube.
+// slugs (ADR 0008): the hash is #rangetube, never #02-rangetube.
 
 test.describe("Showcase selection", () => {
   test("clicking a Selector tab switches the active Stage and syncs the clean-slug hash", async ({

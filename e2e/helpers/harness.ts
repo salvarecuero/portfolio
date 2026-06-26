@@ -31,6 +31,8 @@ function stubUrl(behavior: StubBehavior = {}): string {
 // Markup for an extra embed Stage injected for the LRU test. embedController.collect() queries
 // the whole document for `.stage[data-embed-url]`, so a 4th entry anywhere in <body> registers
 // without needing a matching Selector tab (the spec drives it via the showcase:activate event).
+// This mirrors the controller hooks in Stage.astro / Embed.astro (data-embed-url, data-embed-frame,
+// data-embed-cover); keep it in step if those hooks change, or the 4th stage is silently ignored.
 function extraStageMarkup(id: string, url: string): string {
   return `<section class="stage stage--embed" role="tabpanel" id="panel-${id}" data-project="${id}" data-embed-url="${url}" aria-labelledby="tab-${id}" hidden>
     <div class="embed" data-embed>
@@ -57,7 +59,8 @@ export async function installShowcaseRoute(
   const { embeds = {}, extraEmbeds = {} } = options;
 
   await page.route(
-    (url) => url.hostname === "localhost" && url.pathname === "/",
+    // Match only the preview's top-level index (port 4329), never the cross-origin stub (4399).
+    (url) => url.hostname === "localhost" && url.port === "4329" && url.pathname === "/",
     async (route) => {
       const response = await route.fetch();
       let body = await response.text();
@@ -95,7 +98,9 @@ export async function revealShowcaseInView(page: Page): Promise<void> {
 
 // Markup for a standalone gallery that the real galleryController (already loaded on the index)
 // will wire on parse. Used to exercise the carousel glue with deterministic slide counts and an
-// optional video, independent of the embed-covered galleries inside the Stages.
+// optional video, independent of the embed-covered galleries inside the Stages. Note the video
+// slide is itself a [data-slide], so a video-only fixture (slides: 0) still has n === 1 and the
+// controller does not early-return on an empty track.
 export function galleryFixtureMarkup(
   id: string,
   opts: { slides: number; video?: boolean },
@@ -126,7 +131,8 @@ export function galleryFixtureMarkup(
 // fixtures that the real controllers pick up at parse time.
 export async function gotoWithInjectedBody(page: Page, markup: string): Promise<void> {
   await page.route(
-    (url) => url.hostname === "localhost" && url.pathname === "/",
+    // Match only the preview's top-level index (port 4329), never the cross-origin stub (4399).
+    (url) => url.hostname === "localhost" && url.port === "4329" && url.pathname === "/",
     async (route) => {
       const response = await route.fetch();
       const body = (await response.text()).replace("</body>", `${markup}</body>`);
