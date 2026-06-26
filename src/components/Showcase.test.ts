@@ -10,8 +10,24 @@ describe("Selector", () => {
     const html = await container.renderToString(Selector, {
       props: {
         projects: [
-          { id: "a", title: "Alpha", iconPath: "M0 0", active: true, summary: "", media: [] },
-          { id: "b", title: "Beta", iconPath: "M0 0", active: false, summary: "", media: [] },
+          {
+            id: "a",
+            slug: "a",
+            title: "Alpha",
+            iconPath: "M0 0",
+            active: true,
+            summary: "",
+            media: [],
+          },
+          {
+            id: "b",
+            slug: "b",
+            title: "Beta",
+            iconPath: "M0 0",
+            active: false,
+            summary: "",
+            media: [],
+          },
         ],
       },
     });
@@ -22,19 +38,30 @@ describe("Selector", () => {
 
   it("exposes the tabs with APG tablist semantics and roving tabindex", async () => {
     const container = await AstroContainer.create();
+    // A legacy order-index prefix on the id must not reach the DOM/URL: the tab keys off the
+    // clean slug, never the raw id (ADR 0008).
     const html = await container.renderToString(Selector, {
       props: {
         projects: [
           {
-            id: "a",
+            id: "01-a",
+            slug: "a",
             title: "Alpha",
             iconPath: "M0 0",
             active: true,
             summary: "",
             media: [],
-            accent: "#abc",
+            accent: "#aabbcc",
           },
-          { id: "b", title: "Beta", iconPath: "M0 0", active: false, summary: "", media: [] },
+          {
+            id: "02-b",
+            slug: "b",
+            title: "Beta",
+            iconPath: "M0 0",
+            active: false,
+            summary: "",
+            media: [],
+          },
         ],
       },
     });
@@ -45,15 +72,19 @@ describe("Selector", () => {
     );
     expect(html).toContain('aria-controls="panel-a"');
     expect(html).toContain('id="tab-a"');
+    expect(html).toContain('data-project="a"');
+    expect(html).not.toContain("01-a"); // the order prefix never leaks into the DOM key
     expect(html).toContain('aria-selected="false"');
     expect(html).toContain('tabindex="-1"');
-    expect(html).toContain('data-accent="#abc"');
+    expect(html).toContain('data-accent="#aabbcc"');
   });
 });
 
 describe("Stage", () => {
+  // id carries a legacy order prefix; slug is the clean key the DOM/URL must use (ADR 0008).
   const project = {
-    id: "alpha",
+    id: "00-alpha",
+    slug: "alpha",
     title: "Alpha",
     iconPath: "M0 0",
     active: true,
@@ -67,6 +98,8 @@ describe("Stage", () => {
     expect(html).toMatch(/role="tabpanel"/);
     expect(html).toContain('id="panel-alpha"');
     expect(html).toContain('aria-labelledby="tab-alpha"');
+    expect(html).toContain('data-project="alpha"');
+    expect(html).not.toContain("00-alpha"); // the order prefix never leaks into the DOM key
     expect(html).not.toMatch(/<section[^>]*\shidden/);
     expect(html).toMatch(/class="[^"]*\bis-active\b/); // SSR / no-JS: only the active Stage paints
   });

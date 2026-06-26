@@ -6,7 +6,7 @@ const { projects } = Astro.props as { projects: ShowcaseProject[] };
 
 {
   /* `.selector` is the visual chrome row; the tablist owns every role="tab" child -
-    one tab per Project. Each tab controls its matching Stage tabpanel (#panel-<id>),
+    one tab per Project. Each tab controls its matching Stage tabpanel (panel-<slug>),
     participating in switching, deep-links, and keyboard nav. */
 }
 <div class="selector">
@@ -16,11 +16,11 @@ const { projects } = Astro.props as { projects: ShowcaseProject[] };
         <button
           class:list={["tab", { active: p.active }]}
           role="tab"
-          id={`tab-${p.id}`}
-          data-project={p.id}
+          id={`tab-${p.slug}`}
+          data-project={p.slug}
           data-accent={p.accent}
           aria-selected={p.active ? "true" : "false"}
-          aria-controls={`panel-${p.id}`}
+          aria-controls={`panel-${p.slug}`}
           tabindex={p.active ? 0 : -1}
           type="button"
         >

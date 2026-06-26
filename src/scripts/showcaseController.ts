@@ -1,7 +1,7 @@
 /**
  * Client wiring for the Showcase Selector: switches the active Project (render-all +
  * toggle), crossfades the Stage swap in place with plain CSS (the Stages are stacked in
- * one grid cell), keeps the #<project-id> hash in sync, and implements the APG tablist
+ * one grid cell), keeps the #<slug> hash in sync, and implements the APG tablist
  * keyboard model. Pure selection math lives in projectSelection.ts (unit-tested).
  *
  * The swap deliberately does NOT use the View Transitions API: a view transition

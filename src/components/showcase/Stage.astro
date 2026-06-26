@@ -9,12 +9,12 @@ const embed = project.mode === "embed" ? project.embed : undefined;
 <section
   class:list={["stage", { "stage--embed": !!embed, "is-active": active }]}
   role="tabpanel"
-  id={`panel-${project.id}`}
-  data-project={project.id}
+  id={`panel-${project.slug}`}
+  data-project={project.slug}
   data-embed-url={embed?.url}
   data-embed-requires-launch={embed?.requiresLaunch ? "" : undefined}
   data-embed-mobile={embed?.mobile ? "" : undefined}
-  aria-labelledby={`tab-${project.id}`}
+  aria-labelledby={`tab-${project.slug}`}
   hidden={!active}
 >
   {
