@@ -29,6 +29,7 @@
   --intro-ease: cubic-bezier(0.22, 1, 0.36, 1);  /* out-quint */
   --stage-inner-radius: 9px;  /* media corners inside the Stage frame */
   --showcase-embed-min: 800px;/* breakpoint: >= desktop set & (Phase 2) live Embed; < = mobile set */
+  --stage-swap: 240ms;        /* single source for the Stage crossfade: stage-in/out keyframes + showcaseController */
 }
 
 :root {

@@ -13,7 +13,18 @@ import { projectFromHash, nextTab, prevTab } from './projectSelection';
 import { decideHashSync } from './showcaseHashSync';
 import { prefersReducedMotion as reduceMotion } from './reduceMotion';
 
-const SWAP_MS = 240; // keep in sync with the stage-in/stage-out duration in showcase.css
+// Crossfade duration read from CSS (--stage-swap) so the keyframes and the controller share a
+// single source. Lazy + memoized to keep getComputedStyle off module evaluation. The build
+// step may emit the value in either unit (e.g. "240ms" or ".24s"), so normalize to ms.
+let swapMs: number | undefined;
+const getSwapMs = () => {
+  if (swapMs === undefined) {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--stage-swap').trim();
+    const n = parseFloat(raw);
+    swapMs = Number.isFinite(n) ? (raw.endsWith('ms') ? n : n * 1000) : 240;
+  }
+  return swapMs;
+};
 
 const tablist = document.querySelector<HTMLElement>('.selector-list[role="tablist"]');
 const showcase = document.getElementById('showcase');
@@ -57,7 +68,7 @@ if (tablist && showcase) {
 
     const onEnd = (e: AnimationEvent) => { if (e.target === incoming) finishSwap?.(); };
     incoming.addEventListener('animationend', onEnd);
-    const timer = window.setTimeout(() => finishSwap?.(), SWAP_MS + 80);
+    const timer = window.setTimeout(() => finishSwap?.(), getSwapMs() + 80);
     finishSwap = () => {
       finishSwap = null;
       window.clearTimeout(timer);

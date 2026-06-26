@@ -303,10 +303,10 @@ html.js.intro-done .stage.is-active { opacity: 1; }
    win the cascade over the intro's held opacity - otherwise the filled opacity:1 would
    pin both Stages and block the fade. */
 @media (prefers-reduced-motion: no-preference) {
-  html.js .stage-viewport > .stage.is-entering { animation: stage-in 0.24s var(--intro-ease) both; }
+  html.js .stage-viewport > .stage.is-entering { animation: stage-in var(--stage-swap) var(--intro-ease) both; }
   html.js .stage-viewport > .stage.is-leaving {
     visibility: visible;
-    animation: stage-out 0.24s var(--intro-ease) both;
+    animation: stage-out var(--stage-swap) var(--intro-ease) both;
   }
 }
 @keyframes stage-in { from { opacity: 0; } to { opacity: 1; } }
