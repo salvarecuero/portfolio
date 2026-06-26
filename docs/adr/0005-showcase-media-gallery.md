@@ -5,7 +5,7 @@ Media mode presents a Project through a **navigable set of media** (images and/o
 Images are optimized through `astro:assets` (`image()` schema helper, `<Picture>` AVIF/WebP, `object-fit: cover` against captures authored near the Stage aspect ratio, so there is no letterbox and the dark cosmos surface fills any residual sliver). Video is a muted/looped/`playsinline` clip that autoplays only when scrolled into view and is deferred (`preload="none"` + lazy + an IntersectionObserver source swap) so initial load behaves like a static image; `prefers-reduced-motion` shows the still poster frame instead and never loads the video. The gallery requires a small client script (carousel + the video observer), a pragmatic, Lighthouse-cheap exception to zero-JS-by-default.
 
 ## Mobile / Embed fallback
-On narrow viewports the default is to show the Media set and **not mount live Embeds** (a global breakpoint, `--showcase-embed-min`). A per-Project opt-in to embed on mobile (`embed.mobile`) is reserved for Phase 2 and is not implemented yet.
+On narrow viewports the default is to show the Media set and **not mount live Embeds** (a global breakpoint, `--showcase-embed-min`). A per-Project opt-in to embed on mobile (`embed.mobile`) overrides this default; it is wired end-to-end (schema -> `data-embed-mobile` -> `shouldMount`), though no Project currently sets it.
 
 ## Considered Options
 - **Single poster image (the previous model):** rejected — a landscape capture cover-cropped on a portrait Stage loses most of the content; a single still also undersells interactive Projects.
