@@ -28,6 +28,16 @@ function setupGallery(root: HTMLElement) {
       if (i === index) t.setAttribute("aria-current", "true");
       else t.removeAttribute("aria-current");
     });
+    root.dispatchEvent(
+      new CustomEvent("gallery:change", {
+        bubbles: true,
+        detail: {
+          index,
+          total: n,
+          caption: slides[index]?.dataset.caption ?? "",
+        },
+      }),
+    );
   };
   const goTo = (i: number) => {
     index = wrapIndex(i, n);
