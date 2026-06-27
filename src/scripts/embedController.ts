@@ -25,8 +25,20 @@ import {
 } from "./showcaseScrollEscape";
 import { prefersReducedMotion as reduceMotion } from "./reduceMotion";
 import { LIVE_CAP, HELLO_INTERVAL_MS, HELLO_MAX_TRIES } from "./showcaseTiming";
+import { readViewPreference } from "./viewMode";
 
 const showcase = document.getElementById("showcase");
+
+// Session view preference, guarded (sessionStorage can throw in privacy modes). A remembered
+// "screenshots" preference suppresses proactive embed mounting (bandwidth) until the user
+// explicitly asks for the live app via the view switcher.
+const viewPreference = () => {
+  try {
+    return readViewPreference(sessionStorage);
+  } catch {
+    return "interactive" as const;
+  }
+};
 
 // JS gate must stay in sync with the CSS breakpoint (--showcase-embed-min in global.css).
 // Read lazily + memoized so the getComputedStyle call stays off the startup critical path
@@ -153,6 +165,7 @@ function fallback(entry: EmbedEntry) {
   const i = mountOrder.indexOf(entry.id);
   if (i !== -1) mountOrder.splice(i, 1);
   entry.mounted = false;
+  showcase?.dispatchEvent(new CustomEvent("showcase:embed-failed", { detail: { id: entry.id } }));
 }
 
 function mount(entry: EmbedEntry) {
@@ -226,7 +239,7 @@ function unmount(id: string) {
   if (i !== -1) mountOrder.splice(i, 1);
 }
 
-function maybeMount(id: string) {
+function maybeMount(id: string, force = false) {
   const entry = entries.get(id);
   if (!entry) return;
   if (
@@ -239,6 +252,7 @@ function maybeMount(id: string) {
   )
     return;
   if (entry.failed) return; // already known bad → the stage already shows media (embed-failed)
+  if (!force && viewPreference() === "screenshots") return; // remembered: open in screenshots
   mount(entry);
   touchLRU(id);
 }
@@ -332,6 +346,15 @@ if (showcase) {
   showcase.addEventListener("showcase:activate", (e) => {
     const id = (e as CustomEvent<{ id: string }>).detail?.id;
     if (id) maybeMount(id);
+  });
+
+  // User toggled the view switcher: park the live embed when going to media, (re)mount when
+  // going back to interactive (force overrides the screenshots preference for this Project).
+  showcase.addEventListener("showcase:view", (e) => {
+    const detail = (e as CustomEvent<{ id: string; view: "embed" | "media" }>).detail;
+    if (!detail) return;
+    if (detail.view === "media") unmount(detail.id);
+    else maybeMount(detail.id, true);
   });
 
   // requiresLaunch: explicit mount on the launch button.
