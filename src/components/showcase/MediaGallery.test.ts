@@ -75,4 +75,31 @@ describe("MediaGallery", () => {
     expect(html).toMatch(/gallery-thumb__img/);
     expect(html).toMatch(/gallery-thumb[^"]*vid/);
   });
+  it("tags each slide with its caption for the chrome viewer toolbar", async () => {
+    const c = await AstroContainer.create();
+    const imgMeta = { src: "/p.webp", width: 1280, height: 720, format: "webp" } as any;
+    const items = [
+      { type: "image", src: imgMeta, alt: "Image Compressor" },
+      { type: "image", src: imgMeta, alt: "Merge PDF" },
+    ];
+    const html = await c.renderToString(MediaGallery, { props: { items, variant: "desktop" } });
+    expect(html).toContain('data-caption="Image Compressor"');
+    expect(html).toContain('data-caption="Merge PDF"');
+  });
+  it("renders a duration chip for video thumbs that declare a duration", async () => {
+    const c = await AstroContainer.create();
+    const imgMeta = { src: "/p.webp", width: 1280, height: 720, format: "webp" } as any;
+    const items = [
+      {
+        type: "video",
+        poster: imgMeta,
+        sources: [{ src: "/v.webm", type: "video/webm" }],
+        alt: "Demo clip",
+        duration: "0:42",
+      },
+    ];
+    const html = await c.renderToString(MediaGallery, { props: { items, variant: "desktop" } });
+    expect(html).toContain('class="gallery-thumb__dur"');
+    expect(html).toContain("0:42");
+  });
 });

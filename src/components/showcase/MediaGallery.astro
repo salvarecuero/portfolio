@@ -27,6 +27,7 @@ const widths = [640, 960, 1280, 1920, 2560];
         <div
           class="gallery-slide"
           data-slide
+          data-caption={item.alt}
           role="group"
           aria-roledescription="slide"
           aria-label={`${i + 1} of ${total}`}
@@ -116,6 +117,9 @@ const widths = [640, 960, 1280, 1920, 2560];
             loading="lazy"
             decoding="async"
           />
+          {item.type === "video" && item.duration && (
+            <span class="gallery-thumb__dur">{item.duration}</span>
+          )}
         </button>
       ))
     }

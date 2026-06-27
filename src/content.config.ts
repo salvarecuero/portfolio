@@ -22,6 +22,7 @@ const projects = defineCollection({
         poster: image(), // optimized still: base layer + reduced-motion fallback
         sources: z.array(z.object({ src: z.string(), type: z.string() })).min(1),
         alt: z.string(),
+        duration: z.string().optional(), // human-readable run time (e.g. "0:42"), shown as a thumb chip
       }),
     ]);
 
