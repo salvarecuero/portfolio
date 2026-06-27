@@ -10,18 +10,15 @@ async function render(props: any) {
 }
 
 describe("ProjectLinks.astro", () => {
-  it('embed mode: primary CTA is "Open in new tab" with the external-link icon', async () => {
+  it("embed mode: no live pill (open-in-new-tab lives in the chrome)", async () => {
     const html = await render({
       ...base,
       mode: "embed",
       links: { live: "https://rangetube.netlify.app" },
     });
-    expect(html).toContain("Open in new tab");
-    expect(html).not.toContain("Live site");
-    expect(html).toContain("M21 14v5"); // external-link glyph fragment
-    expect(html).toMatch(
-      /<a[^>]*class="lnk live"[^>]*href="https:\/\/rangetube\.netlify\.app"[^>]*target="_blank"/,
-    );
+    expect(html).not.toContain("Open in new tab");
+    expect(html).not.toContain('class="lnk live"');
+    expect(html).toContain("Details"); // Details still present
   });
 
   it('media mode: primary CTA is "Live site" with the globe icon', async () => {

@@ -7,10 +7,9 @@ interface Props {
   mode: EmbedMode;
 }
 const { links, title, slug, mode } = Astro.props as Props;
-// For live embeds the site is already running in the Stage, so "Live site" is misleading;
-// the link just opens it standalone. Non-embed Projects link out to the deployed site.
 const isEmbed = mode === "embed";
-const liveLabel = isEmbed ? "Open in new tab" : "Live site";
+// Non-embed Projects link out to the deployed site; embed Projects surface open-in-new-tab in the chrome bar instead.
+const liveLabel = "Live site";
 ---
 
 <nav class="projlinks" aria-label="Project links">
@@ -33,7 +32,7 @@ const liveLabel = isEmbed ? "Open in new tab" : "Live site";
     <span class="label">Details</span>
   </a>
   {
-    links?.live && (
+    links?.live && !isEmbed && (
       <a
         class="lnk live"
         href={links.live}
@@ -41,34 +40,18 @@ const liveLabel = isEmbed ? "Open in new tab" : "Live site";
         rel="noopener"
         aria-label={`${liveLabel} - ${title}`}
       >
-        {isEmbed ? (
-          <svg
-            class="icn"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.9"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M15 3h6v6" />
-            <path d="M10 14 21 3" />
-            <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
-          </svg>
-        ) : (
-          <svg
-            class="icn"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.9"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="9" />
-            <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
-          </svg>
-        )}
+        <svg
+          class="icn"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.9"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+        </svg>
         <span class="label">{liveLabel}</span>
       </a>
     )
