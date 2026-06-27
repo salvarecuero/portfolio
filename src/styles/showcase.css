@@ -929,6 +929,11 @@ html.js.intro-done .stage.is-active {
     opacity: 0;
     transform: translate(-50%, 8px);
   }
+  /* the view switcher rides in with the selector row (mirrors the inactive tabs) */
+  html.js:not(.intro-done) .view-switch {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
 
   /* intro-play (Showcase entered view) → run the locked reveal once, hold the end */
   html.js.intro-play:not(.intro-done) .cmd {
@@ -951,6 +956,9 @@ html.js.intro-done .stage.is-active {
   }
   html.js.intro-play:not(.intro-done) .projlinks {
     animation: beat-links var(--intro-cycle) var(--intro-ease) both;
+  }
+  html.js.intro-play:not(.intro-done) .view-switch {
+    animation: beat-inactive var(--intro-cycle) var(--intro-ease) both;
   }
 }
 
