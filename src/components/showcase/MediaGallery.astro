@@ -1,5 +1,5 @@
 ---
-import { Picture } from "astro:assets";
+import { Picture, Image } from "astro:assets";
 import type { MediaItem } from "../../lib/showcaseProjects";
 
 interface Props {
@@ -103,7 +103,20 @@ const widths = [640, 960, 1280, 1920, 2560];
           aria-current={i === 0 ? "true" : undefined}
           aria-label={`Show: ${item.alt}`}
           data-thumb={i}
-        />
+        >
+          {/* Real preview of the item: the image itself, or a video's poster still.
+              Downscaled to a thumbnail width; the button's aria-label names it, so the
+              image is decorative (alt=""). */}
+          <Image
+            src={item.type === "image" ? item.src : item.poster}
+            width={160}
+            format="webp"
+            alt=""
+            class="gallery-thumb__img"
+            loading="lazy"
+            decoding="async"
+          />
+        </button>
       ))
     }
   </div>

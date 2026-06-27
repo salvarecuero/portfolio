@@ -63,4 +63,16 @@ describe("MediaGallery", () => {
     expect((html.match(/aria-current="true"/g) ?? []).length).toBe(1);
     expect(html).toContain('aria-label="Show: overview"');
   });
+  // Each thumbnail shows a real preview of its item so the strip is a visual picker,
+  // not a row of identical blank chips. Marked with a distinctive class to scope the
+  // count past the full-size slide images.
+  it("renders a preview image inside every thumbnail", async () => {
+    const html = await render([imageItem, imageItem, imageItem]);
+    expect((html.match(/gallery-thumb__img/g) ?? []).length).toBe(3);
+  });
+  it("uses the poster still as the preview for video items", async () => {
+    const html = await render([videoItem]);
+    expect(html).toMatch(/gallery-thumb__img/);
+    expect(html).toMatch(/gallery-thumb[^"]*vid/);
+  });
 });
