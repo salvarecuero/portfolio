@@ -45,4 +45,29 @@ describe("Stage", () => {
     expect(html).toContain("media-gallery--mobile");
     expect(html).toContain("media-gallery--desktop");
   });
+
+  it("embed mode: renders the StageWindow chrome and seeds the media view class", async () => {
+    const c = await AstroContainer.create();
+    const imgMeta = { src: "/p.webp", width: 1280, height: 720, format: "webp" } as any;
+    const project = {
+      id: "sts",
+      slug: "sts",
+      title: "Simple Tools",
+      summary: "s",
+      iconPath: "M0 0",
+      active: true,
+      mode: "embed",
+      embed: { url: "https://simple-tools.app", requiresLaunch: false, mobile: false },
+      media: [{ type: "image", src: imgMeta, alt: "Image Compressor" }],
+    } as any;
+    const html = await c.renderToString(Stage, { props: { project, active: true } });
+    expect(html).toContain("stage-chrome");
+    expect(html).toContain("stage--view-media");
+  });
+
+  it("media mode: renders no chrome and no view class", async () => {
+    const html = await render({ title: "A", summary: "s", media: [img("a0")] });
+    expect(html).not.toContain("stage-chrome");
+    expect(html).not.toContain("stage--view-media");
+  });
 });
