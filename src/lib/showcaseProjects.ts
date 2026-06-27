@@ -43,6 +43,15 @@ export type ShowcaseProject =
   | (ShowcaseBase & { mode: "embed"; embed: EmbedConfig })
   | (ShowcaseBase & { mode: "media" | "custom"; embed?: undefined });
 
+// A media item is portrait when its intrinsic height exceeds its width. The gallery frame is
+// landscape (viewport-sized), so object-fit:cover would zoom a portrait capture to an illegible
+// sliver; the gallery renders portrait items contained instead (see showcase.css). Square counts
+// as landscape (cover, no letterbox). Reads the image src, or a video's poster.
+export function isPortrait(item: MediaItem): boolean {
+  const asset = item.type === "image" ? item.src : item.poster;
+  return asset.height > asset.width;
+}
+
 export function toShowcaseProjects(
   entries: Pick<CollectionEntry<"projects">, "id" | "data">[],
 ): ShowcaseProject[] {

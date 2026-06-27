@@ -74,6 +74,23 @@ test.describe("Embed/media view switcher", () => {
     await expect(page.locator("#panel-rangetube")).toHaveClass(/stage--view-media/);
   });
 
+  test("a portrait capture is contained while landscape stays cover", async ({ page }) => {
+    // bye-bg's desktop set mixes landscape captures (before-after, batch) with one portrait
+    // controls panel. Cover-cropping the portrait one in the landscape frame zooms it to an
+    // illegible sliver, so the gallery contains portrait items instead.
+    await gotoShowcase(page);
+    await revealShowcaseInView(page);
+    await page.locator("#tab-bye-bg").click();
+    await expect(page.locator("#panel-bye-bg")).toHaveClass(/is-active/);
+    await page.locator('[data-view-set="media"]').click();
+    await expect(page.locator("#panel-bye-bg")).toHaveClass(/stage--view-media/);
+
+    const media = page.locator("#panel-bye-bg .media-gallery--desktop .gallery-media");
+    await expect(media.nth(0)).toHaveCSS("object-fit", "cover"); // before-after (landscape)
+    await expect(media.nth(2)).toHaveClass(/gallery-media--portrait/); // panel (portrait)
+    await expect(media.nth(2)).toHaveCSS("object-fit", "contain");
+  });
+
   test("a failed embed forces media and disables Interactive", async ({ page }) => {
     await gotoShowcase(page, { embeds: { "simple-tool-stack": { ready: false } } });
     await revealShowcaseInView(page);

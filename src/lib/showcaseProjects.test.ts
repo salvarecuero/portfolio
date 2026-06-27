@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { toShowcaseProjects, projectSlug } from "./showcaseProjects";
+import { toShowcaseProjects, projectSlug, isPortrait } from "./showcaseProjects";
+
+const asset = (width: number, height: number) =>
+  ({ src: "/x.png", width, height, format: "png" }) as any;
 
 const img = { src: "/x.webp", width: 10, height: 10, format: "webp" } as any;
 const raw = [
@@ -92,6 +95,27 @@ describe("toShowcaseProjects - embed fields", () => {
     const [p] = toShowcaseProjects([{ id: "m", data: { ...base, mode: "media" } }] as any);
     expect(p.mode).toBe("media");
     expect(p.embed).toBeUndefined();
+  });
+});
+
+describe("isPortrait", () => {
+  it("is true when an image's intrinsic height exceeds its width", () => {
+    expect(isPortrait({ type: "image", src: asset(421, 838), alt: "" })).toBe(true);
+  });
+  it("is false for a landscape image", () => {
+    expect(isPortrait({ type: "image", src: asset(1306, 937), alt: "" })).toBe(false);
+  });
+  it("treats a square image as landscape (cover, no letterbox)", () => {
+    expect(isPortrait({ type: "image", src: asset(100, 100), alt: "" })).toBe(false);
+  });
+  it("reads orientation from a video's poster", () => {
+    const portraitVideo = {
+      type: "video",
+      poster: asset(421, 838),
+      sources: [{ src: "/x.webm", type: "video/webm" }],
+      alt: "",
+    } as any;
+    expect(isPortrait(portraitVideo)).toBe(true);
   });
 });
 

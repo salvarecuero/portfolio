@@ -86,6 +86,26 @@ describe("MediaGallery", () => {
     expect(html).toContain('data-caption="Image Compressor"');
     expect(html).toContain('data-caption="Merge PDF"');
   });
+  // A portrait capture in the landscape gallery frame would be zoomed to a sliver by
+  // object-fit:cover; the gallery tags portrait items so CSS contains them instead.
+  it("marks a portrait image's media and thumb so the gallery contains it", async () => {
+    const c = await AstroContainer.create();
+    const portrait = { src: "/p.png", width: 421, height: 838, format: "png" } as any;
+    const html = await c.renderToString(MediaGallery, {
+      props: { items: [{ type: "image", src: portrait, alt: "panel" }], variant: "desktop" },
+    });
+    expect(html).toMatch(/gallery-media--portrait/);
+    expect(html).toMatch(/gallery-thumb__img--portrait/);
+  });
+  it("does not mark a landscape image as portrait (stays cover)", async () => {
+    const c = await AstroContainer.create();
+    const landscape = { src: "/l.png", width: 1280, height: 720, format: "png" } as any;
+    const html = await c.renderToString(MediaGallery, {
+      props: { items: [{ type: "image", src: landscape, alt: "wide" }], variant: "desktop" },
+    });
+    expect(html).not.toContain("gallery-media--portrait");
+    expect(html).not.toContain("gallery-thumb__img--portrait");
+  });
   it("renders a duration chip for video thumbs that declare a duration", async () => {
     const c = await AstroContainer.create();
     const imgMeta = { src: "/p.webp", width: 1280, height: 720, format: "webp" } as any;

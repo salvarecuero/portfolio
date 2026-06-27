@@ -452,6 +452,11 @@ html.js.intro-done .stage.is-active {
   object-fit: cover;
   border-radius: 0 0 var(--stage-inner-radius) var(--stage-inner-radius);
 }
+/* Portrait captures: contain (full image, centered) so the landscape frame doesn't crop them
+   to a zoomed sliver. The empty band shows the Stage's --space background. */
+.gallery-media--portrait {
+  object-fit: contain;
+}
 /* reduced motion: show the static poster, never reveal/load the video */
 .gallery-media--video {
   display: none;
@@ -543,6 +548,9 @@ html.js.intro-done .stage.is-active {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.gallery-thumb__img--portrait {
+  object-fit: contain;
 }
 .gallery-thumb.on {
   border-color: var(--accent);
