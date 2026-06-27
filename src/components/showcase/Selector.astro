@@ -1,7 +1,9 @@
 ---
 import type { ShowcaseProject } from "../../lib/showcaseProjects";
 import ProjectLogo from "./ProjectLogo.astro";
+import ViewSwitcher from "./ViewSwitcher.astro";
 const { projects } = Astro.props as { projects: ShowcaseProject[] };
+const activeIsEmbed = (projects.find((p) => p.active) ?? projects[0])?.mode === "embed";
 ---
 
 {
@@ -29,4 +31,5 @@ const { projects } = Astro.props as { projects: ShowcaseProject[] };
       ))
     }
   </div>
+  <ViewSwitcher visible={activeIsEmbed} />
 </div>

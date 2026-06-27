@@ -65,4 +65,45 @@ describe("Selector", () => {
     expect(html).toContain("tab-logo--byebg");
     expect(html).toMatch(/-bg/);
   });
+
+  it("renders the view switcher, visible when the active Project is an embed", async () => {
+    const c = await AstroContainer.create();
+    const projects = [
+      {
+        slug: "sts",
+        title: "Simple Tools",
+        iconPath: "M0 0",
+        accent: "#6366f1",
+        active: true,
+        mode: "embed",
+      },
+      {
+        slug: "byebg",
+        title: "bye-bg",
+        iconPath: "M0 0",
+        accent: "#16b8a6",
+        active: false,
+        mode: "media",
+      },
+    ] as any;
+    const html = await c.renderToString(Selector, { props: { projects } });
+    expect(html).toContain("data-view-switch");
+    expect(html).not.toMatch(/data-view-switch[^>]*\shidden/); // active is embed -> visible
+  });
+
+  it("hides the view switcher when the active Project is not an embed", async () => {
+    const c = await AstroContainer.create();
+    const projects = [
+      {
+        slug: "byebg",
+        title: "bye-bg",
+        iconPath: "M0 0",
+        accent: "#16b8a6",
+        active: true,
+        mode: "media",
+      },
+    ] as any;
+    const html = await c.renderToString(Selector, { props: { projects } });
+    expect(html).toMatch(/data-view-switch[^>]*\shidden/);
+  });
 });
