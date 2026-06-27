@@ -118,6 +118,21 @@ if (showcase && switchEl) {
     if (pos) pos.textContent = `${d.index + 1} / ${d.total}`;
   });
 
-  // Initial state for the default active Project.
+  // Seed the view class on EVERY embed Stage, not just the active one. The keep-alive /
+  // proactive-preload model (embedController) mounts background embeds while their Stage sits
+  // at visibility:hidden, and the embed iframe only lays out (so the embedded app boots and
+  // completes its handshake) when it is display:block, which the CSS gate keys off
+  // stage--view-embed. Without seeding the inactive Stages they keep their SSR stage--view-media,
+  // render display:none, and a real app that defers boot to first paint never sends "ready" →
+  // handshake timeout → embed-failed. Seeding does not mount anything (embedController owns that)
+  // and is invisible while the Stage is hidden; it only restores the iframe's layout box.
+  for (const stage of document.querySelectorAll<HTMLElement>(".stage--embed")) {
+    const id = stage.dataset.project;
+    if (!id) continue;
+    const { view } = resolveView({ preference: pref(), embedFailed: failedIds.has(id) });
+    applyView(stage, view);
+  }
+
+  // Initial state for the default active Project (also syncs the switcher).
   if (activeId) reflect(activeId);
 }
