@@ -42,6 +42,15 @@ describe("StageWindow.astro", () => {
     expect(html).toContain('rel="noopener"');
   });
 
+  it("makes the address bar a mouse-only link to the embed URL (kept out of the tab order)", async () => {
+    const html = await render({ project });
+    expect(html).toMatch(
+      /<a[^>]*class="stage-chrome__url"[^>]*href="https:\/\/simple-tools\.app\/home"[^>]*target="_blank"/,
+    );
+    // decorative + mouse-only: the chrome open button is the keyboard/AT-accessible affordance
+    expect(html).toMatch(/class="stage-chrome__url"[^>]*tabindex="-1"/);
+  });
+
   it("keeps the open-in-new-tab link reachable by assistive tech (only decorative parts are aria-hidden)", async () => {
     const html = await render({ project });
     // the chrome container itself is not aria-hidden

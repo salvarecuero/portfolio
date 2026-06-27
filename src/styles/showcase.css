@@ -1199,6 +1199,15 @@ html.js
   font-family: var(--font-geist-mono);
   font-size: 0.74rem;
   color: #aeb3c6;
+  text-decoration: none;
+  cursor: pointer;
+}
+.stage-chrome__url:hover {
+  background: #14161f;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+.stage-chrome__url:hover .stage-chrome__host {
+  color: #fff;
 }
 .stage-chrome__lock {
   width: 12px;
