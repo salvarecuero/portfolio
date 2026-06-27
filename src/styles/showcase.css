@@ -1037,9 +1037,12 @@ html.js.intro-done .stage.is-active {
 
 /* Visibility gate (keep in sync with --showcase-embed-min). The desktop media gallery is
    the SSR/no-JS baseline AND the failure fallback; the live Embed replaces it only with JS
-   on a working (or still-loading) embed. Below the breakpoint the mobile gallery is the
-   baseline and no iframe is mounted. A [data-embed-mobile] Project mounts the Embed on
-   mobile too, so its mobile gallery becomes the no-JS / fallback baseline there. */
+   on a working (or still-loading) embed AND only when stage--view-embed is active (set by
+   the view switcher controller). Below the breakpoint the mobile gallery is the baseline
+   and no iframe is mounted. A [data-embed-mobile] Project mounts the Embed on mobile too,
+   so its mobile gallery becomes the no-JS / fallback baseline there.
+   SSR/no-JS contract: embed Stages render with stage--view-media; the controller adds
+   stage--view-embed on init (JS required). So no-JS → gallery shows (correct). */
 .stage--embed .embed {
   display: none;
 }
@@ -1047,19 +1050,340 @@ html.js.intro-done .stage.is-active {
   display: block;
 }
 @media (min-width: 800px) {
-  html.js .stage--embed:not(.embed-failed) .embed {
+  html.js .stage--embed.stage--view-embed:not(.embed-failed) .embed {
     display: block;
   }
-  html.js .stage--embed:not(.embed-failed) .media-gallery--desktop {
+  html.js .stage--embed.stage--view-embed:not(.embed-failed) .media-gallery--desktop {
     display: none;
   }
   .stage--embed .media-gallery--mobile {
     display: none;
   }
 }
-html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .embed {
+html.js .stage--embed[data-embed-mobile].stage--view-embed:not(.embed-failed) .embed {
   display: block;
 }
-html.js .stage--embed[data-embed-mobile]:not(.embed-failed) .media-gallery--mobile {
+html.js
+  .stage--embed[data-embed-mobile].stage--view-embed:not(.embed-failed)
+  .media-gallery--mobile {
   display: none;
+}
+
+/* =========================================================
+   Browser-window chrome + embed/media view switcher.
+   The embed Stage is framed as a window: a chrome bar (desktop only) whose center morphs
+   between an address bar (Interactive) and an image-viewer toolbar (Screenshots). The view
+   class (stage--view-*) drives all visibility; Smooth++ motion is gated by reduced-motion.
+   Tokens --stage-chrome-* live in the showcase :root (global.css), added in Step 1b.
+   ========================================================= */
+
+/* The view switcher in the selector row */
+.view-switch {
+  margin-left: auto;
+  align-self: center;
+  display: inline-flex;
+  gap: 2px;
+  background: rgba(2, 2, 6, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 3px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.view-switch[hidden] {
+  display: none;
+}
+.view-switch__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  background: transparent;
+  color: #cdd2e3;
+  cursor: pointer;
+  font-family: var(--font-outfit);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 5px 13px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.view-switch__icn {
+  width: 15px;
+  height: 15px;
+}
+.view-switch__btn[aria-pressed="true"] {
+  background: var(--app-surface);
+  color: #1c2030;
+}
+.view-switch__btn[aria-pressed="true"] .view-switch__icn {
+  color: var(--accent);
+}
+.view-switch__btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.view-switch__btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Chrome bar — desktop embed Stages only */
+.stage-chrome {
+  display: none;
+}
+@media (min-width: 800px) {
+  .stage--embed .stage-chrome {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 8;
+    height: var(--stage-chrome-h);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 13px;
+    background: var(--stage-chrome-bg);
+    border-bottom: 1px solid var(--stage-chrome-line);
+  }
+  /* content sits below the chrome bar */
+  .stage--embed .embed,
+  .stage--embed .media-gallery--desktop {
+    top: var(--stage-chrome-h);
+  }
+}
+.stage-chrome__dots {
+  display: flex;
+  gap: 7px;
+  flex: none;
+}
+.stage-chrome__dots i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: block;
+}
+.stage-chrome__center {
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  min-width: 0;
+}
+.stage-chrome__url,
+.stage-chrome__viewer {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+}
+.stage-chrome__url {
+  left: 0;
+  max-width: 460px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #0f1019;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--font-geist-mono);
+  font-size: 0.74rem;
+  color: #aeb3c6;
+}
+.stage-chrome__lock {
+  width: 12px;
+  height: 12px;
+  opacity: 0.65;
+  flex: none;
+}
+.stage-chrome__host {
+  color: #d6dae8;
+}
+.stage-chrome__viewer {
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #c2c7d6;
+  min-width: 0;
+}
+.stage-chrome__vico {
+  width: 15px;
+  height: 15px;
+  color: var(--accent);
+  flex: none;
+}
+.stage-chrome__cap {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e3e6f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stage-chrome__sep {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  flex: none;
+}
+.stage-chrome__pos {
+  font-family: var(--font-geist-mono);
+  font-size: 0.74rem;
+  color: #8b90a3;
+  flex: none;
+}
+.stage-chrome__open {
+  display: grid;
+  place-items: center;
+  flex: none;
+  padding: 5px;
+  border-radius: 7px;
+  color: #8b90a3;
+}
+.stage-chrome__open svg {
+  width: 16px;
+  height: 16px;
+}
+.stage-chrome__open:hover,
+.stage-chrome__open:focus-visible {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.07);
+  outline: none;
+}
+
+/* Center morph: address bar in embed view, viewer toolbar in media view */
+.stage--view-embed .stage-chrome__url {
+  opacity: 1;
+  pointer-events: auto;
+}
+.stage--view-media .stage-chrome__viewer {
+  opacity: 1;
+  pointer-events: auto;
+}
+/* Hide the in-gallery counter inside the windowed embed Stage (position shown in the chrome) */
+@media (min-width: 800px) {
+  .stage--embed .gallery-counter {
+    display: none;
+  }
+}
+
+/* Capsule filmstrip — desktop galleries hug their thumbs (replaces the full-width strip).
+   The mobile override below the breakpoint keeps the larger centered tap targets. */
+@media (min-width: 800px) {
+  .gallery-thumbs {
+    left: 50%;
+    right: auto;
+    bottom: 14px;
+    transform: translate(-50%, 0);
+    width: max-content;
+    max-width: calc(100% - 28px);
+    gap: 11px;
+    padding: 10px 12px;
+    background: color-mix(in srgb, var(--stage-chrome-bg) 72%, transparent);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.7);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .gallery-thumb {
+    width: 82px;
+    height: 52px;
+    border-radius: 9px;
+    background: #0f1019;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    opacity: 0.66;
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 0.7);
+  }
+  .gallery-thumb:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.32);
+  }
+  .gallery-thumb.on {
+    opacity: 1;
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent),
+      0 8px 18px -7px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+  /* lift the project links clear of the capsule in media view */
+  .stage--embed.stage--view-media .projlinks {
+    bottom: 92px;
+  }
+}
+/* Video thumb play badge + duration chip */
+.gallery-thumb__dur {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  font-family: var(--font-geist-mono);
+  font-size: 0.56rem;
+  color: #fff;
+  background: rgba(2, 2, 6, 0.7);
+  border-radius: 4px;
+  padding: 1px 4px;
+  line-height: 1.2;
+}
+
+/* Arrows restyled to the chrome surface */
+@media (min-width: 800px) {
+  .stage--embed .gallery-arrow {
+    top: 44%;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--stage-chrome-bg) 80%, transparent);
+    color: #d6dae8;
+    /* keep the existing 18px text glyph (‹ ›) from the base .gallery-arrow rule */
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .stage--embed .gallery-arrow:hover {
+    color: #fff;
+    background: var(--stage-chrome-bg);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+}
+
+/* Smooth++ transitions — gated so reduced-motion and no-JS get the instant end state */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .stage--embed .embed,
+  html.js .stage--embed .media-gallery--desktop {
+    transition: opacity 220ms var(--intro-ease);
+  }
+  html.js .stage-chrome__url,
+  html.js .stage-chrome__viewer {
+    transition: opacity 150ms var(--intro-ease);
+  }
+  html.js .stage--embed .gallery-thumbs {
+    transition: transform 300ms var(--intro-ease);
+  }
+  html.js .stage--embed.stage--view-embed .gallery-thumbs {
+    transform: translate(-50%, 28px);
+  }
+  html.js .stage--embed.stage--view-media .gallery-thumbs {
+    transform: translate(-50%, 0);
+  }
+  html.js .stage--embed .gallery-thumb {
+    transition:
+      opacity 0.16s var(--intro-ease),
+      transform 0.2s var(--intro-ease),
+      border-color 0.16s var(--intro-ease),
+      box-shadow 0.16s var(--intro-ease);
+  }
+  html.js .stage--embed .gallery-arrow {
+    transition:
+      color 0.15s,
+      background 0.15s,
+      border-color 0.15s,
+      transform 320ms var(--intro-ease);
+  }
 }

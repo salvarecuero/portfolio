@@ -30,6 +30,9 @@
   --stage-inner-radius: 9px; /* media corners inside the Stage frame */
   --showcase-embed-min: 800px; /* breakpoint: >= desktop set & (Phase 2) live Embed; < = mobile set */
   --stage-swap: 240ms; /* single source for the Stage crossfade: stage-in/out keyframes + showcaseController */
+  --stage-chrome-h: 42px; /* browser-window chrome bar height */
+  --stage-chrome-bg: #1b1d27; /* chrome bar surface */
+  --stage-chrome-line: rgba(255, 255, 255, 0.07); /* chrome hairline */
 }
 
 :root {
