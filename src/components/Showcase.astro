@@ -4,6 +4,7 @@ import { toShowcaseProjects } from "../lib/showcaseProjects";
 import Selector from "./showcase/Selector.astro";
 import Stage from "./showcase/Stage.astro";
 import ProjectLinks from "./showcase/ProjectLinks.astro";
+import StackIcons from "./showcase/StackIcons.astro";
 import "../styles/showcase.css";
 
 const projects = toShowcaseProjects(await getCollection("projects"));
@@ -30,6 +31,7 @@ const active = projects.find((p) => p.active) ?? projects[0];
       {
         projects.map((p) => (
           <Stage project={p} active={p.active}>
+            <StackIcons stack={p.stack} />
             <ProjectLinks links={p.links} title={p.title} slug={p.slug} mode={p.mode} />
           </Stage>
         ))
