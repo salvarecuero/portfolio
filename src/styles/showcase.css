@@ -1412,3 +1412,126 @@ html.js
       transform 320ms var(--intro-ease);
   }
 }
+
+/* Stack icons - Variant A1: a frosted floating pill of icon-only stack glyphs, centered
+   just above the .projlinks CTA row. Mono by default; each glyph tints to its intrinsic
+   brand (--brand, set per <li>) and lifts on hover/focus. Icon-only with the tech name in
+   a dark slide-up tooltip (the Presentation .tip pattern). Sits in the Stage overlay band
+   over the embed/poster, so it owns a translucent surface to stay legible on any backdrop. */
+.stack-icons {
+  position: absolute;
+  left: 50%;
+  bottom: 76px;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.95rem;
+  max-width: 84%;
+  margin: 0;
+  padding: 7px 15px;
+  list-style: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 24px -14px rgba(10, 12, 20, 0.6);
+}
+.stack-ic {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b4f63;
+  --brand: #4b4f63;
+}
+.stack-ic svg,
+.stack-ic__mask {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.stack-ic svg {
+  fill: currentColor;
+}
+.stack-ic__mask {
+  background: currentColor;
+  -webkit-mask: var(--mask) center / contain no-repeat;
+  mask: var(--mask) center / contain no-repeat;
+}
+.stack-ic:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* tooltip - mirrors the Presentation .tip (dark surface, slide-up) */
+.stack-ic__tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: 0.32em 0.55em;
+  border-radius: 6px;
+  background: var(--p-ink, #26221f);
+  color: #f3f1ee;
+  font-family: var(--font-geist);
+  font-size: 0.7rem;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+  box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.7);
+}
+.stack-ic__tip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--p-ink, #26221f);
+}
+.stack-ic:hover .stack-ic__tip,
+.stack-ic:focus-visible .stack-ic__tip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stack-ic {
+    transition:
+      color 0.16s ease,
+      transform 0.16s ease;
+  }
+  .stack-ic__tip {
+    transition:
+      opacity 0.14s ease,
+      transform 0.14s ease;
+  }
+  .stack-ic:hover,
+  .stack-ic:focus-visible {
+    transform: translateY(-2px);
+  }
+}
+.stack-ic:hover,
+.stack-ic:focus-visible {
+  color: var(--brand);
+}
+
+/* Narrow / media-view: the CTA row drops to bottom:104px (see the .stage .projlinks
+   media query ~line 583); keep the rail above it so the two never overlap. */
+@media (max-width: 799px) {
+  .stack-icons {
+    bottom: 150px;
+    gap: 0.7rem;
+    padding: 6px 12px;
+  }
+  .stack-ic svg,
+  .stack-ic__mask {
+    width: 16px;
+    height: 16px;
+  }
+}
