@@ -1524,7 +1524,7 @@ html.js
 /* Desktop Screenshots (media) view: .projlinks lifts to bottom:92px to clear the gallery
    filmstrip capsule (see .stage--embed.stage--view-media .projlinks ~line 1342). Lift the
    rail in turn so it stays clear of the raised CTA row. Interactive (embed) view keeps the
-   base 76px since the gallery is hidden there. */
+   base 92px since the gallery is hidden there. */
 @media (min-width: 800px) {
   .stage--embed.stage--view-media .stack-icons {
     bottom: 158px;

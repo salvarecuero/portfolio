@@ -1,11 +1,14 @@
-// Shared stack-icon registry - consumed by the Presentation and the Tool page.
+// Shared stack-icon registry - consumed by the Presentation, the Tool page, and
+// the Showcase stack-icons rail (StackIcons.astro).
 // Keyed by the exact stack name. `brand` is the hover colour, tuned to read on
 // the light wall (React/Astro/AWS overridden from the simple-icons defaults).
 // An entry is EITHER a simple-icons single SVG path ({ brand, path }, rendered
 // with fill: currentColor) OR a data:-URI used as a CSS mask ({ brand, mask },
 // background: currentColor) for brands with no simple-icons glyph. Both tint
-// ink → brand on hover identically. A name absent from this map falls back to a
-// plain text pill.
+// ink → brand on hover identically. Missing-name fallback differs per consumer:
+// the Presentation renders a plain text pill; the Showcase rail renders no glyph
+// and instead relies on a build-time content guard (stack-icon-coverage.test.ts)
+// that fails the build if any Project stack name is absent here.
 //
 // Adding a CUSTOM (non-simple-icons) brand:
 //   1. Start from a transparent-background logo (any color; only alpha matters).
