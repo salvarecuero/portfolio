@@ -11,6 +11,9 @@ const SIMPLE = {
   Traefik: ["traefikproxy", "#24A1C1"],
   Hono: ["hono", "#E36002"],
   Mantine: ["mantine", "#339AF0"],
+  Netlify: ["netlify", "#00C7B7"],
+  "YouTube IFrame API": ["youtube", "#FF0000"],
+  "ONNX Runtime Web": ["onnx", "#005CED"],
 };
 
 let out = "";
