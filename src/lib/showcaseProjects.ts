@@ -26,6 +26,7 @@ interface ShowcaseBase {
   slug: string;
   title: string;
   summary: string;
+  stack: string[];
   iconPath: string;
   accent?: string;
   active: boolean;
@@ -63,6 +64,7 @@ export function toShowcaseProjects(
         slug: projectSlug(e.id),
         title: e.data.title,
         summary: e.data.summary,
+        stack: e.data.stack,
         iconPath: iconPath(e.data.icon),
         accent: e.data.accent,
         active: i === 0,

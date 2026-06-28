@@ -52,6 +52,24 @@ describe("toShowcaseProjects", () => {
     const out = toShowcaseProjects(raw as any);
     expect(out[0].links?.repo).toBe("https://git/a");
   });
+  it("threads the stack array through", () => {
+    const withStack = toShowcaseProjects([
+      {
+        id: "s",
+        data: {
+          title: "S",
+          order: 0,
+          summary: "s",
+          mode: "media",
+          stack: ["React", "Docker"],
+          media: [
+            { type: "image", src: { src: "/x.webp", width: 10, height: 10, format: "webp" }, alt: "a" },
+          ],
+        },
+      },
+    ] as any);
+    expect(withStack[0].stack).toEqual(["React", "Docker"]);
+  });
   it("passes the media set through; media[0] is the poster", () => {
     const out = toShowcaseProjects(raw as any);
     expect(out[0].media).toHaveLength(1);
