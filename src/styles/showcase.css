@@ -1434,11 +1434,16 @@ html.js
   padding: 7px 15px;
   list-style: none;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.62);
+  /* Near-opaque so the pill reads as the same light surface over any embed/poster backdrop
+     (a lower alpha lets dark embeds bleed through and invert it to grey, breaking
+     cross-Project consistency and icon contrast). Blur kept for a subtle frosted edge. */
+  background: rgba(255, 255, 255, 0.92);
   -webkit-backdrop-filter: blur(10px) saturate(1.2);
   backdrop-filter: blur(10px) saturate(1.2);
   border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 8px 24px -14px rgba(10, 12, 20, 0.6);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    0 8px 24px -14px rgba(10, 12, 20, 0.6);
 }
 .stack-ic {
   position: relative;
