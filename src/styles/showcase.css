@@ -1421,7 +1421,7 @@ html.js
 .stack-icons {
   position: absolute;
   left: 50%;
-  bottom: 76px;
+  bottom: 92px;
   transform: translateX(-50%);
   z-index: 5;
   display: flex;
@@ -1521,11 +1521,21 @@ html.js
   color: var(--brand);
 }
 
+/* Desktop Screenshots (media) view: .projlinks lifts to bottom:92px to clear the gallery
+   filmstrip capsule (see .stage--embed.stage--view-media .projlinks ~line 1342). Lift the
+   rail in turn so it stays clear of the raised CTA row. Interactive (embed) view keeps the
+   base 76px since the gallery is hidden there. */
+@media (min-width: 800px) {
+  .stage--embed.stage--view-media .stack-icons {
+    bottom: 158px;
+  }
+}
+
 /* Narrow / media-view: the CTA row drops to bottom:104px (see the .stage .projlinks
    media query ~line 583); keep the rail above it so the two never overlap. */
 @media (max-width: 799px) {
   .stack-icons {
-    bottom: 150px;
+    bottom: 158px;
     gap: 0.7rem;
     padding: 6px 12px;
   }
