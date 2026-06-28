@@ -35,4 +35,12 @@ const webp = await sharp("src/assets/stack/sablier.png")
 const uri = "data:image/webp;base64," + webp.toString("base64");
 out += `  Sablier: { brand: "#F2810E", mask: ${JSON.stringify(uri)} },\n`;
 
+const webgpuWebp = await sharp("src/assets/stack/webgpu.png")
+  .trim()
+  .resize(40, 40, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+  .webp({ lossless: true })
+  .toBuffer();
+const webgpuUri = "data:image/webp;base64," + webgpuWebp.toString("base64");
+out += `  WebGPU: { brand: "#0066B0", mask: ${JSON.stringify(webgpuUri)} },\n`;
+
 process.stdout.write(out);
