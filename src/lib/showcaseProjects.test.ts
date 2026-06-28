@@ -63,7 +63,11 @@ describe("toShowcaseProjects", () => {
           mode: "media",
           stack: ["React", "Docker"],
           media: [
-            { type: "image", src: { src: "/x.webp", width: 10, height: 10, format: "webp" }, alt: "a" },
+            {
+              type: "image",
+              src: { src: "/x.webp", width: 10, height: 10, format: "webp" },
+              alt: "a",
+            },
           ],
         },
       },
