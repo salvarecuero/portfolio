@@ -1,0 +1,125 @@
+import { describe, it, expect } from "vitest";
+import { experimental_AstroContainer as AstroContainer } from "astro/container";
+import MediaGallery from "./MediaGallery.astro";
+import placeholder from "../../assets/posters/placeholder.webp";
+
+const imageItem = { type: "image" as const, src: placeholder, alt: "overview" };
+const videoItem = {
+  type: "video" as const,
+  poster: placeholder,
+  alt: "live demo",
+  sources: [
+    { src: "/media/demo.av1.webm", type: "video/webm; codecs=av01.0.05M.08" },
+    { src: "/media/demo.h264.mp4", type: "video/mp4" },
+  ],
+};
+
+async function render(items: any[], variant: "desktop" | "mobile" = "desktop") {
+  const container = await AstroContainer.create();
+  return container.renderToString(MediaGallery, { props: { items, variant } });
+}
+
+describe("MediaGallery", () => {
+  it("renders one slide and one thumbnail per item", async () => {
+    const html = await render([imageItem, imageItem, imageItem]);
+    expect((html.match(/data-slide/g) ?? []).length).toBe(3);
+    expect((html.match(/data-thumb=/g) ?? []).length).toBe(3);
+  });
+  it("shows a 1 / N counter and prev/next controls", async () => {
+    const html = await render([imageItem, imageItem]);
+    expect(html).toContain("1 / 2");
+    expect(html).toContain("data-prev");
+    expect(html).toContain("data-next");
+  });
+  it("renders an <img> for image items", async () => {
+    const html = await render([imageItem]);
+    expect(html).toMatch(/<img[^>]+alt="overview"/);
+  });
+  it("renders a <video> with one <source> per source plus a poster <img> for video items", async () => {
+    const html = await render([videoItem]);
+    expect(html).toContain("<video");
+    expect((html.match(/data-src=/g) ?? []).length).toBe(2);
+    expect(html).toMatch(/gallery-media--poster/);
+  });
+  it("tags the variant on the root for CSS show/hide", async () => {
+    const html = await render([imageItem], "mobile");
+    expect(html).toMatch(/media-gallery--mobile/);
+  });
+  // The thumbnail strip follows the WAI-ARIA APG "carousel" slide-picker pattern:
+  // a labelled group of buttons, not a tablist (no tabpanels/aria-controls exist).
+  it("exposes the thumbnail strip as a labelled group, not a tablist", async () => {
+    const html = await render([imageItem, imageItem]);
+    expect(html).toMatch(/class="gallery-thumbs"[^>]*role="group"/);
+    expect(html).toContain('aria-label="Choose media"');
+    expect(html).not.toContain('role="tablist"');
+  });
+  it("uses plain buttons without tab semantics for thumbnails", async () => {
+    const html = await render([imageItem, imageItem]);
+    expect(html).not.toContain('role="tab"');
+    expect(html).not.toContain("aria-selected");
+  });
+  it("marks the active thumbnail with aria-current and keeps descriptive labels", async () => {
+    const html = await render([imageItem, imageItem]);
+    expect((html.match(/aria-current="true"/g) ?? []).length).toBe(1);
+    expect(html).toContain('aria-label="Show: overview"');
+  });
+  // Each thumbnail shows a real preview of its item so the strip is a visual picker,
+  // not a row of identical blank chips. Marked with a distinctive class to scope the
+  // count past the full-size slide images.
+  it("renders a preview image inside every thumbnail", async () => {
+    const html = await render([imageItem, imageItem, imageItem]);
+    expect((html.match(/gallery-thumb__img/g) ?? []).length).toBe(3);
+  });
+  it("uses the poster still as the preview for video items", async () => {
+    const html = await render([videoItem]);
+    expect(html).toMatch(/gallery-thumb__img/);
+    expect(html).toMatch(/gallery-thumb[^"]*vid/);
+  });
+  it("tags each slide with its caption for the chrome viewer toolbar", async () => {
+    const c = await AstroContainer.create();
+    const imgMeta = { src: "/p.webp", width: 1280, height: 720, format: "webp" } as any;
+    const items = [
+      { type: "image", src: imgMeta, alt: "Image Compressor" },
+      { type: "image", src: imgMeta, alt: "Merge PDF" },
+    ];
+    const html = await c.renderToString(MediaGallery, { props: { items, variant: "desktop" } });
+    expect(html).toContain('data-caption="Image Compressor"');
+    expect(html).toContain('data-caption="Merge PDF"');
+  });
+  // A portrait capture in the landscape gallery frame would be zoomed to a sliver by
+  // object-fit:cover; the gallery tags portrait items so CSS contains them instead.
+  it("marks a portrait image's media and thumb so the gallery contains it", async () => {
+    const c = await AstroContainer.create();
+    const portrait = { src: "/p.png", width: 421, height: 838, format: "png" } as any;
+    const html = await c.renderToString(MediaGallery, {
+      props: { items: [{ type: "image", src: portrait, alt: "panel" }], variant: "desktop" },
+    });
+    expect(html).toMatch(/gallery-media--portrait/);
+    expect(html).toMatch(/gallery-thumb__img--portrait/);
+  });
+  it("does not mark a landscape image as portrait (stays cover)", async () => {
+    const c = await AstroContainer.create();
+    const landscape = { src: "/l.png", width: 1280, height: 720, format: "png" } as any;
+    const html = await c.renderToString(MediaGallery, {
+      props: { items: [{ type: "image", src: landscape, alt: "wide" }], variant: "desktop" },
+    });
+    expect(html).not.toContain("gallery-media--portrait");
+    expect(html).not.toContain("gallery-thumb__img--portrait");
+  });
+  it("renders a duration chip for video thumbs that declare a duration", async () => {
+    const c = await AstroContainer.create();
+    const imgMeta = { src: "/p.webp", width: 1280, height: 720, format: "webp" } as any;
+    const items = [
+      {
+        type: "video",
+        poster: imgMeta,
+        sources: [{ src: "/v.webm", type: "video/webm" }],
+        alt: "Demo clip",
+        duration: "0:42",
+      },
+    ];
+    const html = await c.renderToString(MediaGallery, { props: { items, variant: "desktop" } });
+    expect(html).toContain('class="gallery-thumb__dur"');
+    expect(html).toContain("0:42");
+  });
+});

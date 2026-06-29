@@ -1,0 +1,145 @@
+---
+import { Picture, Image } from "astro:assets";
+import { isPortrait } from "../../lib/showcaseProjects";
+import type { MediaItem } from "../../lib/showcaseProjects";
+
+interface Props {
+  items: MediaItem[];
+  variant: "desktop" | "mobile";
+}
+const { items, variant } = Astro.props as Props;
+const total = items.length;
+// Stage is ~full viewport width minus the cosmos frame padding.
+const sizes = "(min-width: 800px) calc(100vw - 72px), 100vw";
+const widths = [640, 960, 1280, 1920, 2560];
+---
+
+<div
+  class:list={["media-gallery", `media-gallery--${variant}`]}
+  data-gallery
+  data-index="0"
+  role="group"
+  aria-roledescription="carousel"
+  aria-label="Project media"
+>
+  <div class="gallery-track" data-track style="transform:translateX(0%)">
+    {
+      items.map((item, i) => {
+        // Portrait captures get contained (not cover-cropped) in the landscape frame.
+        const portrait = isPortrait(item);
+        return (
+          <div
+            class="gallery-slide"
+            data-slide
+            data-caption={item.alt}
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${total}`}
+            aria-hidden={i === 0 ? "false" : "true"}
+          >
+            {item.type === "image" ? (
+              <Picture
+                src={item.src}
+                formats={["avif", "webp"]}
+                widths={widths}
+                sizes={sizes}
+                layout="none"
+                alt={item.alt}
+                class:list={["gallery-media", { "gallery-media--portrait": portrait }]}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <>
+                <img
+                  class:list={[
+                    "gallery-media gallery-media--poster",
+                    { "gallery-media--portrait": portrait },
+                  ]}
+                  src={item.poster.src}
+                  width={item.poster.width}
+                  height={item.poster.height}
+                  alt={item.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <video
+                  class:list={[
+                    "gallery-media gallery-media--video",
+                    { "gallery-media--portrait": portrait },
+                  ]}
+                  data-video
+                  muted
+                  loop
+                  playsinline
+                  preload="none"
+                  poster={item.poster.src}
+                  width={item.poster.width}
+                  height={item.poster.height}
+                  aria-label={item.alt}
+                >
+                  {item.sources.map((s) => (
+                    <source data-src={s.src} type={s.type} />
+                  ))}
+                </video>
+              </>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+
+  <button
+    class="gallery-arrow gallery-arrow--prev"
+    type="button"
+    data-prev
+    aria-label="Previous media">‹</button
+  >
+  <button class="gallery-arrow gallery-arrow--next" type="button" data-next aria-label="Next media"
+    >›</button
+  >
+  <div class="gallery-counter" data-counter aria-hidden="true">1 / {total}</div>
+
+  {
+    /* WAI-ARIA APG "carousel" slide-picker: a labelled group of buttons that jump to a
+      slide, with the active one marked by aria-current. Not a tablist - there are no
+      tabpanels/aria-controls, and the slides already carry "slide" roles. */
+  }
+  <div class="gallery-thumbs" role="group" aria-label="Choose media">
+    {
+      items.map((item, i) => {
+        const portrait = isPortrait(item);
+        return (
+          <button
+            class:list={["gallery-thumb", { on: i === 0, vid: item.type === "video" }]}
+            type="button"
+            aria-current={i === 0 ? "true" : undefined}
+            aria-label={`Show: ${item.alt}`}
+            data-thumb={i}
+          >
+            {/* Real preview of the item: the image itself, or a video's poster still.
+              Downscaled to a thumbnail width; the button's aria-label names it, so the
+              image is decorative (alt=""). */}
+            <Image
+              src={item.type === "image" ? item.src : item.poster}
+              width={160}
+              format="webp"
+              alt=""
+              class:list={["gallery-thumb__img", { "gallery-thumb__img--portrait": portrait }]}
+              loading="lazy"
+              decoding="async"
+            />
+            {item.type === "video" && item.duration && (
+              <span class="gallery-thumb__dur">{item.duration}</span>
+            )}
+          </button>
+        );
+      })
+    }
+  </div>
+</div>
+
+<script>
+  import "../../scripts/galleryController";
+</script>

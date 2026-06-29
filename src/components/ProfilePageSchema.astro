@@ -1,0 +1,16 @@
+---
+import { buildProfilePageSchema } from "../data/profilePageSchema";
+import { presentation } from "../data/presentation";
+import { siteOrigin } from "../lib/seo";
+
+interface Props {
+  /** Absolute URL to the photo (resolved by the parent from Astro.site). */
+  imageUrl: string;
+}
+
+const { imageUrl } = Astro.props;
+const siteUrl = siteOrigin(Astro.site, presentation.domain);
+const schema = buildProfilePageSchema({ siteUrl, imageUrl });
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />

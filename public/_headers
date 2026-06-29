@@ -1,0 +1,65 @@
+# Cloudflare Pages serves this from the dist/ root (Astro copies public/ verbatim).
+# The portfolio is the iframe PARENT, so it needs no frame-ancestors for itself; the
+# embedded Projects enforce their own framing (frame-ancestors, ADR 0004).
+#
+# Deliberately NO restrictive CSP frame-src allowlist: it would couple this file to every
+# new embed Project (adding a Project would require editing _headers), breaking the additive
+# content model (handoff invariant). Security headers below carry no such coupling.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Agent discovery (RFC 8288): advertise the sitemap on the homepage so crawlers and AI
+# agents can find the canonical URL set from the entry response alone, without first
+# fetching robots.txt. Scoped to `/` to avoid emitting it on every static asset response.
+/
+  Link: </sitemap-index.xml>; rel="sitemap"
+
+# Agent-facing markdown pages (/hire.md, /contact.md, /projects.md). Served so agents and
+# chatbots get clean prose instead of scraping HTML. A static .md would otherwise be sent
+# as a download (octet-stream); pin it to text/markdown. This also covers /projects.md: a
+# static build keeps the endpoint's body but not its Response Content-Type, so the type is
+# set here, not in the route.
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+# Astro content-hashes these (JS, CSS, images, and the self-hosted fonts under
+# /_astro/fonts) — the filename changes when the content does, so a new build never
+# collides with a cached file. Safe to cache forever; the browser never revalidates.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Non-hashed brand assets that change rarely. A week of browser cache lets repeat visits
+# skip even the conditional (304) request; stale-while-revalidate refreshes in the
+# background. A redesign needing an instant swap can rename the file or Purge Everything.
+/favicon.ico
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/favicon.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/icon-192.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/icon-512.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/icon-maskable-512.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# Web app manifest. Pinned Content-Type because the global nosniff would otherwise let a
+# browser reject a mistyped response; same brand-asset cache cadence as the icons above.
+/site.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# Social preview. Bounded to a day fresh so a redesign propagates next-day; crawlers
+# refetch on their own cadence regardless of this header.
+/og.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+# Everything else (HTML pages, robots.txt, the sitemaps) is intentionally NOT listed here.
+# It inherits Cloudflare Pages' default `Cache-Control: public, max-age=0, must-revalidate`
+# plus an ETag: the browser revalidates with a cheap conditional request and gets a 304
+# when unchanged, so a new deployment is served instantly. Pinning HTML to a longer cache
+# (here or via a zone-level "Cache Everything" rule) is the one thing that would break
+# deploy invalidation. See docs/adr/0006-caching-and-deploy-invalidation.md.

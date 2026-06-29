@@ -1,0 +1,161 @@
+---
+import { getCollection } from "astro:content";
+import { toShowcaseProjects } from "../lib/showcaseProjects";
+import Selector from "./showcase/Selector.astro";
+import Stage from "./showcase/Stage.astro";
+import ProjectLinks from "./showcase/ProjectLinks.astro";
+import StackIcons from "./showcase/StackIcons.astro";
+import "../styles/showcase.css";
+
+const projects = toShowcaseProjects(await getCollection("projects"));
+const active = projects.find((p) => p.active) ?? projects[0];
+---
+
+<section
+  id="showcase"
+  class="showcase"
+  style={active?.accent ? `--accent:${active.accent}` : undefined}
+>
+  <div class="cosmos" aria-hidden="true"></div>
+
+  {/* command overlay ($ showcase) - base display:none; shown only while the intro plays */}
+  <div class="cmd" aria-hidden="true">
+    <div class="line">
+      <span class="p">$</span><span class="word">showcase</span><span class="caret"></span>
+    </div>
+  </div>
+
+  <div class="to">
+    <Selector projects={projects} />
+    <div class="stage-viewport">
+      {
+        projects.map((p) => (
+          <Stage project={p} active={p.active}>
+            <StackIcons stack={p.stack} />
+            <ProjectLinks links={p.links} title={p.title} slug={p.slug} mode={p.mode} />
+          </Stage>
+        ))
+      }
+    </div>
+  </div>
+
+  {
+    /* Backdrop meta - the reveal toggle and the (CC BY 4.0 mandated) credit share the
+     bottom-right frame band. The toggle sits left of the credit; both stay visible and
+     usable over the bare cosmos while the foreground is faded out. */
+  }
+  <div class="cosmos-meta">
+    {
+      /* Reveal toggle - fades the foreground out so the cosmos shows through. Shown only
+       after the intro (html.js.intro-done). Icon-only: the eye glyph swaps on aria-pressed;
+       the accessible name lives on the button's aria-label (set by JS). */
+    }
+    <button type="button" class="backdrop-toggle" aria-pressed="false" aria-label="View backdrop">
+      <svg
+        class="backdrop-toggle__glyph backdrop-toggle__glyph--show"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      <svg
+        class="backdrop-toggle__glyph backdrop-toggle__glyph--hide"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+        <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+        ></path>
+        <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+        <line x1="2" x2="22" y1="2" y2="22"></line>
+      </svg>
+    </button>
+
+    {
+      /* Backdrop credit - CC BY 4.0 requires a clearly visible, unaltered, linked credit
+       for the ESA/Hubble image used as the cosmos. */
+    }
+    <p class="cosmos-credit">
+      <span class="cosmos-credit__mark" aria-hidden="true">✦</span>
+      <a href="https://esahubble.org/images/heic1806a/" target="_blank" rel="noopener noreferrer"
+        >NASA, ESA, and P. van Dokkum (Yale University)</a
+      >
+      <span class="cosmos-credit__sep" aria-hidden="true">·</span>
+      <a
+        href="https://creativecommons.org/licenses/by/4.0/"
+        target="_blank"
+        rel="noopener noreferrer">CC BY 4.0</a
+      >
+    </p>
+  </div>
+</section>
+
+<script>
+  import { createIntroController, cssTimeToMs } from "../scripts/introTrigger";
+  const root = document.documentElement;
+  const showcase = document.getElementById("showcase");
+  if (showcase) {
+    let doneTimer = 0;
+    const play = () => {
+      root.classList.remove("intro-play", "intro-done");
+      void (showcase as HTMLElement).offsetWidth; // reflow → clean (re)start
+      root.classList.add("intro-play");
+      // After the reveal, hand opacity control from the beat-window fill to the resting
+      // rules (.intro-done) so Stage switching can crossfade without re-triggering the intro.
+      const cycle = cssTimeToMs(getComputedStyle(root).getPropertyValue("--intro-cycle"), 2800);
+      doneTimer = window.setTimeout(() => root.classList.add("intro-done"), cycle);
+    };
+    // Leaving the Showcase mid-intro: finish it now so the fixed $ showcase overlay does not
+    // linger over the Presentation. No replay - returning lands on the resting state.
+    const settle = () => {
+      window.clearTimeout(doneTimer);
+      root.classList.add("intro-done");
+    };
+    const decide = createIntroController(0.6, 0.5);
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const action = decide(e);
+          if (action === "play") play();
+          else if (action === "settle") {
+            settle();
+            io.unobserve(showcase);
+          }
+        }
+      },
+      { threshold: [0, 0.5, 0.6, 1] },
+    );
+    io.observe(showcase);
+  }
+</script>
+
+<script>
+  import "../scripts/showcaseController";
+</script>
+
+<script>
+  import "../scripts/embedController";
+</script>
+
+<script>
+  import "../scripts/viewModeController";
+</script>
+
+<script>
+  import "../scripts/showcaseScrollEscape";
+</script>
+
+<script>
+  import "../scripts/cosmosReveal";
+</script>

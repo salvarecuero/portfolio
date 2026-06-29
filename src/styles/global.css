@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Design tokens - source of truth for the design system. See docs/design-system.md.
+   Tailwind v4 consumes these tokens via @theme and generates utilities from them.
+   The final visual is iterated later; this is the minimal foundation. */
+@theme {
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-bg: oklch(0.18 0.01 260);
+  --color-fg: oklch(0.96 0.01 260);
+
+  /* Identity accent: resolves to the runtime --accent var, which the Showcase
+     overrides per Project (theming via token override). */
+  --color-accent: var(--accent, oklch(0.7 0.16 250));
+
+  --radius-base: 0.5rem;
+}
+
+/* Showcase (dark cosmos world) tokens - consumed by src/styles/showcase.css.
+   Distinct from the Presentation's scoped light palette. Per-Project accent is
+   applied at runtime via the --accent override on the Showcase root. */
+:root {
+  --space: #020206; /* deep near-black space */
+  --prompt: #7fb481; /* terminal-green $ prompt + block caret */
+  --cmd-word: #ffffff; /* typed command, pure white (not the accent) */
+  --app-surface: #ffffff; /* the light app/Stage surface (light-merge tab) */
+  --showcase-pad: 36px; /* cosmos frame thickness (sides/bottom) */
+  --intro-cycle: 2800ms; /* locked intro total */
+  --intro-ease: cubic-bezier(0.22, 1, 0.36, 1); /* out-quint */
+  --stage-inner-radius: 9px; /* media corners inside the Stage frame */
+  --showcase-embed-min: 800px; /* breakpoint: >= desktop set & (Phase 2) live Embed; < = mobile set */
+  --stage-swap: 240ms; /* single source for the Stage crossfade: stage-in/out keyframes + showcaseController */
+  --stage-chrome-h: 42px; /* browser-window chrome bar height */
+  --stage-chrome-bg: #1b1d27; /* chrome bar surface */
+  --stage-chrome-line: rgba(255, 255, 255, 0.07); /* chrome hairline */
+}
+
+:root {
+  color-scheme: dark;
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+}
+
+/* `main` is the scroll container (overflow-y-scroll snap), so the smooth behaviour must
+   live on it, not only on `html`, for the in-page anchor scroll (e.g. the Presentation's
+   "Scroll" cue → #showcase) to animate instead of jumping. */
+html,
+main {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  main {
+    scroll-behavior: auto;
+  }
+}

@@ -1,0 +1,59 @@
+---
+import { Font } from "astro:assets";
+import SEO from "../components/SEO.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageAlt?: string;
+  type?: string;
+  jsonLd?: object | object[];
+}
+
+const { title, description, image, imageWidth, imageHeight, imageAlt, type, jsonLd } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <Font cssVariable="--font-geist" preload />
+    <Font cssVariable="--font-geist-mono" preload />
+    {
+      /* Strapline display faces (above the fold). Each has a distant generic fallback
+        (cursive / condensed sans / slab), so without preload the swap from the fallback
+        is visually conspicuous on the hero's core message. Preloaded so they arrive with
+        the primary text and the reveal lands at first paint. */
+    }
+    <Font cssVariable="--font-yellowtail" preload />
+    <Font cssVariable="--font-oswald" preload />
+    <Font cssVariable="--font-zilla" preload />
+    {
+      /* Outfit is a Showcase-only face (below the fold); not preloaded so it does not
+        compete with the Presentation's LCP image for priority and bandwidth. */
+    }
+    <Font cssVariable="--font-outfit" />
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      imageWidth={imageWidth}
+      imageHeight={imageHeight}
+      imageAlt={imageAlt}
+      type={type}
+      jsonLd={jsonLd}
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

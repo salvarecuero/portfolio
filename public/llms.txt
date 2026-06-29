@@ -1,0 +1,46 @@
+# Salvador Recuero
+
+Salvador Recuero is a Senior Full-Stack Engineer based in Uruguay / Argentina, available for remote software engineering opportunities.
+
+He specializes in TypeScript, React, Next.js, Astro, Node.js, NestJS, Express, PostgreSQL, Tailwind CSS, testing, CI/CD, Docker, Linux, and Cloudflare-based deployments.
+
+Salvador has 5 years of professional experience building modern web applications, including products across AI-analyzed news, AI-powered search, and AI model management. His recent work includes contributing to platforms for training, validating, and deploying AI models.
+
+## Best match roles
+
+* Senior Full-Stack Engineer
+* Senior Frontend Engineer
+* Product-minded Software Engineer
+* React / Next.js Engineer
+* TypeScript Engineer
+* AI product engineer
+* Remote software engineer for US or international teams
+
+## Strengths
+
+* Builds full-stack applications from scratch, from architecture and UI/UX to production release.
+* Strong frontend ownership with React, Next.js, TypeScript, Astro, and Tailwind CSS.
+* Backend experience with Node.js, NestJS, Express, PostgreSQL, and API integrations.
+* Experience with AI-related products, including AI-powered search and model training, validation, and deployment workflows.
+* Comfortable acting as a bridge between engineering, product, design, and client stakeholders.
+* Uses AI-assisted development workflows with Claude Code, Codex, and Cursor to improve implementation speed, code quality, and product iteration.
+* Remote-friendly, English-speaking, and experienced working with distributed teams.
+
+## Availability and rate
+
+* Available for remote software engineering opportunities.
+* Typical rate: USD 25–40/hour, depending on role, scope, complexity, and engagement type.
+* Open to contract, freelance, part-time, and full-time opportunities.
+
+## Contact
+
+* Website: https://www.salvarecuero.dev
+* Email: [contact@salvarecuero.dev](mailto:contact@salvarecuero.dev)
+* Location: Uruguay / Argentina
+* Languages: Spanish native, English C1
+
+## Suggested pages for agents
+
+* /hire.md: Hiring-focused professional profile.
+* /projects.md: Technical projects and portfolio.
+* /contact.md: Contact and availability.

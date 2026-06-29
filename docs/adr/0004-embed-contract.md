@@ -1,0 +1,43 @@
+# Embed contract between the portfolio and the Projects
+
+For a Project to be shown in Embed mode, its own repo/deploy implements a contract toward the portfolio. The committed contract has two parts:
+
+1. **`frame-ancestors` (CSP)** — mandatory. The Project's deploy sends `Content-Security-Policy: frame-ancestors <portfolio-origin>` to allow being embedded only by the portfolio. Without it the browser refuses the iframe. Scoped to the exact origin, never `*`.
+2. **Readiness handshake (`postMessage`)** — the Project emits `parent.postMessage({type:'portfolio:ready'}, <portfolio-origin>)` when it is actually interactive (not on the iframe's `load`, which fires before the app is usable). The portfolio listens, validates `event.origin`, and only then fades the loading cover out to reveal the live app. The handshake is the **only** reveal signal: an embed that never sends it falls back to the Project's media gallery, so implementing it is mandatory for Embed mode.
+
+It is only possible because the Projects are owned.
+
+## Considered Options
+
+- **Embed mode via query param (`?embed=1`)** — when the Project detects the param, it hides its own chrome (nav/footer/cookie banner) and skips heavy third-party scripts, serving a cleaner and lighter view (with `noindex`). Not discarded: it remains a per-Project candidate to implement case by case, given its variable cost. Not part of the firm contract yet. See the design note below.
+
+### `?embed=1` optimization (designed, deferred)
+
+A Project may opt into an embed-optimized view: when it detects `?embed=1` it (a) hides its own
+chrome (nav, footer, cookie banner) so only the app surface shows inside the Stage, (b) skips heavy
+third-party scripts (analytics, chat widgets) that are pointless inside an embed and cost load time,
+and (c) emits `<meta name="robots" content="noindex">` so the embed URL is not indexed as a
+duplicate of the canonical app.
+
+**Portfolio side (optional opt-in, not yet implemented):** an `embed.embedParam` boolean content
+field (default `false`). When `true`, the controller appends `?embed=1` to the iframe `src` it
+assigns on mount (the only change — the lazy-mount, handshake, keep-alive, and warming are
+unchanged). Origin validation is unaffected: `event.origin` is compared against the origin derived
+by `embedOrigin(url)` (`new URL(url).origin`), which ignores the query string.
+
+**Status: deferred.** The cost is per-Project and lives mostly in the Project's own repo, so it is
+implemented case by case when a Project benefits (e.g. a Project with a heavy nav/cookie banner or
+third-party scripts). It is not part of the firm contract. The future optimization skill (Phase 7)
+is the natural home for both sides of this mechanism.
+
+## Consequences
+
+- The contract is the basis for a future skill that encapsulates the embed/optimization mechanism. Phase 2 is the reference implementation of that mechanism (`src/scripts/embedController.ts` + `embedLifecycle.ts`).
+- The exclusion criterion for Embed mode is "the app _functionally requires_ cross-origin isolation (`SharedArrayBuffer`)", not "runs WASM/AI" and not "sets `COOP`/`COEP`" — see ADR 0002. bye-bg was initially assumed non-embeddable because of its isolation, but `COEP` does not block framing: bye-bg sets `COOP`/`COEP` for an optional multi-threaded-WASM speed-up yet runs fine without it (WebGPU primary, single-threaded WASM fallback), so it implements this contract and runs as a live Embed — un-isolated inside the iframe (no `SharedArrayBuffer`), isolated standalone.
+
+## Phase 2 as built
+
+- **Two-way handshake, protocol `v: 1`.** The parent attaches its `message` listener _before_ setting `iframe.src`, posts `portfolio:hello` on iframe `load`, and the child posts `portfolio:ready` on a retry interval until it receives `portfolio:ack`. The `hello` covers the race where the child becomes ready before the parent's listener exists. Messages carry `{ type, v }`; the parent validates `event.origin` (=== the origin derived from `embed.url`), `event.source` (=== the iframe's `contentWindow`), and the shape/version before acking and revealing. Posts always use an explicit `targetOrigin`, never `*`.
+- **Handshake-only reveal, with a media fallback.** The cover fades out only on the validated `portfolio:ready` message. If none arrives within a 4 s ceiling, or the iframe fires `error`, the Stage falls back to the Project's media gallery (`.embed-failed`) and the failure is remembered for the session. A spinner is shown on the cover only after a 600 ms delay, so a fast reveal never flashes it. Reveal and fallback are mutually exclusive and exactly-once. Pure decision in `createEmbedTimers` (unit-tested). This replaces the earlier lenient first-wins reveal (handshake **or** load+grace **or** ceiling), which could reveal a blocked iframe's error page instead of falling back.
+- **`requiresLaunch`.** When set, the embed is not auto-mounted; the loading cover shows with an explicit launch affordance and the iframe mounts on click.
+- **`frame-ancestors` scope.** The portfolio's parent origins are `https://salvarecuero.dev` and `http://localhost:<dev-port>`; the Project allowlists exactly these and adds no `X-Frame-Options` (one mechanism only).

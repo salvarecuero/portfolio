@@ -1,0 +1,69 @@
+---
+// Brand logo lockups for the Selector tabs. Each Project's tab shows its real
+// site logo in place of a generic glyph + title. Marks are self-contained
+// (inline SVG / text, no web fonts, no extra requests) so they stay lightweight
+// and inherit the tab's foreground colour where the brand allows it.
+//
+// Known slugs render a bespoke lockup; any other Project falls back to the
+// generic icon glyph + ellipsizable title (the prior behaviour), so future
+// Projects without a bespoke logo still render sanely.
+interface Props {
+  slug: string;
+  title: string;
+  iconPath: string;
+  accent?: string;
+}
+const { slug, title, iconPath, accent } = Astro.props;
+---
+
+{
+  slug === "simple-tool-stack" ? (
+    <span class="tab-logo tab-logo--sts">
+      <svg class="tab-logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs>
+          <linearGradient id="sts-mark-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#6366f1" />
+            <stop offset="1" stop-color="#06b6d4" />
+          </linearGradient>
+        </defs>
+        <path d="M16 3 L27 9.5 V22.5 L16 29 L5 22.5 V9.5 Z" fill="url(#sts-mark-grad)" />
+        <path d="M17 8 L10.5 17 H15 L14 24 L21.5 14 H16.5 Z" fill="#fff" />
+      </svg>
+      <span class="tab-logo-word">Simple Tools</span>
+    </span>
+  ) : slug === "rangetube" ? (
+    <span class="tab-logo tab-logo--rangetube" role="img" aria-label={title}>
+      <span class="rt-word" aria-hidden="true">
+        R<span class="rt-a">a</span>ngeTu<span class="rt-b">b</span>e
+      </span>
+      <span class="rt-track" aria-hidden="true">
+        <span class="rt-track-line" />
+        <span class="rt-handle rt-handle--a" />
+        <span class="rt-handle rt-handle--b" />
+      </span>
+    </span>
+  ) : slug === "bye-bg" ? (
+    <span class="tab-logo tab-logo--byebg tab-logo-word">
+      <>
+        <span>bye</span>
+        <span class="tab-logo-accent" style={accent ? `color:${accent}` : undefined}>
+          -bg
+        </span>
+      </>
+    </span>
+  ) : (
+    <>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d={iconPath} />
+      </svg>
+      <span class="tab-label">{title}</span>
+    </>
+  )
+}

@@ -1,0 +1,33 @@
+---
+import type { ShowcaseProject } from "../../lib/showcaseProjects";
+const { project } = Astro.props as { project: ShowcaseProject };
+const embed = project.mode === "embed" ? project.embed : undefined;
+---
+
+<div class="embed" data-embed>
+  <iframe
+    class="embed-frame"
+    data-embed-frame
+    aria-label={project.title}
+    referrerpolicy="strict-origin-when-cross-origin"
+    allow="autoplay; fullscreen"
+    loading="lazy"
+    inert
+    tabindex="-1"></iframe>
+  {
+    /* Flat loading cover over the iframe (no Poster image, so the resolve into the live app
+     is seamless). Fades out on the readiness handshake; holds the delayed accent spinner. */
+  }
+  <div class="embed-cover" data-embed-cover>
+    <div class="embed-spinner" data-embed-spinner aria-hidden="true">
+      <span class="embed-ring"></span>
+    </div>
+  </div>
+  {
+    embed?.requiresLaunch && (
+      <button class="embed-launch" type="button" data-embed-launch>
+        Launch {project.title}
+      </button>
+    )
+  }
+</div>

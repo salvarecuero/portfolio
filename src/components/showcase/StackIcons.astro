@@ -1,0 +1,38 @@
+---
+import { stackIcons } from "../../data/presentationIcons";
+
+interface Props {
+  stack: string[];
+}
+const { stack } = Astro.props as Props;
+---
+
+{
+  stack.length > 0 && (
+    <ul class="stack-icons" aria-label="Tech stack">
+      {stack.map((tech) => {
+        const icon = stackIcons[tech];
+        return (
+          <li class="stack-ic" tabindex="0" style={icon ? `--brand:${icon.brand}` : undefined}>
+            {icon && "path" in icon && (
+              <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label={tech}>
+                <path d={icon.path} />
+              </svg>
+            )}
+            {icon && "mask" in icon && (
+              <span
+                class="stack-ic__mask"
+                role="img"
+                aria-label={tech}
+                style={`--mask:url('${icon.mask}')`}
+              />
+            )}
+            <span class="stack-ic__tip" aria-hidden="true">
+              {tech}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  )
+}

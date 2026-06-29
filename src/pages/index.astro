@@ -1,0 +1,15 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Presentation from "../components/Presentation.astro";
+import Showcase from "../components/Showcase.astro";
+import { presentation } from "../data/presentation";
+
+const title = `${presentation.name} - ${presentation.role}`;
+---
+
+<Layout title={title} description={presentation.description}>
+  <main class="h-dvh snap-y snap-mandatory overflow-y-scroll">
+    <Presentation />
+    <Showcase />
+  </main>
+</Layout>
