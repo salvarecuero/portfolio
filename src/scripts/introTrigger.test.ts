@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createIntroController } from "./introTrigger";
+import { createIntroController, cssTimeToMs } from "./introTrigger";
 
 const entry = (isIntersecting: boolean, intersectionRatio: number) =>
   ({ isIntersecting, intersectionRatio }) as IntersectionObserverEntry;
@@ -31,5 +31,20 @@ describe("createIntroController", () => {
     const next = createIntroController(0.6, 0.5);
     expect(next(entry(true, 0.8))).toBe("play");
     expect(next(entry(false, 0))).toBe("settle");
+  });
+});
+
+describe("cssTimeToMs", () => {
+  it("keeps millisecond CSS values as milliseconds", () => {
+    expect(cssTimeToMs("2800ms", 100)).toBe(2800);
+  });
+
+  it("converts minified second CSS values to milliseconds", () => {
+    expect(cssTimeToMs("2.8s", 100)).toBe(2800);
+  });
+
+  it("uses the fallback for invalid or unitless values", () => {
+    expect(cssTimeToMs("", 2800)).toBe(2800);
+    expect(cssTimeToMs("2.8", 2800)).toBe(2800);
   });
 });

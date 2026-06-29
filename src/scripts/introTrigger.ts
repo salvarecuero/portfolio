@@ -34,3 +34,10 @@ export function createIntroController(playThreshold = 0.6, settleThreshold = 0.5
     return "none";
   };
 }
+
+export function cssTimeToMs(value: string, fallbackMs: number) {
+  const raw = value.trim();
+  const n = parseFloat(raw);
+  if (!Number.isFinite(n)) return fallbackMs;
+  return raw.endsWith("ms") ? n : raw.endsWith("s") ? n * 1000 : fallbackMs;
+}
