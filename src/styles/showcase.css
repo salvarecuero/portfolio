@@ -1503,7 +1503,7 @@ html.js
     0 1px 0 rgba(255, 255, 255, 0.65) inset,
     0 8px 24px -14px rgba(10, 12, 20, 0.6);
 }
-.stack-ic {
+.stack-icons .stack-ic {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -1511,27 +1511,27 @@ html.js
   color: #4b4f63;
   --brand: #4b4f63;
 }
-.stack-ic svg,
-.stack-ic__mask {
+.stack-icons .stack-ic svg,
+.stack-icons .stack-ic__mask {
   width: 18px;
   height: 18px;
   display: block;
 }
-.stack-ic svg {
+.stack-icons .stack-ic svg {
   fill: currentColor;
 }
-.stack-ic__mask {
+.stack-icons .stack-ic__mask {
   background: currentColor;
   -webkit-mask: var(--mask) center / contain no-repeat;
   mask: var(--mask) center / contain no-repeat;
 }
-.stack-ic:focus-visible {
+.stack-icons .stack-ic:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 4px;
 }
 /* tooltip - mirrors the Presentation .tip (dark surface, slide-up) */
-.stack-ic__tip {
+.stack-icons .stack-ic__tip {
   position: absolute;
   bottom: calc(100% + 8px);
   left: 50%;
@@ -1549,7 +1549,7 @@ html.js
   z-index: 20;
   box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.7);
 }
-.stack-ic__tip::after {
+.stack-icons .stack-ic__tip::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -1558,29 +1558,29 @@ html.js
   border: 4px solid transparent;
   border-top-color: var(--p-ink, #26221f);
 }
-.stack-ic:hover .stack-ic__tip,
-.stack-ic:focus-visible .stack-ic__tip {
+.stack-icons .stack-ic:hover .stack-ic__tip,
+.stack-icons .stack-ic:focus-visible .stack-ic__tip {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
 @media (prefers-reduced-motion: no-preference) {
-  .stack-ic {
+  .stack-icons .stack-ic {
     transition:
       color 0.16s ease,
       transform 0.16s ease;
   }
-  .stack-ic__tip {
+  .stack-icons .stack-ic__tip {
     transition:
       opacity 0.14s ease,
       transform 0.14s ease;
   }
-  .stack-ic:hover,
-  .stack-ic:focus-visible {
+  .stack-icons .stack-ic:hover,
+  .stack-icons .stack-ic:focus-visible {
     transform: translateY(-2px);
   }
 }
-.stack-ic:hover,
-.stack-ic:focus-visible {
+.stack-icons .stack-ic:hover,
+.stack-icons .stack-ic:focus-visible {
   color: var(--brand);
 }
 
@@ -1602,8 +1602,8 @@ html.js
     gap: 0.7rem;
     padding: 6px 12px;
   }
-  .stack-ic svg,
-  .stack-ic__mask {
+  .stack-icons .stack-ic svg,
+  .stack-icons .stack-ic__mask {
     width: 16px;
     height: 16px;
   }
