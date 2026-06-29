@@ -1,40 +1,36 @@
-# Design System — Foundation
+# Design System - Foundation
 
-Record of the design system's foundation: the base the shipped visual design rests on. The visual design itself has since been iterated across the build (see Status); this document records the foundation, not an exhaustive spec of the shipped result.
+This document records the portfolio's design foundation. It describes the principles and implementation anchors that shape the visual system; the source files remain authoritative for exact component details.
 
 ## Foundation decisions
 
-- **Tokens as CSS custom properties** as the source of truth (colors, spacing, typography, radii, etc.).
-- **Tailwind v4** consumes those tokens. Zero-runtime (compiles to CSS): Lighthouse-neutral.
-- **Per-Project theming**: each Project's visual identity (and the chrome accent on switch / its Custom view) is expressed as a token override, not as hardcoded styles.
-- The visual is hand-crafted; no component library is used, to avoid a generic aesthetic.
+- **Tokens as CSS custom properties** are the source of truth for color, spacing, typography, radii, and related visual values.
+- **Tailwind v4** consumes those tokens and compiles them to CSS with no client-side styling runtime.
+- **Per-project theming** is expressed through runtime token overrides. Each project's accent color is set through `--accent` on the Showcase root instead of hardcoded component styles.
+- **Hand-crafted components** define the interface. The site does not use a component library, which keeps the visual language specific to this portfolio.
 
-## Status (2026-06-26)
+## Design Scope
 
-The visual design has been iterated and ships as the current baseline; the earlier deferral
-(the "Phase 5 deferred" status) is resolved. The iteration spans the Presentation, the Showcase
-shell and play-on-enter intro, the project/tool detail pages, the CTA pills, and the lightbox.
-The foundation above held through that work without structural change.
+The visual system covers the Presentation, Showcase shell, project/tool detail pages, CTA pills,
+stack icon rail, media gallery, and lightbox. These areas share the same token foundation while
+allowing scoped section palettes where the experience calls for them.
 
-Notes on the items previously listed as pending:
+Key implementation notes:
 
-- **Per-Project accent tokens** are defined and applied at runtime via the `--accent` override on
-  the Showcase root, set per Project from content.
-- **Type scale, palette and light/dark** are realized in the token layer plus deliberate
-  per-section palettes (the Presentation's scoped light surface, the Showcase's dark cosmos),
-  not a user-facing theme toggle.
-- **Primitives** remain intentionally hand-crafted per component (no component library), per the
-  foundation decision above; there is no separate primitives library.
+- **Accent tokens** are defined per project in content and applied at runtime through the Showcase root.
+- **Type scale and palette** live in the token layer, with deliberate section-level palettes such as the Presentation's light surface and the Showcase's dark cosmos.
+- **Theme switching** is not exposed as a user-facing control; contrast and mood are handled by scoped sections.
+- **Primitives** are implemented directly in the components rather than maintained as a separate primitives package.
 
-Because the shipped design is the source of truth, treat the implementation (`src/styles/` and the
-components) as authoritative over this record where they differ.
+Treat `src/styles/` and the Astro components as authoritative whenever exact behavior or styling differs from this foundation note.
 
 ## Custom stack icons
 
-Stack glyphs come from `src/data/presentationIcons.ts`. Each is either a
-simple-icons SVG path or, for a brand with no simple-icons glyph, a small
-`data:`-URI WebP used as a CSS `mask` over `background: currentColor`. The mask
-form tints ink → brand on hover exactly like the SVG paths, so custom logos stay
-visually consistent. Regenerate a mask asset with `node scripts/gen-stack-icons.mjs`
-(sharp → 40×40 lossless WebP → base64). Glyphs are inlined to keep zero extra
+Stack glyphs come from `src/data/presentationIcons.ts`. Each glyph is either a simple-icons SVG path
+or, for a brand with no simple-icons glyph, a small `data:` URI WebP used as a CSS `mask` over
+`background: currentColor`.
+
+The mask approach lets custom logos tint from neutral ink to brand color on hover in the same way as
+SVG path icons. Mask assets can be regenerated with `node scripts/gen-stack-icons.mjs`, which uses
+sharp to produce a 40x40 lossless WebP and inline it as base64. Glyphs are inlined to avoid extra
 network requests. A technology not in the registry renders as a plain text pill.
