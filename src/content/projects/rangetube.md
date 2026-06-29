@@ -1,32 +1,37 @@
 ---
 title: "RangeTube"
-summary: "Loop any YouTube video between a custom start and end point."
+summary: "A polished A-B looper for YouTube with saved loops, shareable ranges, speed control, and focus mode."
 description:
-  - "RangeTube loops a YouTube video between two points you pick. Paste a link, drag the two handles to set where the clip starts and ends, and it replays just that section."
-  - "Useful for practising a passage of music, drilling a step in a tutorial, or rewatching a favourite moment without scrubbing the timeline each time."
+  - "RangeTube loops a YouTube video between two points you pick. Paste a link, set A and B on the custom range control, and it replays that section without making you scrub the timeline again."
+  - "The v2 rewrite turned the old single-page React app into a static Astro site with a Preact looper island. The player uses a click-to-load YouTube facade, a source-agnostic loop engine, keyboard Mark-In and Mark-Out, playback speed control, saved loops, and URLs that sync to the current range."
+  - "Content pages ship as zero-JS HTML for SEO, while the interactive tool hydrates only when needed. The portfolio embed contract is preserved, so the live app can still run inside this showcase."
 mode: "embed"
 embed:
-  url: "https://rangetube.netlify.app"
+  url: "https://rangetube.salvarecuero.dev"
   requiresLaunch: false
   mobile: false
 media:
   - type: image
-    src: ../../assets/showcase/rangetube/working.png
-    alt: "RangeTube on desktop: a YouTube video loaded, with the loop start and end set on the range slider below the player"
+    src: ../../assets/showcase/rangetube/v2-working.png
+    alt: "RangeTube v2 on desktop: a YouTube video loaded above the redesigned A-B loop deck, playback speed controls, copy link, and saved loop form"
   - type: image
-    src: ../../assets/showcase/rangetube/start.png
-    alt: "RangeTube on desktop: the home screen with the YouTube URL input under the wordmark"
+    src: ../../assets/showcase/rangetube/v2-home.png
+    alt: "RangeTube v2 on desktop: the home screen with the new wordmark, value proposition, YouTube URL input, paste button, load button, and example link"
+  - type: image
+    src: ../../assets/showcase/rangetube/v2-focus.png
+    alt: "RangeTube v2 on desktop: focus mode with a dark background, the YouTube player, compact loop range controls, and keyboard exit hint"
 mediaMobile:
   - type: image
-    src: ../../assets/showcase/rangetube/working-mobile.png
-    alt: "RangeTube on mobile: a loaded video with the loop range set on the slider"
+    src: ../../assets/showcase/rangetube/v2-working-mobile.png
+    alt: "RangeTube v2 on mobile: a loaded YouTube video, compact A-B loop controls, playback speed, copy link, and saved loops panel"
   - type: image
-    src: ../../assets/showcase/rangetube/start-mobile.png
-    alt: "RangeTube on mobile: the home screen with the YouTube URL input"
+    src: ../../assets/showcase/rangetube/v2-home-mobile.png
+    alt: "RangeTube v2 on mobile: the home screen with the new wordmark, YouTube URL input, load action, and three-step prompt"
 order: 2
-accent: "#e8634c"
+accent: "#00a99d"
 icon: "range"
 links:
-  live: "https://rangetube.netlify.app"
-stack: ["React", "YouTube IFrame API", "Netlify"]
+  live: "https://rangetube.salvarecuero.dev"
+  repo: "https://github.com/salvarecuero/rangetube"
+stack: ["Astro", "Preact", "TypeScript", "Tailwind CSS", "YouTube IFrame API", "Cloudflare"]
 ---

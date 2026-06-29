@@ -10,7 +10,7 @@ export const STUB_ORIGIN = "http://localhost:4399";
 export const REAL_EMBED_ORIGINS: Record<string, string> = {
   "simple-tool-stack": "https://simpletoolstack.com",
   "bye-bg": "https://bye-bg.salvarecuero.dev",
-  rangetube: "https://rangetube.netlify.app",
+  rangetube: "https://rangetube.salvarecuero.dev",
 };
 
 export type StubBehavior = {

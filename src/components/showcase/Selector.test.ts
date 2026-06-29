@@ -57,10 +57,13 @@ describe("Selector", () => {
     // Simple Tools: wordmark beside the gradient mark.
     expect(html).toContain("tab-logo--sts");
     expect(html).toMatch(/Simple Tools/);
-    // RangeTube: self-contained svg wordmark with an accessible name.
+    // RangeTube: v2 wordmark plus A-B track with an accessible name.
     expect(html).toMatch(
       /class="tab-logo tab-logo--rangetube"[^>]*role="img"[^>]*aria-label="RangeTube"/,
     );
+    expect(html).toContain("rt-track-line");
+    expect(html).toContain("rt-handle--a");
+    expect(html).toContain("rt-handle--b");
     // bye-bg: "bye" + accent "-bg".
     expect(html).toContain("tab-logo--byebg");
     expect(html).toMatch(/-bg/);
