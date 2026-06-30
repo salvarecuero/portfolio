@@ -2,14 +2,15 @@
 import { stackIcons } from "../../data/presentationIcons";
 
 interface Props {
-  stack: string[];
+  stack?: string[];
+  variant?: "overlay" | "chrome";
 }
-const { stack } = Astro.props as Props;
+const { stack = [], variant = "overlay" } = Astro.props as Props;
 ---
 
 {
   stack.length > 0 && (
-    <ul class="stack-icons" aria-label="Tech stack">
+    <ul class:list={["stack-icons", `stack-icons--${variant}`]} aria-label="Tech stack">
       {stack.map((tech) => {
         const icon = stackIcons[tech];
         return (

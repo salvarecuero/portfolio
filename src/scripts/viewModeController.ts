@@ -113,9 +113,10 @@ if (showcase && switchEl) {
     if (!stage || !stage.classList.contains("stage--embed")) return;
     const d = (e as CustomEvent<{ index: number; total: number; caption: string }>).detail;
     const cap = stage.querySelector<HTMLElement>("[data-view-caption]");
-    const pos = stage.querySelector<HTMLElement>("[data-view-pos]");
     if (cap) cap.textContent = d.caption;
-    if (pos) pos.textContent = `${d.index + 1} / ${d.total}`;
+    for (const pos of stage.querySelectorAll<HTMLElement>("[data-view-pos]")) {
+      pos.textContent = `${d.index + 1} / ${d.total}`;
+    }
   });
 
   // Seed the view class on EVERY embed Stage, not just the active one. The keep-alive /

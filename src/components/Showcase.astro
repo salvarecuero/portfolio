@@ -31,8 +31,12 @@ const active = projects.find((p) => p.active) ?? projects[0];
       {
         projects.map((p) => (
           <Stage project={p} active={p.active}>
-            <StackIcons stack={p.stack} />
-            <ProjectLinks links={p.links} title={p.title} slug={p.slug} mode={p.mode} />
+            {p.mode !== "embed" && (
+              <>
+                <StackIcons stack={p.stack} />
+                <ProjectLinks links={p.links} title={p.title} slug={p.slug} mode={p.mode} />
+              </>
+            )}
           </Stage>
         ))
       }
