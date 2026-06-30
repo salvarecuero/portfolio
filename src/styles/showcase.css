@@ -1135,6 +1135,10 @@ html.js.intro-done .stage.is-active {
    into the live app is seamless). The cover fades out on the readiness handshake; if the
    handshake never arrives the Stage falls back to its media gallery (.embed-failed).
    .stage is already position:relative, so .embed's inset:0 is contained. */
+.stage--embed {
+  --chrome-row-h: var(--stage-chrome-h);
+  --chrome-stack-row-h: 0px;
+}
 .stage--embed .embed {
   position: absolute;
   inset: 0;
@@ -1539,8 +1543,10 @@ html.js
   }
 }
 @media (max-width: 799px) {
-  .stage-chrome {
+  .stage--embed {
     --chrome-stack-row-h: 38px;
+  }
+  .stage-chrome {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: var(--chrome-row-h) var(--chrome-stack-row-h);
     gap: 0 8px;
