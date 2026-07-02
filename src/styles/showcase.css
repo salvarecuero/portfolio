@@ -1312,18 +1312,37 @@ html.js
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
-@media (max-width: 520px) {
-  .tab:not(.active) {
-    padding-inline: 0.62rem;
-    flex: 0 0 auto;
+@media (max-width: 799px) {
+  .showcase {
+    --showcase-pad: clamp(16px, 5vw, 28px);
   }
-  .tab:not(.active) .tab-logo-word,
-  .tab:not(.active) .tab-label {
+  .to {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .selector {
+    overflow: hidden;
+  }
+  .selector-list {
+    flex: 1 1 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .selector-list::-webkit-scrollbar {
     display: none;
   }
   .view-switch {
     flex: none;
+    margin-left: 0;
   }
+}
+@media (max-width: 799px) {
+  .tab,
+  .tab.active,
+  .tab:not(.active) {
+    flex: 0 0 auto;
+  }
+}
+@media (max-width: 520px) {
   .view-switch__btn {
     width: 32px;
     height: 28px;
@@ -1548,7 +1567,8 @@ html.js
   }
 }
 @media (max-width: 799px) {
-  .stage--embed {
+  .stage--embed,
+  .stage-chrome {
     --chrome-stack-row-h: 38px;
   }
   .stage-chrome {
