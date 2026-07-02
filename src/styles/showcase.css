@@ -277,6 +277,11 @@ html.js.intro-done .backdrop-toggle {
   position: relative;
   min-height: 100dvh;
   scroll-snap-align: start;
+  /* Below the first viewport: skip initial layout/paint work for the Showcase shell while
+     preserving its scroll footprint. The fixed cosmos is only needed once this section is
+     approached, so it can be skipped during Presentation LCP. */
+  content-visibility: auto;
+  contain-intrinsic-size: 100dvh;
 }
 
 /* command overlay ($ showcase) - fixed, the "submit" gesture of the intro */

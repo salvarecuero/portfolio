@@ -379,32 +379,36 @@ if (showcase) {
   tablist?.addEventListener("pointerenter", onIntent, true);
   tablist?.addEventListener("focusin", onIntent);
 
-  // After the hero is interactive + idle: warm + mount the default Project, then warm the rest.
+  // Keep cross-origin embeds off the initial Presentation load. The Showcase is below the fold,
+  // and mounting the default iframe after `load` still competes with the hero's LCP window on
+  // mobile Lighthouse. Start warming/mounting only when the Showcase is approached; intent
+  // warming above still covers explicit hover/focus on the Selector.
   const boot = () =>
     onIdle(() => {
-      const active = document.querySelector<HTMLElement>(".stage[data-embed-url].is-active");
-      if (active?.dataset.project) {
-        const e = entries.get(active.dataset.project);
-        if (e) warm(e.origin);
-        maybeMount(active.dataset.project);
-      }
-      for (const entry of entries.values()) warm(entry.origin);
-      // Phase 2: registered after the active embed is mounted so liveCount is accurate (no
-      // preload→evict churn). One-shot; own observer (decoupled from the intro's classes). Fires
-      // immediately if the Showcase is already in view.
-      const preloadIO = new IntersectionObserver(
+      const startEmbeds = () => {
+        const active = document.querySelector<HTMLElement>(".stage[data-embed-url].is-active");
+        if (active?.dataset.project) {
+          const e = entries.get(active.dataset.project);
+          if (e) warm(e.origin);
+          maybeMount(active.dataset.project);
+        }
+        for (const entry of entries.values()) warm(entry.origin);
+        preloadRest();
+      };
+
+      const io = new IntersectionObserver(
         (obsEntries) => {
           for (const e of obsEntries) {
             if (e.isIntersecting) {
-              preloadIO.disconnect();
-              preloadRest();
+              io.disconnect();
+              startEmbeds();
               break;
             }
           }
         },
-        { threshold: 0.4 },
+        { threshold: 0.01 },
       );
-      preloadIO.observe(showcase);
+      io.observe(showcase);
     });
   if (document.readyState === "complete") boot();
   else window.addEventListener("load", boot, { once: true });

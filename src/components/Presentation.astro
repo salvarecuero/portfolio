@@ -160,11 +160,12 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, presentation.domain))
       class="subject"
       src={subject}
       alt={`Photo of ${name}`}
-      widths={[400, 480, 600, 800]}
+      widths={[320, 400, 440, 480, 600, 800]}
       sizes="(min-width: 1180px) 600px, (min-width: 655px) 380px, 58vw"
       format="webp"
       loading="eager"
       fetchpriority="high"
+      decoding="sync"
     />
   </div>
 
@@ -440,6 +441,8 @@ const imageUrl = new URL(photo.src, siteOrigin(Astro.site, presentation.domain))
     border-radius: 2px;
     background: linear-gradient(90deg, transparent, var(--accent-bright) 65%, var(--accent-bright));
     opacity: 0;
+  }
+  .w-fast.is-wind .streaks i {
     animation: zip 0.21s linear infinite;
   }
   .w-fast .streaks.front i {
