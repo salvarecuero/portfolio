@@ -25,7 +25,7 @@ test.describe("Embed/media view switcher", () => {
     await expect(page.locator(`${ACTIVE} .media-gallery--desktop`)).toBeVisible();
     await expect(page.locator('[data-view-set="media"]')).toHaveAttribute("aria-pressed", "true");
     // chrome viewer toolbar position is seeded
-    await expect(page.locator(`${ACTIVE} [data-view-pos]`)).toContainText("/");
+    await expect(page.locator(`${ACTIVE} .stage-caption__pos`)).toContainText("/");
     // the live iframe is parked (src dropped) to free the connection
     await expect
       .poll(() =>
